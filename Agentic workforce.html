@@ -778,6 +778,97 @@
             color: #ffa657;
         }
 
+        /* ── REVIEW GATE ── */
+        .review-gate {
+            background: rgba(121, 192, 255, 0.04);
+            border: 1px dashed rgba(121, 192, 255, 0.35);
+            border-radius: 8px;
+            padding: 14px 20px;
+            margin: 8px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .review-gate .gate-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: rgba(121, 192, 255, 0.6);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .review-gate .gate-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--arch);
+            margin-bottom: 6px;
+        }
+
+        .review-gate .gate-rule {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .review-gate .gate-reviewers {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .review-gate .rv {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 3px;
+            background: var(--surface3);
+            border: 1px solid var(--border2);
+        }
+
+        .rv.sec { color: var(--sec); border-color: rgba(255,123,114,0.3); }
+        .rv.test { color: var(--test); border-color: rgba(255,166,87,0.3); }
+        .rv.perf { color: var(--arch); border-color: rgba(121,192,255,0.3); }
+
+        .phase-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: var(--dim);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-align: center;
+            margin: 16px 0 6px;
+        }
+
+        .parallel-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 8px 0;
+        }
+
+        .bug-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 8px 0;
+        }
+
+        .bug-chip {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 4px 12px;
+            border-radius: 3px;
+        }
+
+        .bug-chip.p0 { background: rgba(255,123,114,0.12); border: 1px solid rgba(255,123,114,0.35); color: var(--sec); }
+        .bug-chip.p1 { background: rgba(255,166,87,0.12); border: 1px solid rgba(255,166,87,0.35); color: var(--test); }
+        .bug-chip.p3 { background: rgba(126,231,135,0.08); border: 1px solid rgba(126,231,135,0.25); color: var(--back); }
+
         /* ── RISK TABLE ── */
         .risk-grid {
             display: grid;
@@ -799,6 +890,10 @@
             margin-bottom: 8px;
         }
 
+        .sev-critical {
+            color: #ff4d4d;
+        }
+
         .sev-high {
             color: var(--sec);
         }
@@ -809,6 +904,29 @@
 
         .sev-low {
             color: var(--back);
+        }
+
+        .risk-status {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 3px;
+            margin-top: 8px;
+        }
+
+        .status-built {
+            background: rgba(126,231,135,0.1);
+            border: 1px solid rgba(126,231,135,0.3);
+            color: var(--back);
+        }
+
+        .status-planned {
+            background: rgba(121,192,255,0.08);
+            border: 1px solid rgba(121,192,255,0.25);
+            color: var(--arch);
         }
 
         .risk-card h4 {
@@ -931,13 +1049,26 @@
                     </div>
                     <div class="phil-item">
                         <h4>Agents Review Agents</h4>
-                        <p>No agent ships code without a Reviewer Agent signing off. The Security Agent blocks merges.
-                            No human code review needed for iteration.</p>
+                        <p>No agent ships code without a Reviewer Agent signing off. Three specialist reviewers
+                            (Security, Test Coverage, Performance) run in parallel at every gate. No human code
+                            review needed for iteration.</p>
                     </div>
                     <div class="phil-item">
                         <h4>Prompt Versioning</h4>
-                        <p>Every agent system prompt is versioned in <code>/.prompts/</code>. Changing a prompt = a PR.
-                            Agents can improve their own prompts if perf drops.</p>
+                        <p>Every agent system prompt lives in <code>prompts/&lt;agent&gt;.md</code>. Changing a prompt = a PR.
+                            Full diff history, rollback capability, and prompt performance tracking built in.</p>
+                    </div>
+                    <div class="phil-item">
+                        <h4>MCP as Standard Transport</h4>
+                        <p>All tools are exposed as MCP server endpoints. Any MCP-compatible client — Cursor,
+                            Claude Desktop, VSCode — can call the same tool layer the agents use. No vendor
+                            lock-in at the tool layer.</p>
+                    </div>
+                    <div class="phil-item">
+                        <h4>Structured Requirement Intake</h4>
+                        <p>A Requirements Refiner agent intercepts raw input, clarifies ambiguities, recommends
+                            the tech stack, and gets explicit user sign-off before any build work begins.
+                            Garbage in is blocked at the gate.</p>
                     </div>
                 </div>
             </div>
@@ -947,89 +1078,178 @@
         <div class="sec">
             <div class="sec-title"><span>01</span> — Full Autonomous Pipeline</div>
             <div class="flow-diagram">
-                <div class="flow-label">// HUMAN GIVES GOAL → AGENTS BUILD EVERYTHING → HUMAN REVIEWS ONLY CRITICAL
-                    GATES</div>
+                <div class="flow-label">// 4-PHASE GATED PIPELINE · 10 AGENTS · MCP TOOLS · AUTO-COMMIT ON EVERY FILE CHANGE</div>
 
-                <!-- Human input -->
+                <!-- ── PHASE 0: INTAKE ── -->
+                <div class="phase-label">PHASE 0 — REQUIREMENT INTAKE</div>
+
                 <div class="human-node">
                     <div class="label">INITIATOR</div>
                     <div class="title">👤 Human</div>
-                    <div class="detail">types project spec</div>
+                    <div class="detail">types raw project goal</div>
                 </div>
 
                 <div class="vc arrow"></div>
-                <div class="vc-label">project spec + constraints</div>
+                <div class="vc-label">raw requirement</div>
                 <div class="vc arrow"></div>
 
-                <!-- Orchestrator -->
+                <div class="orch-box" style="border-color:rgba(240,207,101,0.5);">
+                    <div class="label">PHASE 0 · REASONING TIER</div>
+                    <div class="title" style="color:var(--orch);">🔎 Requirements Refiner</div>
+                    <div class="detail">clarifies ambiguity · recommends tech stack · critiques conflicts · waits for user confirmation</div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">RefinedSpec + TechStack confirmed by user</div>
+                <div class="vc arrow"></div>
+
                 <div class="orch-box">
-                    <div class="label">MASTER ORCHESTRATOR</div>
-                    <div class="title">🧠 Build Orchestrator</div>
-                    <div class="detail">plans phases · routes tasks · manages state · detects impasses</div>
+                    <div class="label">PLANNING · REASONING TIER</div>
+                    <div class="title">🧠 Lead / Project Manager</div>
+                    <div class="detail">decomposes into task graph · assigns agents · file-conflict-safe chunking · manages retries</div>
                 </div>
 
+                <!-- ── PHASE 1: ARCHITECTURE ── -->
                 <div class="vc arrow"></div>
-                <div class="vc-label">dispatches to specialized agents via MCP</div>
+                <div class="phase-label">PHASE 1 — ARCHITECTURE</div>
                 <div class="vc arrow"></div>
 
-                <!-- Agent layer -->
                 <div class="agent-layer">
                     <div class="ag arch">
                         <div class="ag-icon">📐</div>
                         <div class="ag-name">Architect</div>
-                        <div class="ag-role">system design</div>
-                    </div>
-                    <div class="ag back">
-                        <div class="ag-icon">⚙️</div>
-                        <div class="ag-name">Backend Dev</div>
-                        <div class="ag-role">api + services</div>
-                    </div>
-                    <div class="ag front">
-                        <div class="ag-icon">🎨</div>
-                        <div class="ag-name">Frontend Dev</div>
-                        <div class="ag-role">ui + dashboard</div>
-                    </div>
-                    <div class="ag test">
-                        <div class="ag-icon">🧪</div>
-                        <div class="ag-name">Tester</div>
-                        <div class="ag-role">write + run tests</div>
-                    </div>
-                    <div class="ag sec">
-                        <div class="ag-icon">🔒</div>
-                        <div class="ag-name">Security</div>
-                        <div class="ag-role">audit + harden</div>
-                    </div>
-                    <div class="ag doc">
-                        <div class="ag-icon">📝</div>
-                        <div class="ag-name">Documenter</div>
-                        <div class="ag-role">docs + comments</div>
-                    </div>
-                    <div class="ag rev">
-                        <div class="ag-icon">🔍</div>
-                        <div class="ag-name">Reviewer</div>
-                        <div class="ag-role">QA gate</div>
+                        <div class="ag-role">SystemDesignPlan + TestArchPlan</div>
                     </div>
                 </div>
 
-                <div class="vc arrow" style="margin-top:8px;"></div>
-                <div class="vc-label">tools agents call autonomously</div>
+                <div class="vc arrow"></div>
+                <div class="vc-label">architecture plan → review gate 1</div>
+                <div class="vc arrow"></div>
+
+                <div class="review-gate">
+                    <div class="gate-label">🔴 REVIEW GATE 1 — ARCHITECTURE · ALL 3 MUST APPROVE</div>
+                    <div class="gate-title">Architecture Review</div>
+                    <div class="gate-rule">rejection → back to Architect with consolidated feedback</div>
+                    <div class="gate-reviewers">
+                        <span class="rv sec">🔒 Security Reviewer</span>
+                        <span class="rv test">🧪 Test Coverage Reviewer</span>
+                        <span class="rv perf">⚡ Performance Reviewer</span>
+                    </div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">all 3 approved → FileLockManager assigns files</div>
+
+                <!-- ── PHASE 2: DEVELOPMENT ── -->
+                <div class="phase-label">PHASE 2 — PARALLEL DEVELOPMENT</div>
+
+                <div class="mcp-layer">
+                    <div class="mcp-title">📂 FileLockManager — no two agents touch the same file</div>
+                    <div class="parallel-row">
+                        <div class="ag back">
+                            <div class="ag-icon">⚙️</div>
+                            <div class="ag-name">Developer × N</div>
+                            <div class="ag-role">file-lock aware · iterates on feedback</div>
+                        </div>
+                        <div class="ag doc">
+                            <div class="ag-icon">📝</div>
+                            <div class="ag-name">Doc Agent</div>
+                            <div class="ag-role">README · docstrings · API docs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">code committed → review gate 2</div>
+                <div class="vc arrow"></div>
+
+                <div class="review-gate">
+                    <div class="gate-label">🟡 REVIEW GATE 2 — CODE · 2 OF 3 MUST APPROVE</div>
+                    <div class="gate-title">Code Review</div>
+                    <div class="gate-rule">rejection → feedback injected into Developer's next attempt context</div>
+                    <div class="gate-reviewers">
+                        <span class="rv sec">🔒 Security Reviewer</span>
+                        <span class="rv test">🧪 Test Coverage Reviewer</span>
+                        <span class="rv perf">⚡ Performance Reviewer</span>
+                    </div>
+                </div>
+
+                <!-- ── PHASE 3: TESTING + BUGS ── -->
+                <div class="vc arrow"></div>
+                <div class="phase-label">PHASE 3 — TESTING &amp; BUG TRIAGE</div>
+                <div class="vc arrow"></div>
+
+                <div class="agent-layer">
+                    <div class="ag test">
+                        <div class="ag-icon">🧪</div>
+                        <div class="ag-name">Tester</div>
+                        <div class="ag-role">runs test framework → BugReport</div>
+                    </div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">structured BugReport → Lead assigns severity</div>
+                <div class="vc arrow"></div>
+
+                <div class="orch-box" style="max-width:360px;">
+                    <div class="label">BUG SEVERITY TRIAGE · LEAD / PM</div>
+                    <div class="title">🧠 Lead assigns severity</div>
+                    <div class="detail" style="margin-top:10px;">
+                        <div class="bug-row">
+                            <span class="bug-chip p0">P0 Showstopper</span>
+                            <span class="bug-chip p1">P1/P2 Known Bug</span>
+                            <span class="bug-chip p3">P3 Low Priority</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">P0/P1 bugs → Debugger · P3 logged and deferred</div>
+                <div class="vc arrow"></div>
+
+                <div class="agent-layer">
+                    <div class="ag rev">
+                        <div class="ag-icon">🐛</div>
+                        <div class="ag-name">Debugger</div>
+                        <div class="ag-role">error + git_log + code → fix</div>
+                    </div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">fix committed → review gate 3</div>
+                <div class="vc arrow"></div>
+
+                <div class="review-gate">
+                    <div class="gate-label">🟡 REVIEW GATE 3 — BUG FIX · 2 OF 3 MUST APPROVE</div>
+                    <div class="gate-title">Fix Review</div>
+                    <div class="gate-rule">approved → Tester re-runs · rejected → back to Debugger</div>
+                    <div class="gate-reviewers">
+                        <span class="rv sec">🔒 Security Reviewer</span>
+                        <span class="rv test">🧪 Test Coverage Reviewer</span>
+                        <span class="rv perf">⚡ Performance Reviewer</span>
+                    </div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">tools agents call autonomously via MCP</div>
                 <div class="vc arrow"></div>
 
                 <!-- MCP Tool Layer -->
                 <div class="mcp-layer">
-                    <div class="mcp-title">⚡ MCP TOOL LAYER — agents call these freely, no human involvement</div>
+                    <div class="mcp-title">⚡ MCP TOOL LAYER — permission-gated per agent role</div>
                     <div class="mcp-tools">
                         <span class="mcp-tool">write_file</span>
                         <span class="mcp-tool">read_file</span>
+                        <span class="mcp-tool">edit_file</span>
                         <span class="mcp-tool">list_files</span>
-                        <span class="mcp-tool">run_command</span>
+                        <span class="mcp-tool">execute_code</span>
                         <span class="mcp-tool">run_tests</span>
+                        <span class="mcp-tool">shell</span>
                         <span class="mcp-tool">git_commit</span>
+                        <span class="mcp-tool">git_log</span>
                         <span class="mcp-tool">git_diff</span>
                         <span class="mcp-tool">search_codebase</span>
-                        <span class="mcp-tool">install_deps</span>
-                        <span class="mcp-tool">check_errors</span>
-                        <span class="mcp-tool">read_logs</span>
+                        <span class="mcp-tool">find_files</span>
                         <span class="mcp-tool">ask_human</span>
                     </div>
                 </div>
@@ -1038,15 +1258,14 @@
                 <div class="vc-label">human checkpoint gates (see section 03)</div>
                 <div class="vc arrow"></div>
 
-                <!-- Human review gate -->
                 <div class="human-node" style="border-color:rgba(255,123,114,0.4);">
-                    <div class="label" style="color:rgba(255,123,114,0.6);">GATE</div>
-                    <div class="title" style="color:var(--sec);">🚦 Decision Points</div>
-                    <div class="detail">arch · security · scope changes</div>
+                    <div class="label" style="color:rgba(255,123,114,0.6);">GATES</div>
+                    <div class="title" style="color:var(--sec);">🚦 Human Decision Points</div>
+                    <div class="detail">stack confirm · arch sign-off · security policy · credentials · scope changes</div>
                 </div>
 
                 <div class="vc arrow"></div>
-                <div class="vc-label">approved → agents continue autonomously</div>
+                <div class="vc-label">approved → agents continue · every file write auto-committed to feature branch</div>
                 <div class="vc arrow"></div>
 
                 <!-- Output -->
@@ -1055,7 +1274,8 @@
                     <div class="out-node">📋 Full Test Suite</div>
                     <div class="out-node">📚 Documentation</div>
                     <div class="out-node">🔒 Security Report</div>
-                    <div class="out-node">📝 Prompt Changelog</div>
+                    <div class="out-node">📝 Git Audit Trail</div>
+                    <div class="out-node">⚠️ Risk Register</div>
                 </div>
 
             </div>
@@ -1077,95 +1297,104 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td>🔎</td>
+                        <td style="color:var(--orch);">Requirements Refiner</td>
+                        <td>Intercepts raw user input. Asks clarifying questions if vague. Surfaces conflicts.
+                            Recommends tech stack with rationale. Waits for explicit user confirmation before locking
+                            <code>RefinedSpec</code>. Critiques contradictions with past decisions.</td>
+                        <td><span class="chip chip-k">ask_human</span></td>
+                        <td>Only sees: raw user input + past RefinedSpec from long-term memory.</td>
+                        <td>Always — for stack confirmation, ambiguities, and conflict resolution</td>
+                    </tr>
+                    <tr>
                         <td>🧠</td>
-                        <td style="color:var(--orch);">Build Orchestrator</td>
-                        <td>Owns the entire build plan. Reads spec, creates phase list, dispatches tasks to agents,
-                            merges outputs, tracks what's done, retries failures, decides when to escalate to human.
-                        </td>
-                        <td><span class="chip chip-k">all tools</span></td>
-                        <td>Maintains a running <code>build_state.json</code>. Never loads full code — only summaries.
-                        </td>
-                        <td>Genuinely ambiguous requirement, or 3+ agent retry failures</td>
+                        <td style="color:var(--orch);">Lead / Project Manager</td>
+                        <td>Reads confirmed RefinedSpec. Builds task DAG. Assigns agents. Chunks dev work into
+                            file-conflict-safe units (FileLockManager). Assigns bug severity after Tester reports.
+                            Re-plans on failures.</td>
+                        <td><span class="chip chip-k">list_files</span> <span class="chip chip-k">git_log</span> <span class="chip chip-k">ask_human</span></td>
+                        <td>Maintains <code>build_state.json</code>. Never loads full code — only summaries and diffs.</td>
+                        <td>Bug severity triage, scope changes, 3+ consecutive agent failures</td>
                     </tr>
                     <tr>
                         <td>📐</td>
-                        <td style="color:var(--arch);">Architect Agent</td>
-                        <td>Designs folder structure, API contracts, DB schema, module boundaries, tech stack decisions.
-                            Writes <code>ARCHITECTURE.md</code> and all interface definitions before Backend starts.
-                        </td>
-                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">read_file</span></td>
-                        <td>Only sees: project spec + existing architecture docs. No code.</td>
-                        <td>Conflicting non-functional requirements (scale vs. cost), third-party API choices</td>
-                    </tr>
-                    <tr>
-                        <td>⚙️</td>
-                        <td style="color:var(--back);">Backend Dev Agent</td>
-                        <td>Implements all server-side code: FastAPI routes, MCP server, Whisper pipeline, article
-                            scraper, agent logic, DB models. Runs server, checks logs, fixes errors in a loop until
-                            tests pass.</td>
-                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">run_command</span>
-                            <span class="chip chip-k">run_tests</span> <span class="chip chip-k">read_logs</span> <span
-                                class="chip chip-k">install_deps</span></td>
-                        <td>Sees: ARCHITECTURE.md + only the files it's currently editing. Requests other files via
-                            tool.</td>
-                        <td>Never. Fixes its own bugs. Escalates only if architecture is broken.</td>
-                    </tr>
-                    <tr>
-                        <td>🎨</td>
-                        <td style="color:var(--front);">Frontend Dev Agent</td>
-                        <td>Builds the React dashboard: live media feed, sentiment cards, entity tags, trend charts.
-                            Connects to backend API. Runs dev server, iterates until UI matches spec. Writes CSS and
-                            components.</td>
-                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">run_command</span>
-                            <span class="chip chip-k">check_errors</span> <span class="chip chip-k">read_file</span>
-                        </td>
-                        <td>Sees: API contract from Architect + only its own frontend files.</td>
-                        <td>Never. Iterates autonomously. Escalates only if API contract is wrong.</td>
-                    </tr>
-                    <tr>
-                        <td>🧪</td>
-                        <td style="color:var(--test);">Tester Agent</td>
-                        <td>Writes unit tests, integration tests, and E2E tests for every module. Runs them, reads
-                            failures, fixes test or raises issue to the relevant Dev agent. Maintains test coverage
-                            above 80%.</td>
-                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">run_tests</span> <span
-                                class="chip chip-k">read_logs</span> <span class="chip chip-k">search_codebase</span>
-                        </td>
-                        <td>Sees: the module it's testing + test results. Nothing else.</td>
-                        <td>Test reveals a logic error that changes the spec</td>
+                        <td style="color:var(--arch);">Architect</td>
+                        <td>Reads confirmed TechStack from RefinedSpec. Designs folder structure, API contracts, DB
+                            schema, module boundaries. Writes <code>SystemDesignPlan.md</code> and
+                            <code>TestArchitecturePlan.md</code> to shared state before any dev work begins.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td>Only sees: RefinedSpec + existing architecture docs. No implementation code.</td>
+                        <td>Conflicting non-functional requirements, third-party API choices not in TechStack</td>
                     </tr>
                     <tr>
                         <td>🔒</td>
-                        <td style="color:var(--sec);">Security Agent</td>
-                        <td>Audits all code for injection risks, exposed secrets, insecure deps, CORS misconfig. Runs
-                            bandit/safety. Writes a security report. <strong>Can block merges.</strong> Hardened code
-                            before it ships.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">run_command</span>
-                            <span class="chip chip-k">write_file</span> <span class="chip chip-k">git_diff</span></td>
-                        <td>Sees: git diff of the files being reviewed. No full codebase needed.</td>
-                        <td>Critical vulnerability with no clear fix (e.g. architectural auth flaw)</td>
+                        <td style="color:var(--sec);">Security Reviewer</td>
+                        <td>Reviews architecture plans and code diffs for injection risks, exposed secrets, CORS
+                            misconfiguration, auth flaws, insecure deps. Runs bandit/safety. <strong>Blocks the
+                            review gate</strong> if critical issues found. Returns structured verdict.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">git_diff</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: only the diff or plan under review. Never the full codebase.</td>
+                        <td>Critical auth flaw or vulnerability with no clear code-level fix</td>
+                    </tr>
+                    <tr>
+                        <td>🧪</td>
+                        <td style="color:var(--test);">Test Coverage Reviewer</td>
+                        <td>Reviews test plans and code for coverage gaps, missing edge cases, untested error paths,
+                            missing integration tests. Checks that test architecture aligns with the system design.
+                            Returns structured verdict with specific gaps.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: TestArchitecturePlan + diff under review. Nothing else.</td>
+                        <td>Test reveals a spec logic error that requires requirement change</td>
+                    </tr>
+                    <tr>
+                        <td>⚡</td>
+                        <td style="color:var(--front);">Performance Reviewer</td>
+                        <td>Reviews architecture and code for N+1 queries, blocking calls in async paths, unbounded
+                            memory growth, missing indexes, unscalable patterns. Returns structured verdict with
+                            line-level callouts.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: only the diff or plan. No runtime profiling — static analysis only.</td>
+                        <td>Architecture-level perf issue that requires design change</td>
+                    </tr>
+                    <tr>
+                        <td>⚙️</td>
+                        <td style="color:var(--back);">Developer</td>
+                        <td>Implements code per SystemDesignPlan. File-lock aware — only edits files assigned by Lead.
+                            Iterates on review feedback (feedback injected into context). Runs code in sandbox to
+                            verify before committing.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span class="chip chip-k">shell</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: SystemDesignPlan + only files assigned to it by FileLockManager.</td>
+                        <td>Never. Fixes its own bugs. Calls ask_human only for genuine spec ambiguity.</td>
                     </tr>
                     <tr>
                         <td>📝</td>
-                        <td style="color:var(--doc);">Documenter Agent</td>
-                        <td>Writes README, inline docstrings, API docs (OpenAPI), setup guide, and a
-                            <code>AGENTS.md</code> file logging every agent's contribution. Runs after each module is
-                            complete.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
-                                class="chip chip-k">search_codebase</span></td>
-                        <td>Sees: only the file it's documenting. Requests context via search tool.</td>
+                        <td style="color:var(--doc);">Doc Agent</td>
+                        <td>Runs in parallel with Developer. Writes README, inline docstrings, OpenAPI docs, setup
+                            guide, and <code>AGENTS.md</code> logging every agent's contribution. Triggered after each
+                            module is code-complete.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: only the module it is documenting. Requests context via search_codebase.</td>
                         <td>Never. Fully autonomous.</td>
                     </tr>
                     <tr>
-                        <td>🔍</td>
-                        <td style="color:var(--review);">Reviewer Agent</td>
-                        <td>The final gate before any code is committed. Reviews diffs for logic errors, code quality,
-                            naming, DRY violations. Returns APPROVED or CHANGES_REQUESTED with specific feedback. Acts
-                            as the QA wall.</td>
-                        <td><span class="chip chip-k">git_diff</span> <span class="chip chip-k">read_file</span> <span
-                                class="chip chip-k">search_codebase</span></td>
-                        <td>Sees: only the diff. Never the full repo.</td>
-                        <td>Never. If it blocks, the dev agent fixes and resubmits.</td>
+                        <td>🔬</td>
+                        <td style="color:var(--test);">Tester</td>
+                        <td>Executes the test framework against all code. Produces a structured <code>BugReport</code>
+                            with each bug's error, stack trace, affected files, and reproduction steps. Does not fix
+                            bugs — only reports them.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">execute_code</span> <span class="chip chip-k">run_tests</span></td>
+                        <td>Sees: test suite + the module under test. Test results only.</td>
+                        <td>Test reveals a spec logic error that changes requirements</td>
+                    </tr>
+                    <tr>
+                        <td>🐛</td>
+                        <td style="color:var(--review);">Debugger</td>
+                        <td>Receives BugReport entry + git log for affected files + full file contents. Diagnoses root
+                            cause using commit history context. Fixes the bug, verifies in sandbox, commits fix. Fix
+                            then goes to Review Gate 3.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">edit_file</span> <span class="chip chip-k">shell</span> <span class="chip chip-k">git_log</span> <span class="chip chip-k">execute_code</span></td>
+                        <td>Sees: BugReport entry + git_log for affected files + those files only.</td>
+                        <td>Never. Escalates only to Tester for re-verification.</td>
                     </tr>
                 </tbody>
             </table>
@@ -1223,6 +1452,24 @@
                         "continue" or "fix X first."</p>
                     <div class="cp-trigger">TRIGGER: Orchestrator marks phase COMPLETE</div>
                 </div>
+                <div class="cp-card review">
+                    <div class="cp-type">🔵 REVIEW — BEFORE BUILD BEGINS</div>
+                    <h4>Tech Stack Confirmation</h4>
+                    <p>The Requirements Refiner presents its recommended technology stack (framework, database, infra,
+                        testing tools) with rationale for each choice. Human confirms or overrides individual items.
+                        <code>RefinedSpec</code> is locked only after explicit confirmation — no assumptions are
+                        built in.</p>
+                    <div class="cp-trigger">TRIGGER: Requirements Refiner finishes initial analysis</div>
+                </div>
+                <div class="cp-card advisory">
+                    <div class="cp-type">🟡 ADVISORY — OVERRIDE AVAILABLE</div>
+                    <h4>Bug Severity Triage</h4>
+                    <p>After each Tester run, Lead / PM presents the classified <code>BugReport</code> with its
+                        proposed severity assignments (P0 Showstopper / P1-P2 Known / P3 Low Priority). Human can
+                        override any severity label before the Debugger is dispatched. Prevents misclassified bugs
+                        from blocking or skipping critical fixes.</p>
+                    <div class="cp-trigger">TRIGGER: Tester produces a BugReport with 1+ entries</div>
+                </div>
             </div>
         </div>
 
@@ -1235,6 +1482,8 @@
                 <button class="tab" onclick="showTab(event,'t-agents')">Agent Prompts</button>
                 <button class="tab" onclick="showTab(event,'t-loop')">Build Loop</button>
                 <button class="tab" onclick="showTab(event,'t-state')">State Schema</button>
+                <button class="tab" onclick="showTab(event,'t-gitops')">GitOps Hook</button>
+                <button class="tab" onclick="showTab(event,'t-prompts')">Prompt Versioning</button>
             </div>
 
             <!-- Orchestrator -->
@@ -1656,55 +1905,246 @@ Rules:
   <span class="s">"completed_modules"</span>: []  <span class="c">// backend/frontend tracks finished pieces</span>
 }</pre>
             </div>
+
+            <!-- GitOps Hook -->
+            <div class="code-panel" id="t-gitops">
+                <button class="cp-btn" onclick="copyTab('t-gitops')">COPY</button>
+                <pre><span class="c"># gitops.py — auto-commit hook triggered on every file write/edit</span>
+<span class="c"># Every change is committed with agent identity + prompt version metadata</span>
+<span class="k">import</span> subprocess
+<span class="k">from</span> pathlib <span class="k">import</span> Path
+<span class="k">from</span> datetime <span class="k">import</span> datetime, timezone
+
+<span class="k">class</span> <span class="n">GitOpsManager</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="v">self</span>, repo_root: str, session_branch: str):
+        <span class="v">self</span>.repo = Path(repo_root)
+        <span class="v">self</span>.branch = session_branch
+        <span class="v">self</span>._ensure_branch()
+
+    <span class="k">def</span> <span class="n">_ensure_branch</span>(<span class="v">self</span>):
+        <span class="c"># create feature/session branch if it doesn't exist</span>
+        subprocess.run(
+            [<span class="s">"git"</span>, <span class="s">"checkout"</span>, <span class="s">"-B"</span>, <span class="v">self</span>.branch],
+            cwd=<span class="v">self</span>.repo, check=<span class="b">True</span>
+        )
+
+    <span class="k">def</span> <span class="n">commit</span>(
+        <span class="v">self</span>,
+        file_path: str,
+        agent_name: str,
+        prompt_version: str,
+        prompt_summary: str,
+    ) -> str:
+        <span class="n">"""Stages the file and commits with structured metadata message."""</span>
+        subprocess.run([<span class="s">"git"</span>, <span class="s">"add"</span>, file_path], cwd=<span class="v">self</span>.repo, check=<span class="b">True</span>)
+
+        <span class="v">ts</span> = datetime.now(timezone.utc).isoformat(timespec=<span class="s">"seconds"</span>)
+        <span class="v">msg</span> = (
+            <span class="s">f"[{agent_name}] {prompt_summary}\n\n"</span>
+            <span class="s">f"agent: {agent_name}\n"</span>
+            <span class="s">f"prompt_version: {prompt_version}\n"</span>
+            <span class="s">f"file: {file_path}\n"</span>
+            <span class="s">f"timestamp: {ts}"</span>
+        )
+        subprocess.run(
+            [<span class="s">"git"</span>, <span class="s">"commit"</span>, <span class="s">"-m"</span>, msg],
+            cwd=<span class="v">self</span>.repo, check=<span class="b">True</span>
+        )
+        <span class="k">return</span> msg
+
+<span class="c"># Usage — called automatically after every write_file / edit_file tool call</span>
+<span class="v">gitops</span> = GitOpsManager(<span class="s">"."</span>, session_branch=<span class="s">"feature/session-2026-02-21"</span>)
+
+<span class="v">gitops</span>.commit(
+    file_path=<span class="s">"src/api/routes.py"</span>,
+    agent_name=<span class="s">"Developer"</span>,
+    prompt_version=<span class="s">"developer_v2.1"</span>,
+    prompt_summary=<span class="s">"implement POST /ingest endpoint per SystemDesignPlan"</span>,
+)</pre>
+            </div>
+
+            <!-- Prompt Versioning -->
+            <div class="code-panel" id="t-prompts">
+                <button class="cp-btn" onclick="copyTab('t-prompts')">COPY</button>
+                <pre><span class="c"># prompts/developer.md — agent system prompt as a versioned Markdown file</span>
+<span class="c"># Changing this file = a PR. Every version is diff-able and rollback-able.</span>
+<span class="c"># ─────────────────────────────────────────────────────────────────────────</span>
+<span class="c"># version: 2.1</span>
+<span class="c"># agent: Developer</span>
+<span class="c"># model_tier: standard  # sonnet / gpt-4o</span>
+<span class="c"># last_updated: 2026-02-21</span>
+<span class="c"># ─────────────────────────────────────────────────────────────────────────</span>
+
+<span class="n">You are a Developer agent in a production-grade multi-agent build system.</span>
+
+<span class="n">## Identity</span>
+<span class="n">- You implement code per the SystemDesignPlan.md written by the Architect.</span>
+<span class="n">- You only edit files assigned to you by the Lead / PM via FileLockManager.</span>
+<span class="n">- You are file-lock aware: NEVER edit a file not in your assigned list.</span>
+
+<span class="n">## Behaviour</span>
+<span class="n">- Read SystemDesignPlan.md first on every task.</span>
+<span class="n">- Implement in small, testable, committable chunks.</span>
+<span class="n">- After each file edit: run execute_code to verify locally before committing.</span>
+<span class="n">- If review feedback arrives: read it fully, address ALL items, do not skip.</span>
+
+<span class="n">## Rules</span>
+<span class="n">- temp=0.2 — be deterministic, not creative.</span>
+<span class="n">- Never hallucinate library APIs. Use search_codebase or read_file to verify.</span>
+<span class="n">- Never call ask_human unless the spec is genuinely contradictory.</span>
+<span class="n">- Every file write triggers an auto-commit — do not batch multiple file changes.</span>
+
+<span class="c">---</span>
+<span class="c"># config/agents.yaml — reference by file path, not inline string</span>
+<span class="v">developer</span>:
+  <span class="v">prompt_file</span>: <span class="s">"prompts/developer.md"</span>
+  <span class="v">prompt_version</span>: <span class="s">"2.1"</span>
+  <span class="v">model_tier</span>: <span class="s">"standard"</span>
+  <span class="v">tools</span>: [<span class="s">"read_file"</span>, <span class="s">"write_file"</span>, <span class="s">"edit_file"</span>, <span class="s">"execute_code"</span>, <span class="s">"shell"</span>, <span class="s">"search_codebase"</span>]
+  <span class="v">max_iterations</span>: <span class="b">12</span>
+  <span class="v">temperature</span>: <span class="b">0.2</span></pre>
+            </div>
+
         </div>
 
-        <!-- Risk Mitigations -->
-        <div class="sec">
-            <div class="sec-title"><span>05</span> — Known Risks & Mitigations</div>
+        <!-- Risk Register -->
+        <div class="sec" id="risks">
+            <div class="sec-title"><span>05</span> — Agentic AI Risk Register</div>
             <div class="risk-grid">
+
                 <div class="risk-card">
-                    <div class="severity sev-high">⚠ HIGH RISK</div>
-                    <h4>Context Window Overflow</h4>
-                    <p>Backend agent reads whole codebase → hits token limit → hallucinates or fails.</p>
-                    <div class="mitigation">→ Agents only load files they request via read_file. Orchestrator passes
-                        summaries, not raw code.</div>
+                    <div class="severity sev-critical">⬛ CRITICAL</div>
+                    <h4>Error Propagation</h4>
+                    <p>A flawed architectural decision or incorrect code module silently infects downstream agents
+                        that rely on the same shared state. Errors compound across phases before being caught.</p>
+                    <div class="mitigation">→ 3-reviewer parallel gates at every phase boundary. Architecture must
+                        achieve 3/3 approval; code and fixes require 2/3. Each gate blocks progression until
+                        resolved.</div>
+                    <span class="risk-status status-planned">Planned</span>
                 </div>
+
                 <div class="risk-card">
-                    <div class="severity sev-high">⚠ HIGH RISK</div>
-                    <h4>Infinite Bug Loop</h4>
-                    <p>Agent tries to fix a bug, makes it worse, re-attempts, creates cascade of errors.</p>
-                    <div class="mitigation">→ Max 3 retries per task. On 3rd failure, orchestrator escalates to human
-                        with full context.</div>
-                </div>
-                <div class="risk-card">
-                    <div class="severity sev-high">⚠ HIGH RISK</div>
-                    <h4>Agent Hallucinating APIs</h4>
-                    <p>Backend agent calls a library method that doesn't exist. Tests fail but agent keeps guessing.</p>
-                    <div class="mitigation">→ run_command pip show [lib] + read docs before using. Tester catches
-                        hallucinated APIs.</div>
-                </div>
-                <div class="risk-card">
-                    <div class="severity sev-med">○ MEDIUM RISK</div>
-                    <h4>Prompt Drift Across Agents</h4>
-                    <p>Architect designs something, Backend interprets it differently, Frontend has a third
-                        interpretation.</p>
-                    <div class="mitigation">→ api_contract.json is the single source of truth. All agents read it before
-                        starting.</div>
-                </div>
-                <div class="risk-card">
-                    <div class="severity sev-med">○ MEDIUM RISK</div>
+                    <div class="severity sev-high">⚠ HIGH</div>
                     <h4>Cost Explosion</h4>
-                    <p>Agents in tight retry loops consuming thousands of tokens for simple bugs.</p>
-                    <div class="mitigation">→ Budget cap in orchestrator: if token_spend > $20, pause and ask human. Log
-                        all API calls.</div>
+                    <p>Agents in tight retry loops with large context windows consume thousands of tokens per
+                        iteration. A single failed P0 bug fix loop can exhaust a session budget.</p>
+                    <div class="mitigation">→ Model tiering: Reasoning tier (Opus/o1) only for planning; Standard
+                        (Sonnet) for dev/review; Fast (Haiku) for docs/tests. Budget tracker with real-time
+                        alerts. P3 bugs deferred — never debugged in-session.</div>
+                    <span class="risk-status status-planned">Planned</span>
                 </div>
+
                 <div class="risk-card">
-                    <div class="severity sev-low">● LOW RISK</div>
-                    <h4>Security Agent Over-Blocking</h4>
-                    <p>Security agent flags false positives and blocks the build indefinitely.</p>
-                    <div class="mitigation">→ Security agent can only block CRITICAL issues. HIGH and MEDIUM are
-                        advisory-only.</div>
+                    <div class="severity sev-med">○ MEDIUM</div>
+                    <h4>Latency Accumulation</h4>
+                    <p>Sequential agent chains with multiple LLM calls per phase create end-to-end latency that
+                        makes the system unusable for interactive development loops.</p>
+                    <div class="mitigation">→ DAG-based orchestration with parallel branches. Phase 2 runs
+                        Developer × N and Doc Agent concurrently. Review Gate uses 3 reviewers in parallel.
+                        Fast-tier model for Tester and Doc Agent.</div>
+                    <span class="risk-status status-planned">Planned</span>
                 </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH</div>
+                    <h4>Non-Determinism</h4>
+                    <p>High temperature settings cause agents to produce different code or decisions on identical
+                        inputs, making bugs unreproducible and reviews inconsistent.</p>
+                    <div class="mitigation">→ All agents run at temp=0.2. Pydantic v2 enforces structured output
+                        schemas for all agent outputs (RefinedSpec, BugReport, ReviewVerdict). Validation layer
+                        rejects malformed outputs before they enter shared state.</div>
+                    <span class="risk-status status-built">Built</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH</div>
+                    <h4>Context Window Exhaustion</h4>
+                    <p>Agents that accumulate full conversation history across a long session hit token limits
+                        and begin hallucinating or truncating critical context.</p>
+                    <div class="mitigation">→ Sliding context window with configurable token budget per agent.
+                        Auto-summarization triggers when window approaches limit. Agents never load full codebase
+                        — request specific files via read_file tool only.</div>
+                    <span class="risk-status status-built">Built</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-critical">⬛ CRITICAL</div>
+                    <h4>Prompt Injection</h4>
+                    <p>Malicious content in source files, user input, or tool outputs causes an agent to
+                        override its system prompt, exfiltrate data, or execute unintended commands.</p>
+                    <div class="mitigation">→ Guardrails layer scans all tool outputs before injecting into
+                        agent context. Tool output schema validation rejects unexpected content shapes.
+                        Per-agent tool permission matrix — agents can only call their allowed tools.</div>
+                    <span class="risk-status status-planned">Planned</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-critical">⬛ CRITICAL</div>
+                    <h4>Tool Misuse / Destructive Actions</h4>
+                    <p>An agent calls shell or write_file with a destructive path (e.g., deletes unrelated
+                        files, runs <code>rm -rf</code>, or overwrites configuration outside its scope).</p>
+                    <div class="mitigation">→ All code execution in Docker sandbox with resource limits. Path
+                        guard enforces workspace containment — no writes outside project root. Per-agent
+                        permission matrix restricts tool access by role (e.g., Doc Agent cannot call shell).</div>
+                    <span class="risk-status status-planned">Planned</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH</div>
+                    <h4>Identity Explosion / Secret Leak</h4>
+                    <p>An agent receives or generates API keys, passwords, or tokens and writes them to a file
+                        that gets committed to the git history or logged in plaintext.</p>
+                    <div class="mitigation">→ Secrets manager integration — credentials never appear in agent
+                        context. GitOps hook scans commit diffs for secret patterns before writing. Agents are
+                        explicitly instructed: never generate, store, or transmit credentials.</div>
+                    <span class="risk-status status-planned">Planned</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH</div>
+                    <h4>Observability Gaps</h4>
+                    <p>When multi-agent pipelines fail silently or produce wrong output, the absence of
+                        structured traces makes root-cause diagnosis nearly impossible.</p>
+                    <div class="mitigation">→ OpenTelemetry spans per agent and per tool call. structlog for
+                        structured JSON logs. Prometheus metrics for token spend, latency, retry rates. Full
+                        git audit trail: every file change committed with agent name + prompt version.</div>
+                    <span class="risk-status status-planned">Planned</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH</div>
+                    <h4>Deadlocks / Infinite Loops</h4>
+                    <p>Two agents waiting on each other's output (DAG cycle), or a single agent looping on a
+                        fix that continuously fails validation, stalls the entire pipeline indefinitely.</p>
+                    <div class="mitigation">→ max_iterations hard cap per agent (default 12). Per-node timeout
+                        in the DAG executor. Deadlock detection on graph cycles at build time. On 3+ consecutive
+                        failures, Lead auto-escalates to human via ask_human.</div>
+                    <span class="risk-status status-built">Built</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-med">○ MEDIUM</div>
+                    <h4>Feedback Loop Poisoning</h4>
+                    <p>Incorrect task outcomes (hallucinated successes, false test passes) stored in episodic
+                        memory contaminate future agent decisions that draw on past experience.</p>
+                    <div class="mitigation">→ Episodic memory entries validated before storage — only outcomes
+                        that passed the review gate are recorded. Episode scoring tracks accuracy over time.
+                        Poisoned episodes can be flagged and excluded.</div>
+                    <span class="risk-status status-built">Built</span>
+                </div>
+
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH</div>
+                    <h4>Provider Outage / Rate Limits</h4>
+                    <p>Mid-pipeline LLM provider outage or rate limit causes agent failure with no recovery
+                        path, losing hours of build progress and requiring manual restart.</p>
+                    <div class="mitigation">→ Multi-provider fallback: OpenAI ↔ Anthropic switchover on
+                        provider error. Tenacity exponential backoff with jitter on rate limit responses.
+                        Build state persisted to disk — pipeline resumes from last completed node, not from
+                        scratch.</div>
+                    <span class="risk-status status-built">Built</span>
+                </div>
+
             </div>
         </div>
 

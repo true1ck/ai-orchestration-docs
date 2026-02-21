@@ -389,6 +389,15 @@
             box-shadow: 0 20px 60px rgba(240, 207, 101, 0.10);
         }
 
+        .doc-card.card-rose::before {
+            background: radial-gradient(ellipse at top left, rgba(244, 114, 182, 0.07), transparent 60%);
+        }
+
+        .doc-card.card-rose:hover {
+            border-color: rgba(244, 114, 182, 0.5);
+            box-shadow: 0 20px 60px rgba(244, 114, 182, 0.12);
+        }
+
         .doc-card:hover::before {
             opacity: 1;
         }
@@ -421,6 +430,10 @@
             background: linear-gradient(90deg, var(--gold), var(--rose));
         }
 
+        .card-rose .card-top-bar {
+            background: linear-gradient(90deg, var(--rose), var(--violet));
+        }
+
         /* Card icon */
         .card-icon {
             width: 52px;
@@ -449,6 +462,11 @@
             border-color: rgba(240, 207, 101, 0.25);
         }
 
+        .card-rose .card-icon {
+            background: rgba(244, 114, 182, 0.1);
+            border-color: rgba(244, 114, 182, 0.25);
+        }
+
         /* Card tag */
         .card-tag {
             font-family: 'IBM Plex Mono', monospace;
@@ -468,6 +486,10 @@
 
         .card-gold .card-tag {
             color: var(--gold);
+        }
+
+        .card-rose .card-tag {
+            color: var(--rose);
         }
 
         /* Card title */
@@ -546,6 +568,14 @@
 
         .card-gold .cta-arrow {
             color: var(--gold);
+        }
+
+        .card-rose .cta-text {
+            color: var(--rose);
+        }
+
+        .card-rose .cta-arrow {
+            color: var(--rose);
         }
 
         .doc-card:hover .cta-arrow {
@@ -658,12 +688,12 @@
 
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-num c-violet">3</div>
+                    <div class="stat-num c-violet">4</div>
                     <div class="stat-label">Docs</div>
                 </div>
                 <div class="stat-div"></div>
                 <div class="stat">
-                    <div class="stat-num c-teal">8+</div>
+                    <div class="stat-num c-teal">10+</div>
                     <div class="stat-label">Agent Types</div>
                 </div>
                 <div class="stat-div"></div>
@@ -682,22 +712,23 @@
 
             <div class="docs-grid">
 
-                <!-- Card 1: Agentic Workforce -->
+                <!-- Card 1: Agentic Workforce — updated -->
                 <a href="Agentic workforce.html" class="doc-card card-violet">
                     <div class="card-top-bar"></div>
                     <div class="card-icon">🤖</div>
-                    <div class="card-tag">Architecture · Build System</div>
+                    <div class="card-tag">Architecture · Build System · Updated</div>
                     <div class="card-title">Autonomous Agent Factory</div>
                     <p class="card-desc">
-                        Full build system architecture for an autonomous agentic workforce — orchestration layers,
-                        specialist agents, MCP tools, human checkpoints, and prompt templates.
+                        Production-grade autonomous build system — 10 specialist agents, 4-phase gated pipeline,
+                        3-reviewer parallel gates, FileLockManager, Debugger, MCP tool transport, and a full
+                        agentic AI risk register.
                     </p>
                     <div class="card-pills">
-                        <span class="pill">Orchestrator</span>
-                        <span class="pill">Architect Agent</span>
-                        <span class="pill">Backend Agent</span>
-                        <span class="pill">Security Agent</span>
+                        <span class="pill">Lead / PM</span>
+                        <span class="pill">3-Reviewer Gate</span>
+                        <span class="pill">Debugger</span>
                         <span class="pill">MCP Tools</span>
+                        <span class="pill">Risk Register</span>
                     </div>
                     <div class="card-cta">
                         <span class="cta-text">OPEN DOCUMENT →</span>
@@ -742,6 +773,30 @@
                         <span class="pill">Vision Agent</span>
                         <span class="pill">Analyst Agent</span>
                         <span class="pill">Aggregator</span>
+                    </div>
+                    <div class="card-cta">
+                        <span class="cta-text">OPEN DOCUMENT →</span>
+                        <span class="cta-arrow">→</span>
+                    </div>
+                </a>
+
+                <!-- Card 4: Risk Register + Comparison -->
+                <a href="Agentic workforce.html#risks" class="doc-card card-rose" style="animation-delay:0.34s;">
+                    <div class="card-top-bar"></div>
+                    <div class="card-icon">⚠️</div>
+                    <div class="card-tag">Production · Risk Register · Mitigations</div>
+                    <div class="card-title">Agentic AI Risk Register</div>
+                    <p class="card-desc">
+                        12 production failure modes of multi-agent systems — error propagation, cost explosion,
+                        prompt injection, tool misuse, and more — with concrete mitigations and implementation
+                        status for each.
+                    </p>
+                    <div class="card-pills">
+                        <span class="pill">Error Propagation</span>
+                        <span class="pill">Prompt Injection</span>
+                        <span class="pill">Cost Controls</span>
+                        <span class="pill">Sandbox</span>
+                        <span class="pill">Observability</span>
                     </div>
                     <div class="card-cta">
                         <span class="cta-text">OPEN DOCUMENT →</span>
