@@ -817,7 +817,7 @@
             justify-content: center;
             align-items: stretch;
             margin-top: 10px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .review-gate .rv {
@@ -827,12 +827,13 @@
             border-radius: 6px;
             background: var(--surface3);
             border: 1px solid var(--border2);
-            flex: 1 1 140px;
-            min-height: 56px;
+            flex: 1 1 0;
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            box-sizing: border-box;
         }
 
         .rv.sec {
@@ -872,10 +873,11 @@
         /* All direct children in parallel row get equal height */
         .parallel-row > * {
             flex: 1 1 160px;
-            min-height: 140px;
+            min-height: 150px;
             display: flex !important;
             flex-direction: column;
             justify-content: center;
+            align-self: stretch;
         }
 
         .bug-row {
