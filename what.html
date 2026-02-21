@@ -831,44 +831,105 @@
             }
         }
 
-        
+
         /* ══ RESPONSIVE ═══════════════════════════════════════════ */
         @media (max-width: 900px) {
-            .container { padding: 32px 20px; }
-            .header { grid-template-columns: 1fr !important; }
-            .header-meta { text-align: left !important; }
-            .agents-detail { grid-template-columns: repeat(2, 1fr) !important; }
-            .cost-grid { grid-template-columns: repeat(2, 1fr) !important; }
-            .layer { grid-template-columns: 80px 1fr !important; }
+            .container {
+                padding: 32px 20px;
+            }
+
+            .header {
+                grid-template-columns: 1fr !important;
+            }
+
+            .header-meta {
+                text-align: left !important;
+            }
+
+            .agents-detail {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .cost-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .layer {
+                grid-template-columns: 80px 1fr !important;
+            }
         }
 
         @media (max-width: 600px) {
-            .header h1 { font-size: clamp(24px,8vw,44px) !important; letter-spacing: -1px !important; }
-            .vision { padding: 24px 20px !important; }
-            .vision p { font-size: 16px !important; }
-            .arch-wrapper { padding: 20px 16px !important; }
-            .layer { grid-template-columns: 60px 1fr !important; gap: 10px !important; }
-            .layer-label { font-size: 8px !important; padding-top: 14px !important; }
-            .layer-content { flex-wrap: wrap; gap: 8px !important; }
-            .src-node, .proc-node { min-width: 100px !important; }
-            .agent-node { min-width: 100% !important; }
-            .agents-detail { grid-template-columns: 1fr !important; }
-            .cost-grid { grid-template-columns: 1fr 1fr !important; }
-            .stack-table { display: block; overflow-x: auto; }
-            .sec-head { margin-top: 36px !important; }
-            .footer { flex-direction: column; gap: 8px; }
+            .header h1 {
+                font-size: clamp(24px, 8vw, 44px) !important;
+                letter-spacing: -1px !important;
+            }
+
+            .vision {
+                padding: 24px 20px !important;
+            }
+
+            .vision p {
+                font-size: 16px !important;
+            }
+
+            .arch-wrapper {
+                padding: 20px 16px !important;
+            }
+
+            .layer {
+                grid-template-columns: 60px 1fr !important;
+                gap: 10px !important;
+            }
+
+            .layer-label {
+                font-size: 8px !important;
+                padding-top: 14px !important;
+            }
+
+            .layer-content {
+                flex-wrap: wrap;
+                gap: 8px !important;
+            }
+
+            .src-node,
+            .proc-node {
+                min-width: 100px !important;
+            }
+
+            .agent-node {
+                min-width: 100% !important;
+            }
+
+            .agents-detail {
+                grid-template-columns: 1fr !important;
+            }
+
+            .cost-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            .stack-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .sec-head {
+                margin-top: 36px !important;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 8px;
+            }
         }
 
         @media (max-width: 640px) {
-            .header {
-                grid-template-columns: 1fr;
-            }
-
             .layer {
                 grid-template-columns: 80px 1fr;
             }
         }
-    
+
 
         /* ── LIGHT MODE OVERRIDES ── */
         [data-theme="light"] {
@@ -878,17 +939,17 @@
             --text: #0d1117;
             --muted: #4b5563;
             --dim: #6b7280;
-            --border: rgba(0,0,0,0.10);
-            --border2: rgba(0,0,0,0.18);
+            --border: rgba(0, 0, 0, 0.10);
+            --border2: rgba(0, 0, 0, 0.18);
             /* Darken accents for legibility on white */
             --violet: #6366f1;
-            --teal:   #0891b2;
-            --gold:   #b45309;
-            --rose:   #db2777;
-            --green:  #16a34a;
-            --red:    #dc2626;
-            --amber:  #d97706;
-            --blue:   #2563eb;
+            --teal: #0891b2;
+            --gold: #b45309;
+            --rose: #db2777;
+            --green: #16a34a;
+            --red: #dc2626;
+            --amber: #d97706;
+            --blue: #2563eb;
             --purple: #7c3aed;
         }
 
@@ -897,11 +958,13 @@
             background: var(--bg);
             color: var(--text);
         }
+
         [data-theme="light"] body::before {
             background-image:
-                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+                linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
         }
+
         [data-theme="light"] body::after {
             background: none;
         }
@@ -911,38 +974,56 @@
         [data-theme="light"] pre {
             background: #1e2030 !important;
             color: #cdd6f4 !important;
-            border-color: rgba(255,255,255,0.06) !important;
+            border-color: rgba(255, 255, 255, 0.06) !important;
         }
+
         [data-theme="light"] .cp-btn {
-            background: rgba(255,255,255,0.08) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
             color: #94a3b8 !important;
         }
 
         /* ── Navigation / Back button ── */
         [data-theme="light"] .back-btn {
-            background: rgba(99,102,241,0.08) !important;
+            background: rgba(99, 102, 241, 0.08) !important;
             color: var(--violet) !important;
-            border-color: rgba(99,102,241,0.3) !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
         }
+
         [data-theme="light"] nav {
-            background: rgba(246,248,250,0.95) !important;
+            background: rgba(246, 248, 250, 0.95) !important;
             border-bottom-color: var(--border2) !important;
         }
+
         [data-theme="light"] .nav-logo,
-        [data-theme="light"] .nav-breadcrumb { color: var(--text) !important; }
+        [data-theme="light"] .nav-breadcrumb {
+            color: var(--text) !important;
+        }
 
         /* ── Section / Page headers ── */
-        [data-theme="light"] .sec-title { color: var(--text) !important; }
-        [data-theme="light"] .sec-title span { color: var(--violet) !important; }
-        [data-theme="light"] .header h1 { color: var(--text) !important; }
-        [data-theme="light"] .tag { color: var(--dim) !important; border-color: var(--border2) !important; }
+        [data-theme="light"] .sec-title {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .sec-title span {
+            color: var(--violet) !important;
+        }
+
+        [data-theme="light"] .header h1 {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .tag {
+            color: var(--dim) !important;
+            border-color: var(--border2) !important;
+        }
 
         /* ── Section containers & cards ── */
         [data-theme="light"] .sec {
             background: var(--surface) !important;
             border-color: var(--border2) !important;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
         }
+
         [data-theme="light"] .card,
         [data-theme="light"] .acard,
         [data-theme="light"] .risk-card,
@@ -951,25 +1032,40 @@
         [data-theme="light"] .agents-detail .acard {
             background: var(--surface) !important;
             border-color: var(--border2) !important;
-            box-shadow: 0 2px 16px rgba(0,0,0,0.07) !important;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07) !important;
         }
-        [data-theme="light"] .acard h3 { color: var(--text) !important; }
-        [data-theme="light"] .acard p   { color: var(--muted) !important; }
-        [data-theme="light"] .kv-val    { color: var(--muted) !important; }
-        [data-theme="light"] .kv-key    { color: var(--dim)   !important; }
+
+        [data-theme="light"] .acard h3 {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .acard p {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .kv-val {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .kv-key {
+            color: var(--dim) !important;
+        }
 
         /* ── Tabs ── */
         [data-theme="light"] .tabs {
             background: var(--surface2) !important;
             border-color: var(--border2) !important;
         }
+
         [data-theme="light"] .tab {
             color: var(--muted) !important;
         }
+
         [data-theme="light"] .tab:hover {
             color: var(--text) !important;
-            background: rgba(0,0,0,0.04) !important;
+            background: rgba(0, 0, 0, 0.04) !important;
         }
+
         [data-theme="light"] .tab.active {
             background: var(--surface) !important;
             color: var(--violet) !important;
@@ -977,24 +1073,49 @@
         }
 
         /* ── Hero, stats blocks ── */
-        [data-theme="light"] .hero-kicker { color: var(--teal) !important; }
-        [data-theme="light"] .hero-desc   { color: var(--muted) !important; }
-        [data-theme="light"] .stat-val    { color: var(--text) !important; }
-        [data-theme="light"] .stat-label  { color: var(--dim) !important; }
+        [data-theme="light"] .hero-kicker {
+            color: var(--teal) !important;
+        }
+
+        [data-theme="light"] .hero-desc {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .stat-val {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .stat-label {
+            color: var(--dim) !important;
+        }
 
         /* ── Doc cards (index.html) ── */
         [data-theme="light"] .doc-card {
             background: var(--surface) !important;
             border-color: var(--border2) !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.07) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07) !important;
         }
+
         [data-theme="light"] .doc-card:hover {
-            box-shadow: 0 12px 40px rgba(0,0,0,0.12) !important;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
         }
-        [data-theme="light"] .card-title  { color: var(--text)  !important; }
-        [data-theme="light"] .card-desc   { color: var(--muted) !important; }
-        [data-theme="light"] .card-meta   { color: var(--dim)   !important; }
-        [data-theme="light"] .pill        { background: rgba(0,0,0,0.06) !important; color: var(--muted) !important; }
+
+        [data-theme="light"] .card-title {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .card-desc {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .card-meta {
+            color: var(--dim) !important;
+        }
+
+        [data-theme="light"] .pill {
+            background: rgba(0, 0, 0, 0.06) !important;
+            color: var(--muted) !important;
+        }
 
         /* ── Agent & flow diagram nodes ── */
         [data-theme="light"] .proc-node,
@@ -1005,49 +1126,112 @@
             border-color: var(--border2) !important;
             color: var(--text) !important;
         }
+
         [data-theme="light"] .proc-node .title,
-        [data-theme="light"] .proc-node .sub { color: var(--text) !important; }
+        [data-theme="light"] .proc-node .sub {
+            color: var(--text) !important;
+        }
+
         [data-theme="light"] .proc-node .tech {
-            background: rgba(99,102,241,0.12) !important;
+            background: rgba(99, 102, 241, 0.12) !important;
             color: var(--violet) !important;
         }
+
         [data-theme="light"] .output-node {
-            background: linear-gradient(135deg, rgba(8,145,178,0.1), rgba(99,102,241,0.1)) !important;
-            border-color: rgba(8,145,178,0.4) !important;
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.1), rgba(99, 102, 241, 0.1)) !important;
+            border-color: rgba(8, 145, 178, 0.4) !important;
         }
-        [data-theme="light"] .output-node .badge { color: var(--dim) !important; }
-        [data-theme="light"] .output-node .name  { color: var(--text) !important; }
-        [data-theme="light"] .output-node .desc  { color: var(--muted) !important; }
-        [data-theme="light"] .agent-node .name  { color: var(--text) !important; }
-        [data-theme="light"] .agent-node .desc  { color: var(--muted) !important; }
-        [data-theme="light"] .agent-node .tool  { background: rgba(0,0,0,0.06) !important; color: var(--muted) !important; }
-        [data-theme="light"] .layer-content { border-color: var(--border2) !important; }
-        [data-theme="light"] .layer-content::before { background: var(--violet) !important; border-color: var(--bg) !important; }
-        [data-theme="light"] .connector-line { border-color: var(--border2) !important; }
-        [data-theme="light"] .arch-wrapper { background: var(--surface) !important; border-color: var(--border2) !important; }
+
+        [data-theme="light"] .output-node .badge {
+            color: var(--dim) !important;
+        }
+
+        [data-theme="light"] .output-node .name {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .output-node .desc {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .agent-node .name {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .agent-node .desc {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .agent-node .tool {
+            background: rgba(0, 0, 0, 0.06) !important;
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .layer-content {
+            border-color: var(--border2) !important;
+        }
+
+        [data-theme="light"] .layer-content::before {
+            background: var(--violet) !important;
+            border-color: var(--bg) !important;
+        }
+
+        [data-theme="light"] .connector-line {
+            border-color: var(--border2) !important;
+        }
+
+        [data-theme="light"] .arch-wrapper {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
 
         /* ── Tables ── */
         [data-theme="light"] .stack-table th {
             color: var(--dim) !important;
             border-bottom-color: var(--border2) !important;
         }
+
         [data-theme="light"] .stack-table td {
             color: var(--muted) !important;
             border-bottom-color: var(--border) !important;
         }
-        [data-theme="light"] .stack-table td:nth-child(2) { color: var(--text) !important; }
-        [data-theme="light"] .stack-table tr:hover td { background: rgba(0,0,0,0.025) !important; }
-        [data-theme="light"] .agent-table th { background: var(--surface2) !important; color: var(--dim) !important; border-color: var(--border2) !important; }
-        [data-theme="light"] .agent-table td { border-color: var(--border) !important; color: var(--muted) !important; }
-        [data-theme="light"] .agent-table tr:hover td { background: rgba(0,0,0,0.02) !important; }
+
+        [data-theme="light"] .stack-table td:nth-child(2) {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .stack-table tr:hover td {
+            background: rgba(0, 0, 0, 0.025) !important;
+        }
+
+        [data-theme="light"] .agent-table th {
+            background: var(--surface2) !important;
+            color: var(--dim) !important;
+            border-color: var(--border2) !important;
+        }
+
+        [data-theme="light"] .agent-table td {
+            border-color: var(--border) !important;
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .agent-table tr:hover td {
+            background: rgba(0, 0, 0, 0.02) !important;
+        }
 
         /* ── Risk cards ── */
         [data-theme="light"] .risk-card {
             background: var(--surface) !important;
             border-color: var(--border2) !important;
         }
-        [data-theme="light"] .risk-card h3 { color: var(--text) !important; }
-        [data-theme="light"] .risk-card p   { color: var(--muted) !important; }
+
+        [data-theme="light"] .risk-card h3 {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .risk-card p {
+            color: var(--muted) !important;
+        }
 
         /* ── Flow boxes (Agentic workforce) ── */
         [data-theme="light"] .flow-box {
@@ -1055,53 +1239,110 @@
             border-color: var(--border2) !important;
             color: var(--text) !important;
         }
-        [data-theme="light"] .flow-label { color: var(--dim) !important; }
+
+        [data-theme="light"] .flow-label {
+            color: var(--dim) !important;
+        }
 
         /* ── Vision block ── */
         [data-theme="light"] .vision {
-            background: linear-gradient(135deg, rgba(8,145,178,0.06), rgba(99,102,241,0.06)) !important;
-            border-color: rgba(8,145,178,0.25) !important;
+            background: linear-gradient(135deg, rgba(8, 145, 178, 0.06), rgba(99, 102, 241, 0.06)) !important;
+            border-color: rgba(8, 145, 178, 0.25) !important;
         }
-        [data-theme="light"] .vision p { color: var(--text) !important; }
-        [data-theme="light"] .vtag { color: var(--muted) !important; border-color: var(--border2) !important; }
+
+        [data-theme="light"] .vision p {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .vtag {
+            color: var(--muted) !important;
+            border-color: var(--border2) !important;
+        }
 
         /* ── Footer ── */
         [data-theme="light"] .footer {
             border-color: var(--border2) !important;
         }
+
         [data-theme="light"] .footer-left,
-        [data-theme="light"] .footer-right { color: var(--dim) !important; }
+        [data-theme="light"] .footer-right {
+            color: var(--dim) !important;
+        }
 
         /* ── Doc.html specific (uses different var names) ── */
-        [data-theme="light"] .header { border-color: var(--border2) !important; }
+        [data-theme="light"] .header {
+            border-color: var(--border2) !important;
+        }
+
         [data-theme="light"] .agent-card {
             background: var(--surface) !important;
             border-color: var(--border2) !important;
             color: var(--text) !important;
         }
-        [data-theme="light"] .agent-card .role { color: var(--dim) !important; }
-        [data-theme="light"] .agent-card .name { color: var(--text) !important; }
-        [data-theme="light"] .agent-card .desc { color: var(--muted) !important; }
-        [data-theme="light"] .flow-node { background: var(--surface2) !important; border-color: var(--border2) !important; color: var(--text) !important; }
-        [data-theme="light"] .flow-arrow { color: var(--dim) !important; }
-        [data-theme="light"] .section-label { color: var(--dim) !important; }
+
+        [data-theme="light"] .agent-card .role {
+            color: var(--dim) !important;
+        }
+
+        [data-theme="light"] .agent-card .name {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .agent-card .desc {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .flow-node {
+            background: var(--surface2) !important;
+            border-color: var(--border2) !important;
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .flow-arrow {
+            color: var(--dim) !important;
+        }
+
+        [data-theme="light"] .section-label {
+            color: var(--dim) !important;
+        }
 
         /* ── "What is an Agent?" section ── */
-        [data-theme="light"] .agent-eq { color: var(--muted) !important; }
+        [data-theme="light"] .agent-eq {
+            color: var(--muted) !important;
+        }
+
         [data-theme="light"] .pillar-card {
             background: var(--surface) !important;
             border-color: var(--border2) !important;
         }
-        [data-theme="light"] .pillar-card h3  { color: var(--text) !important; }
-        [data-theme="light"] .pillar-card p   { color: var(--muted) !important; }
-        [data-theme="light"] .pillar-card code { background: rgba(0,0,0,0.06) !important; color: var(--muted) !important; }
+
+        [data-theme="light"] .pillar-card h3 {
+            color: var(--text) !important;
+        }
+
+        [data-theme="light"] .pillar-card p {
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .pillar-card code {
+            background: rgba(0, 0, 0, 0.06) !important;
+            color: var(--muted) !important;
+        }
 
         /* ── Pill badges in light mode ── */
-        [data-theme="light"] .badge-pill.pill-k { background: rgba(0,0,0,0.07) !important; color: var(--dim) !important; }
+        [data-theme="light"] .badge-pill.pill-k {
+            background: rgba(0, 0, 0, 0.07) !important;
+            color: var(--dim) !important;
+        }
 
         /* ── Scrollbar (WebKit) ── */
-        [data-theme="light"] ::-webkit-scrollbar-track { background: var(--surface2) !important; }
-        [data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25) !important; }
+        [data-theme="light"] ::-webkit-scrollbar-track {
+            background: var(--surface2) !important;
+        }
+
+        [data-theme="light"] ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.25) !important;
+        }
 
         /* ── THEME TOGGLE BUTTON ── */
         #theme-toggle {
@@ -1120,13 +1361,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         #theme-toggle:hover {
             transform: scale(1.1);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -1169,7 +1410,7 @@
     </nav>
     <div class="container">
 
-                <!-- Header -->
+        <!-- Header -->
         <div class="header">
             <div class="tag">Sankhya Team — Feb 22 Demo</div>
             <h1>Media <span>Intelligence</span><br>Platform</h1>
@@ -1179,7 +1420,10 @@
         <!-- Vision -->
         <div class="vision">
             <p>
-                Upload a <span>massive intelligence payload (ZIP format)</span> containing mixed media — videos, audio leaks, PDFs, raw images, and text. The Orchestrator autonomously unpacks the archive, classifies every file by MIME type, and dispatches a swarm of specialist agents to transcribe, extract, and analyze the data <strong>in parallel</strong>, surfacing a unified intelligence report on the live dashboard.
+                Upload a <span>massive intelligence payload (ZIP format)</span> containing mixed media — videos, audio
+                leaks, PDFs, raw images, and text. The Orchestrator autonomously unpacks the archive, classifies every
+                file by MIME type, and dispatches a swarm of specialist agents to transcribe, extract, and analyze the
+                data <strong>in parallel</strong>, surfacing a unified intelligence report on the live dashboard.
             </p>
             <div class="vision-tags">
                 <span class="vtag">BULK ZIP INGESTION</span>
@@ -1226,7 +1470,8 @@
                         <div class="proc-node" style="border-color: var(--violet);">
                             <div class="title">Payload Unpacker & Classifier</div>
                             <div class="sub">Extracts to secure sandbox, runs MIME detection</div>
-                            <div class="tech" style="background: rgba(99,102,241,0.12); color: var(--violet);">mimetypes / magic</div>
+                            <div class="tech" style="background: rgba(99,102,241,0.12); color: var(--violet);">mimetypes
+                                / magic</div>
                         </div>
                         <div class="proc-node">
                             <div class="title">DAG Builder</div>
@@ -1239,7 +1484,8 @@
                 <!-- Connector -->
                 <div class="connector">
                     <div></div>
-                    <div class="connector-line"><span class="connector-label">spawn agents per MIME type → execute in parallel</span></div>
+                    <div class="connector-line"><span class="connector-label">spawn agents per MIME type → execute in
+                            parallel</span></div>
                 </div>
 
                 <!-- Layer 3: MCP Agent Pipeline -->
@@ -1288,7 +1534,8 @@
                 <!-- Connector -->
                 <div class="connector">
                     <div></div>
-                    <div class="connector-line"><span class="connector-label">massive parallel JSON stream → frontend</span></div>
+                    <div class="connector-line"><span class="connector-label">massive parallel JSON stream →
+                            frontend</span></div>
                 </div>
 
                 <!-- Layer 4: Output -->
@@ -1327,12 +1574,18 @@
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">Orchestrator</div>
                 <h3>🧠 Router / Bulk Orchestrator</h3>
-                <p>The central dispatcher. Receives a raw ZIP payload, decompresses it to a secure sandbox, detects MIME types for dozens of files instantly, and spawns the exact right specialist agents in massive parallel streams. Collates and merges all outputs.</p>
+                <p>The central dispatcher. Receives a raw ZIP payload, decompresses it to a secure sandbox, detects MIME
+                    types for dozens of files instantly, and spawns the exact right specialist agents in massive
+                    parallel streams. Collates and merges all outputs.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet-4-6</span></div>
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">{ zip_buffer, timestamp }</span></div>
-                    <div class="kv-row"><span class="kv-key">Scaling</span><span class="kv-val">50+ concurrent agents</span></div>
-                    <div class="kv-row"><span class="kv-key">Pattern</span><span class="kv-val">Scatter-Gather / MapReduce</span></div>
+                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet-4-6</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">{ zip_buffer, timestamp
+                            }</span></div>
+                    <div class="kv-row"><span class="kv-key">Scaling</span><span class="kv-val">50+ concurrent
+                            agents</span></div>
+                    <div class="kv-row"><span class="kv-key">Pattern</span><span class="kv-val">Scatter-Gather /
+                            MapReduce</span></div>
                 </div>
             </div>
 
@@ -1340,10 +1593,14 @@
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 1</div>
                 <h3>🎙 Transcriber + Cleaner</h3>
-                <p>Triggered on every standard A/V file (mp4, mp3, wav). Runs Whisper (or calls API), then acts as a journalist editor—cleaning noisy transcripts, identifying speakers, and highlighting extreme sentiment shifts.</p>
+                <p>Triggered on every standard A/V file (mp4, mp3, wav). Runs Whisper (or calls API), then acts as a
+                    journalist editor—cleaning noisy transcripts, identifying speakers, and highlighting extreme
+                    sentiment shifts.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: mp4/wav</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ transcript, key_quotes[], duration }</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: mp4/wav</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ transcript,
+                            key_quotes[], duration }</span></div>
                 </div>
             </div>
 
@@ -1351,10 +1608,13 @@
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 2</div>
                 <h3>👁 Vision Analyzer</h3>
-                <p>Triggered on every image found inside the ZIP. Uses Claude's vision capabilities to describe the scene, extract visible text, and spot logos or landmarks without human review.</p>
+                <p>Triggered on every image found inside the ZIP. Uses Claude's vision capabilities to describe the
+                    scene, extract visible text, and spot logos or landmarks without human review.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">image_base64: str</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ description, text_ext, logos[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">image_base64: str</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ description, text_ext,
+                            logos[] }</span></div>
                 </div>
             </div>
 
@@ -1362,10 +1622,13 @@
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 3</div>
                 <h3>📄 Document Extractor</h3>
-                <p>Triggered on PDFs, DOCX, or unstructured web slices inside the dump. Uses OCR (if needed) and parses out people, organizations, dates, and a concise executive summary per document.</p>
+                <p>Triggered on PDFs, DOCX, or unstructured web slices inside the dump. Uses OCR (if needed) and parses
+                    out people, organizations, dates, and a concise executive summary per document.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: pdf/txt</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ summary, entities[], dates[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: pdf/txt</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ summary, entities[],
+                            dates[] }</span></div>
                 </div>
             </div>
 
@@ -1373,10 +1636,13 @@
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 4 & 5</div>
                 <h3>📊 Analyst & 🏷 Categorizer</h3>
-                <p>Runs sequentially as a post-processor on <em>all</em> text outputs (from videos, images, and documents). Scores bias, assigns taxonomy tags (politics, finance, etc.), and checks language.</p>
+                <p>Runs sequentially as a post-processor on <em>all</em> text outputs (from videos, images, and
+                    documents). Scores bias, assigns taxonomy tags (politics, finance, etc.), and checks language.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text_output: str</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ sentiment, bias, tags[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text_output: str</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ sentiment, bias, tags[]
+                            }</span></div>
                 </div>
             </div>
 
@@ -1384,10 +1650,14 @@
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 6</div>
                 <h3>🔗 Cross-File Aggregator</h3>
-                <p>The crucial final step. Runs only when all parallel tasks finish. Scans the complete knowledge space to find intersection points—e.g. proving that the organization named in `doc_4.pdf` matches the logo found in `image_12.jpg`.</p>
+                <p>The crucial final step. Runs only when all parallel tasks finish. Scans the complete knowledge space
+                    to find intersection points—e.g. proving that the organization named in `doc_4.pdf` matches the logo
+                    found in `image_12.jpg`.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Trigger</span><span class="kv-val">Barrier sync (all complete)</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ unified_report, cross_links[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Trigger</span><span class="kv-val">Barrier sync (all
+                            complete)</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ unified_report,
+                            cross_links[] }</span></div>
                 </div>
             </div>
 
@@ -1525,7 +1795,7 @@
                     <li>Dry run full presentation by 6pm</li>
                 </ul>
             </div>
-        </div>\n        <!-- Footer -->
+        </div>\n <!-- Footer -->
         <div
             style="border-top: 1px solid var(--border); margin-top: 56px; padding-top: 20px; display:flex; justify-content:space-between; align-items:center;">
             <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">LIVINGAI TEAM · FEB
@@ -1540,7 +1810,7 @@
     <button id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle theme">🌙</button>
 
     <script>
-        (function() {
+        (function () {
             var btn = document.getElementById('theme-toggle');
             var stored = localStorage.getItem('theme');
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1554,7 +1824,7 @@
 
             apply(theme);
 
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 var current = document.documentElement.getAttribute('data-theme');
                 apply(current === 'dark' ? 'light' : 'dark');
             });
