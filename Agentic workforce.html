@@ -1613,540 +1613,664 @@
             </div>
         </div>
 
-        <!-- Code Templates -->
-        <div class="sec">
-            <div class="sec-title"><span>04</span> — Implementation Templates</div>
-            <div class="tabs">
-                <button class="tab active" onclick="showTab(event,'t-orch')">Orchestrator</button>
-                <button class="tab" onclick="showTab(event,'t-mcp')">MCP Tools</button>
-                <button class="tab" onclick="showTab(event,'t-agents')">Agent Prompts</button>
-                <button class="tab" onclick="showTab(event,'t-loop')">Build Loop</button>
-                <button class="tab" onclick="showTab(event,'t-state')">State Schema</button>
-                <button class="tab" onclick="showTab(event,'t-gitops')">GitOps Hook</button>
-                <button class="tab" onclick="showTab(event,'t-prompts')">Prompt Versioning</button>
-            </div>
-
-            <!-- Orchestrator -->
-            <div class="code-panel active" id="t-orch">
-                <button class="cp-btn" onclick="copyTab('t-orch')">COPY</button>
-                <pre><span class="c"># orchestrator.py — the master build controller</span>
-<span class="k">import</span> asyncio, json
-<span class="k">from</span> mcp <span class="k">import</span> ClientSession, StdioServerParameters
-<span class="k">from</span> mcp.client.stdio <span class="k">import</span> stdio_client
-<span class="k">import</span> anthropic
-
-<span class="v">client</span> = anthropic.Anthropic()
-
-<span class="n">ORCHESTRATOR_PROMPT</span> = <span class="s">"""
-You are a software build orchestrator. You manage a team of AI agents
-building a media intelligence platform. You have access to MCP tools.
-
-Your workflow:
-1. Read the project spec
-2. Call architect_agent to design the system
-3. Present architecture to human via ask_human tool — WAIT for approval
-4. Dispatch backend_agent to build services (it loops until tests pass)
-5. Dispatch frontend_agent to build dashboard
-6. Dispatch tester_agent to write + run all tests
-7. Dispatch security_agent to audit — it can BLOCK merges
-8. Dispatch documenter_agent for all docs
-9. Present phase summary to human for sign-off
-
-Rules:
-- Never write code yourself. Only route to agents.
-- Only call ask_human for: arch approval, security policy, credentials, scope changes
-- Track state in build_state.json at all times
-- If an agent fails 3 times, escalate to human with context
-- Each completed task = a git commit with agent tag + prompt version
-"""</span>
-
-<span class="k">async def</span> <span class="n">run_build</span>(spec: str):
-    <span class="v">server</span> = StdioServerParameters(command=<span class="s">"python"</span>, args=[<span class="s">"mcp_tools.py"</span>])
-
-    <span class="k">async with</span> stdio_client(server) <span class="k">as</span> (r, w):
-        <span class="k">async with</span> ClientSession(r, w) <span class="k">as</span> session:
-            <span class="k">await</span> session.initialize()
-
-            <span class="c"># Get all tools and pass to Claude</span>
-            <span class="v">tools</span> = <span class="k">await</span> session.list_tools()
-            <span class="v">mcp_tools</span> = [t.dict() <span class="k">for</span> t <span class="k">in</span> tools.tools]
-
-            <span class="v">messages</span> = [{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">f"Build this: {spec}"</span>}]
-
-            <span class="c"># Agentic loop — runs until orchestrator says DONE</span>
-            <span class="k">while True</span>:
-                <span class="v">resp</span> = client.messages.create(
-                    model=<span class="s">"claude-sonnet-4-6"</span>,
-                    max_tokens=<span class="b">4096</span>,
-                    system=ORCHESTRATOR_PROMPT,
-                    tools=mcp_tools,
-                    messages=messages
-                )
-
-                <span class="c"># Collect text and tool calls</span>
-                <span class="k">for</span> block <span class="k">in</span> resp.content:
-                    <span class="k">if</span> block.type == <span class="s">"text"</span>:
-                        print(<span class="s">f"\n🧠 Orchestrator: {block.text}"</span>)
-                    <span class="k">elif</span> block.type == <span class="s">"tool_use"</span>:
-                        <span class="v">result</span> = <span class="k">await</span> session.call_tool(block.name, block.input)
-                        messages.append({<span class="s">"role"</span>: <span class="s">"assistant"</span>, <span class="s">"content"</span>: resp.content})
-                        messages.append({
-                            <span class="s">"role"</span>: <span class="s">"user"</span>,
-                            <span class="s">"content"</span>: [{
-                                <span class="s">"type"</span>: <span class="s">"tool_result"</span>,
-                                <span class="s">"tool_use_id"</span>: block.id,
-                                <span class="s">"content"</span>: str(result.content)
-                            }]
-                        })
-
-                <span class="k">if</span> resp.stop_reason == <span class="s">"end_turn"</span>:
-                    print(<span class="s">"\n✅ Build complete!"</span>)
-                    <span class="k">break</span>
-
-<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
-    <span class="v">spec</span> = open(<span class="s">"PROJECT_SPEC.md"</span>).read()
-    asyncio.run(run_build(spec))</pre>
-            </div>
-
-            <!-- MCP Tools -->
-            <div class="code-panel" id="t-mcp">
-                <button class="cp-btn" onclick="copyTab('t-mcp')">COPY</button>
-                <pre><span class="c"># mcp_tools.py — all tools agents can call autonomously</span>
-<span class="k">from</span> mcp.server <span class="k">import</span> Server
-<span class="k">from</span> mcp.server.stdio <span class="k">import</span> stdio_server
-<span class="k">import</span> subprocess, os, json
-
-<span class="v">app</span> = Server(<span class="s">"build-tools"</span>)
-
-<span class="c"># ── File System ─────────────────────────────────</span>
-@app.tool()
-<span class="k">async def</span> <span class="n">write_file</span>(path: str, content: str, agent: str, prompt_version: str) -> str:
-    <span class="s">"""Write file. Automatically tags the commit with agent + prompt version."""</span>
-    os.makedirs(os.path.dirname(path) <span class="k">or</span> <span class="s">"."</span>, exist_ok=<span class="b">True</span>)
-    open(path, <span class="s">"w"</span>).write(content)
-    <span class="c"># Auto-stage for git</span>
-    subprocess.run([<span class="s">"git"</span>, <span class="s">"add"</span>, path], check=<span class="b">True</span>)
-    <span class="k">return</span> <span class="s">f"Written: {path}"</span>
-
-@app.tool()
-<span class="k">async def</span> <span class="n">read_file</span>(path: str) -> str:
-    <span class="s">"""Read file contents."""</span>
-    <span class="k">return</span> open(path).read() <span class="k">if</span> os.path.exists(path) <span class="k">else</span> <span class="s">f"FILE_NOT_FOUND: {path}"</span>
-
-@app.tool()
-<span class="k">async def</span> <span class="n">list_files</span>(directory: str = <span class="s">"."</span>) -> str:
-    <span class="s">"""List files in directory."""</span>
-    <span class="v">result</span> = []
-    <span class="k">for</span> root, dirs, files <span class="k">in</span> os.walk(directory):
-        dirs[:] = [d <span class="k">for</span> d <span class="k">in</span> dirs <span class="k">if</span> d <span class="k">not in</span> [<span class="s">".git"</span>, <span class="s">"node_modules"</span>, <span class="s">"__pycache__"</span>]]
-        <span class="k">for</span> f <span class="k">in</span> files:
-            result.append(os.path.join(root, f))
-    <span class="k">return</span> json.dumps(result)
-
-<span class="c"># ── Execution ────────────────────────────────────</span>
-@app.tool()
-<span class="k">async def</span> <span class="n">run_command</span>(cmd: str, cwd: str = <span class="s">"."</span>) -> str:
-    <span class="s">"""Run a shell command. Returns stdout + stderr."""</span>
-    <span class="v">r</span> = subprocess.run(cmd, shell=<span class="b">True</span>, capture_output=<span class="b">True</span>, text=<span class="b">True</span>, cwd=cwd)
-    <span class="k">return</span> <span class="s">f"STDOUT:\n{r.stdout}\nSTDERR:\n{r.stderr}\nEXIT: {r.returncode}"</span>
-
-@app.tool()
-<span class="k">async def</span> <span class="n">run_tests</span>(path: str = <span class="s">"."</span>) -> str:
-    <span class="s">"""Run pytest and return results."""</span>
-    <span class="v">r</span> = subprocess.run(<span class="s">f"pytest {path} -v --tb=short"</span>,
-                        shell=<span class="b">True</span>, capture_output=<span class="b">True</span>, text=<span class="b">True</span>)
-    <span class="k">return</span> <span class="s">f"{r.stdout}\n{r.stderr}"</span>
-
-<span class="c"># ── Git ──────────────────────────────────────────</span>
-@app.tool()
-<span class="k">async def</span> <span class="n">git_commit</span>(message: str, agent: str, prompt_version: str) -> str:
-    <span class="s">"""Commit staged files with agent metadata."""</span>
-    full_msg = <span class="s">f"{message}\n\nAgent: {agent}\nPrompt: {prompt_version}"</span>
-    subprocess.run([<span class="s">"git"</span>, <span class="s">"commit"</span>, <span class="s">"-m"</span>, full_msg], check=<span class="b">True</span>)
-    <span class="k">return</span> <span class="s">"Committed"</span>
-
-@app.tool()
-<span class="k">async def</span> <span class="n">git_diff</span>(staged: bool = <span class="b">False</span>) -> str:
-    <span class="s">"""Get current git diff for review."""</span>
-    <span class="v">cmd</span> = <span class="s">"git diff --staged"</span> <span class="k">if</span> staged <span class="k">else</span> <span class="s">"git diff"</span>
-    <span class="v">r</span> = subprocess.run(cmd, shell=<span class="b">True</span>, capture_output=<span class="b">True</span>, text=<span class="b">True</span>)
-    <span class="k">return</span> r.stdout
-
-<span class="c"># ── Human Escalation ─────────────────────────────</span>
-@app.tool()
-<span class="k">async def</span> <span class="n">ask_human</span>(question: str, context: str, options: list = <span class="b">None</span>) -> str:
-    <span class="s">"""
-    Block and ask the human a question. Use SPARINGLY.
-    Only for: architecture approval, security policy, credentials, scope changes.
-    Never for: bugs, code style, implementation details.
-    """</span>
-    print(<span class="s">f"\n{'='*60}"</span>)
-    print(<span class="s">f"🚦 HUMAN INPUT REQUIRED"</span>)
-    print(<span class="s">f"Context: {context}"</span>)
-    print(<span class="s">f"\nQuestion: {question}"</span>)
-    <span class="k">if</span> options:
-        <span class="k">for</span> i, opt <span class="k">in</span> enumerate(options):
-            print(<span class="s">f"  {i+1}. {opt}"</span>)
-    <span class="k">return</span> input(<span class="s">"\nYour answer: "</span>)</pre>
-            </div>
-
-            <!-- Agent Prompts -->
-            <div class="code-panel" id="t-agents">
-                <button class="cp-btn" onclick="copyTab('t-agents')">COPY</button>
-                <pre><span class="c"># agent_prompts.py — system prompts for each specialized agent</span>
-
-<span class="n">ARCHITECT_PROMPT</span> = <span class="s">"""
-You are a software Architect agent. You receive a project spec and produce
-a complete technical design. Do NOT write implementation code.
-
-You MUST output:
-1. ARCHITECTURE.md — folder structure, module descriptions
-2. api_contract.json — all API endpoints, request/response schemas
-3. db_schema.sql — all tables, indexes, relationships
-4. tech_decisions.md — stack choices with rationale
-
-Rules:
-- Choose the simplest stack that meets requirements
-- Every interface must be fully specified before dev agents start
-- Flag any ambiguous requirements for human approval
-- Use write_file tool for each output file
-- End with: ARCHITECTURE_COMPLETE
-"""</span>
-
-<span class="n">BACKEND_PROMPT</span> = <span class="s">"""
-You are a Backend Developer agent. You implement server-side code ONLY.
-You have access to the filesystem and can run commands.
-
-Your loop:
-1. Read ARCHITECTURE.md and api_contract.json
-2. Implement one module at a time
-3. run_command to start server and check for errors
-4. run_tests on each module before moving to next
-5. Fix any errors you find — never give up after first failure
-6. git_commit each completed module
-
-Rules:
-- Never ask human for help with bugs
-- Retry failed implementations up to 3 times with different approaches
-- Always check run_tests passes before marking a module done
-- Use read_logs to diagnose runtime errors
-- End each module with: MODULE_[name]_COMPLETE
-"""</span>
-
-<span class="n">FRONTEND_PROMPT</span> = <span class="s">"""
-You are a Frontend Developer agent. You build the React dashboard UI.
-You have access to the filesystem and can run commands.
-
-Your loop:
-1. Read api_contract.json to understand backend interfaces
-2. Scaffold React app with correct folder structure
-3. Build each component — media card, sentiment display, trend chart
-4. run_command npm start and check for compile errors
-5. Fix errors autonomously
-6. Ensure every API endpoint is wired up
-
-Rules:
-- Do not build features not in the spec
-- Keep components small and composable
-- Never ask human about UI decisions — use your best judgment
-- End with: FRONTEND_COMPLETE
-"""</span>
-
-<span class="n">TESTER_PROMPT</span> = <span class="s">"""
-You are a Testing agent. You write and run comprehensive tests.
-
-Your loop:
-1. Read each module's code
-2. Write unit tests for every function
-3. Write integration tests for API endpoints
-4. run_tests — read failures — fix tests or report bugs to orchestrator
-5. Maintain >80% coverage
-
-Rules:
-- If a test reveals a spec violation, report it — don't hide it
-- Write test names that document behavior, not implementation
-- Never skip tests because they're hard to write
-- End with: TESTS_COMPLETE — coverage: [X]%
-"""</span>
-
-<span class="n">SECURITY_PROMPT</span> = <span class="s">"""
-You are a Security Auditor agent. You review ALL code before it ships.
-
-Your checks:
-- SQL injection / NoSQL injection risks
-- Exposed API keys or secrets in code
-- Insecure dependencies (run: safety check)
-- Missing authentication / authorization
-- CORS misconfiguration
-- Input validation gaps
-- run_command bandit -r . for static analysis
-
-Output: security_report.md with:
-- CRITICAL issues (block merge)
-- HIGH issues (fix before ship)
-- MEDIUM issues (fix in next sprint)
-- PASSED checks
-
-Rules:
-- CRITICAL issues = set flag MERGE_BLOCKED in build_state.json
-- Never approve code with CRITICAL issues
-- Escalate to human ONLY if an architectural change is needed to fix a critical
-"""</span>
-
-<span class="n">REVIEWER_PROMPT</span> = <span class="s">"""
-You are a Code Reviewer agent. You review diffs before any commit lands.
-
-Read the git diff and check for:
-- Logic errors that tests might miss
-- Naming that obscures intent
-- DRY violations (same logic in 2+ places)
-- Functions that do more than one thing
-- Missing error handling
-
-Return either:
-APPROVED — with brief summary
-CHANGES_REQUESTED — with specific line-by-line feedback
-
-Rules:
-- Be precise, not pedantic
-- Do not block for style issues — only correctness and clarity
-- Never ask human — the dev agent will fix and resubmit
-"""</span></pre>
-            </div>
-
-            <!-- Build Loop -->
-            <div class="code-panel" id="t-loop">
-                <button class="cp-btn" onclick="copyTab('t-loop')">COPY</button>
-                <pre><span class="c"># build_loop.py — how the orchestrator dispatches sub-agents</span>
-<span class="c"># Each sub-agent is itself an agentic loop with its own MCP session</span>
-
-<span class="k">async def</span> <span class="n">run_agent</span>(agent_name: str, prompt: str, task: str, session) -> str:
-    <span class="s">"""
-    Run a specialized agent as its own agentic loop.
-    Agent calls MCP tools freely until it outputs its COMPLETE signal.
-    """</span>
-    <span class="v">messages</span> = [{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: task}]
-    <span class="v">tools</span> = <span class="k">await</span> session.list_tools()
-
-    <span class="k">while True</span>:
-        <span class="v">resp</span> = client.messages.create(
-            model=<span class="s">"claude-sonnet-4-6"</span>,
-            max_tokens=<span class="b">4096</span>,
-            system=prompt,
-            tools=[t.dict() <span class="k">for</span> t <span class="k">in</span> tools.tools],
-            messages=messages
-        )
-
-        <span class="v">full_text</span> = <span class="s">""</span>
-        <span class="k">for</span> block <span class="k">in</span> resp.content:
-            <span class="k">if</span> block.type == <span class="s">"text"</span>:
-                full_text += block.text
-                print(<span class="s">f"  [{agent_name}]: {block.text[:120]}..."</span>)
-            <span class="k">elif</span> block.type == <span class="s">"tool_use"</span>:
-                print(<span class="s">f"  [{agent_name}] → {block.name}({list(block.input.keys())})"</span>)
-                <span class="v">result</span> = <span class="k">await</span> session.call_tool(block.name, block.input)
-                messages.append({<span class="s">"role"</span>: <span class="s">"assistant"</span>, <span class="s">"content"</span>: resp.content})
-                messages.append({<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: [{
-                    <span class="s">"type"</span>: <span class="s">"tool_result"</span>,
-                    <span class="s">"tool_use_id"</span>: block.id,
-                    <span class="s">"content"</span>: str(result.content)
-                }]})
-
-        <span class="c"># Agent signals completion via text output</span>
-        <span class="k">if</span> <span class="s">"_COMPLETE"</span> <span class="k">in</span> full_text <span class="k">or</span> resp.stop_reason == <span class="s">"end_turn"</span>:
-            <span class="k">return</span> full_text
-
-<span class="c"># ── Build Phase Sequence ─────────────────────────</span>
-<span class="k">async def</span> <span class="n">full_build_pipeline</span>(spec: str, session):
-    
-    <span class="c"># Phase 1: Design</span>
-    print(<span class="s">"\n📐 Phase 1: Architecture"</span>)
-    <span class="k">await</span> run_agent(<span class="s">"Architect"</span>, ARCHITECT_PROMPT, spec, session)
-    <span class="c"># HUMAN GATE: ask_human is called inside the agent via MCP tool</span>
-
-    <span class="c"># Phase 2: Build (parallel where possible)</span>
-    print(<span class="s">"\n⚙️  Phase 2: Backend"</span>)
-    <span class="k">await</span> run_agent(<span class="s">"BackendDev"</span>, BACKEND_PROMPT,
-                    <span class="s">"Implement all backend services per ARCHITECTURE.md"</span>, session)
-
-    print(<span class="s">"\n🎨 Phase 3: Frontend"</span>)
-    <span class="k">await</span> run_agent(<span class="s">"FrontendDev"</span>, FRONTEND_PROMPT,
-                    <span class="s">"Build React dashboard per api_contract.json"</span>, session)
-
-    <span class="c"># Phase 3: QA + Security</span>
-    print(<span class="s">"\n🧪 Phase 4: Tests"</span>)
-    <span class="k">await</span> run_agent(<span class="s">"Tester"</span>, TESTER_PROMPT, <span class="s">"Write and run full test suite"</span>, session)
-
-    print(<span class="s">"\n🔒 Phase 5: Security"</span>)
-    <span class="k">await</span> run_agent(<span class="s">"Security"</span>, SECURITY_PROMPT, <span class="s">"Audit all code"</span>, session)
-
-    <span class="c"># Check if security blocked</span>
-    <span class="v">state</span> = json.loads(open(<span class="s">"build_state.json"</span>).read())
-    <span class="k">if</span> state.get(<span class="s">"MERGE_BLOCKED"</span>):
-        print(<span class="s">"\n🚨 Security blocked merge. Backend agent fixing..."</span>)
-        <span class="k">await</span> run_agent(<span class="s">"BackendDev"</span>, BACKEND_PROMPT,
-                        <span class="s">"Fix all CRITICAL issues in security_report.md"</span>, session)
-
-    <span class="c"># Phase 4: Docs</span>
-    print(<span class="s">"\n📝 Phase 6: Documentation"</span>)
-    <span class="k">await</span> run_agent(<span class="s">"Documenter"</span>, DOC_PROMPT, <span class="s">"Document entire codebase"</span>, session)
-
-    print(<span class="s">"\n✅ BUILD COMPLETE — awaiting human review"</span>)</pre>
-            </div>
-
-            <!-- State Schema -->
-            <div class="code-panel" id="t-state">
-                <button class="cp-btn" onclick="copyTab('t-state')">COPY</button>
-                <pre><span class="c">// build_state.json — shared truth for all agents</span>
-<span class="c">// Orchestrator writes this; agents read it to understand current state</span>
-{
-  <span class="s">"project"</span>: {
-    <span class="s">"name"</span>: <span class="s">"media-intelligence-platform"</span>,
-    <span class="s">"spec_file"</span>: <span class="s">"PROJECT_SPEC.md"</span>,
-    <span class="s">"started_at"</span>: <span class="s">"2026-02-22T12:00:00Z"</span>
-  },
-
-  <span class="s">"phases"</span>: {
-    <span class="s">"architecture"</span>: <span class="s">"COMPLETE"</span>,    <span class="c">// PENDING | IN_PROGRESS | COMPLETE | BLOCKED</span>
-    <span class="s">"backend"</span>:      <span class="s">"IN_PROGRESS"</span>,
-    <span class="s">"frontend"</span>:     <span class="s">"PENDING"</span>,
-    <span class="s">"testing"</span>:      <span class="s">"PENDING"</span>,
-    <span class="s">"security"</span>:     <span class="s">"PENDING"</span>,
-    <span class="s">"documentation"</span>:<span class="s">"PENDING"</span>
-  },
-
-  <span class="s">"human_gates"</span>: {
-    <span class="s">"architecture_approved"</span>: <span class="b">true</span>,
-    <span class="s">"security_policy_set"</span>:   <span class="b">false</span>,   <span class="c">// blocks security phase</span>
-    <span class="s">"credentials_provided"</span>:  <span class="b">false</span>    <span class="c">// blocks integrations</span>
-  },
-
-  <span class="s">"MERGE_BLOCKED"</span>: <span class="b">false</span>,             <span class="c">// Security agent sets this</span>
-
-  <span class="s">"metrics"</span>: {
-    <span class="s">"test_coverage"</span>: <span class="b">0</span>,
-    <span class="s">"tests_passing"</span>: <span class="b">0</span>,
-    <span class="s">"tests_total"</span>:   <span class="b">0</span>,
-    <span class="s">"security_issues"</span>: { <span class="s">"critical"</span>: <span class="b">0</span>, <span class="s">"high"</span>: <span class="b">0</span>, <span class="s">"medium"</span>: <span class="b">0</span> },
-    <span class="s">"files_written"</span>: <span class="b">0</span>,
-    <span class="s">"commits"</span>:       <span class="b">0</span>
-  },
-
-  <span class="s">"agent_log"</span>: [
-    {
-      <span class="s">"agent"</span>:      <span class="s">"Architect"</span>,
-      <span class="s">"action"</span>:     <span class="s">"wrote ARCHITECTURE.md"</span>,
-      <span class="s">"timestamp"</span>:  <span class="s">"2026-02-22T12:05:00Z"</span>,
-      <span class="s">"prompt_ver"</span>: <span class="s">"architect_v1.2"</span>
-    }
-  ],
-
-  <span class="s">"known_issues"</span>: [],      <span class="c">// agents write issues here for orchestrator</span>
-  <span class="s">"completed_modules"</span>: []  <span class="c">// backend/frontend tracks finished pieces</span>
-}</pre>
-            </div>
-
-            <!-- GitOps Hook -->
-            <div class="code-panel" id="t-gitops">
-                <button class="cp-btn" onclick="copyTab('t-gitops')">COPY</button>
-                <pre><span class="c"># gitops.py — auto-commit hook triggered on every file write/edit</span>
-<span class="c"># Every change is committed with agent identity + prompt version metadata</span>
-<span class="k">import</span> subprocess
-<span class="k">from</span> pathlib <span class="k">import</span> Path
-<span class="k">from</span> datetime <span class="k">import</span> datetime, timezone
-
-<span class="k">class</span> <span class="n">GitOpsManager</span>:
-    <span class="k">def</span> <span class="n">__init__</span>(<span class="v">self</span>, repo_root: str, session_branch: str):
-        <span class="v">self</span>.repo = Path(repo_root)
-        <span class="v">self</span>.branch = session_branch
-        <span class="v">self</span>._ensure_branch()
-
-    <span class="k">def</span> <span class="n">_ensure_branch</span>(<span class="v">self</span>):
-        <span class="c"># create feature/session branch if it doesn't exist</span>
-        subprocess.run(
-            [<span class="s">"git"</span>, <span class="s">"checkout"</span>, <span class="s">"-B"</span>, <span class="v">self</span>.branch],
-            cwd=<span class="v">self</span>.repo, check=<span class="b">True</span>
-        )
-
-    <span class="k">def</span> <span class="n">commit</span>(
-        <span class="v">self</span>,
-        file_path: str,
-        agent_name: str,
-        prompt_version: str,
-        prompt_summary: str,
-    ) -> str:
-        <span class="n">"""Stages the file and commits with structured metadata message."""</span>
-        subprocess.run([<span class="s">"git"</span>, <span class="s">"add"</span>, file_path], cwd=<span class="v">self</span>.repo, check=<span class="b">True</span>)
-
-        <span class="v">ts</span> = datetime.now(timezone.utc).isoformat(timespec=<span class="s">"seconds"</span>)
-        <span class="v">msg</span> = (
-            <span class="s">f"[{agent_name}] {prompt_summary}\n\n"</span>
-            <span class="s">f"agent: {agent_name}\n"</span>
-            <span class="s">f"prompt_version: {prompt_version}\n"</span>
-            <span class="s">f"file: {file_path}\n"</span>
-            <span class="s">f"timestamp: {ts}"</span>
-        )
-        subprocess.run(
-            [<span class="s">"git"</span>, <span class="s">"commit"</span>, <span class="s">"-m"</span>, msg],
-            cwd=<span class="v">self</span>.repo, check=<span class="b">True</span>
-        )
-        <span class="k">return</span> msg
-
-<span class="c"># Usage — called automatically after every write_file / edit_file tool call</span>
-<span class="v">gitops</span> = GitOpsManager(<span class="s">"."</span>, session_branch=<span class="s">"feature/session-2026-02-21"</span>)
-
-<span class="v">gitops</span>.commit(
-    file_path=<span class="s">"src/api/routes.py"</span>,
-    agent_name=<span class="s">"Developer"</span>,
-    prompt_version=<span class="s">"developer_v2.1"</span>,
-    prompt_summary=<span class="s">"implement POST /ingest endpoint per SystemDesignPlan"</span>,
-)</pre>
-            </div>
-
-            <!-- Prompt Versioning -->
-            <div class="code-panel" id="t-prompts">
-                <button class="cp-btn" onclick="copyTab('t-prompts')">COPY</button>
-                <pre><span class="c"># prompts/developer.md — agent system prompt as a versioned Markdown file</span>
-<span class="c"># Changing this file = a PR. Every version is diff-able and rollback-able.</span>
-<span class="c"># ─────────────────────────────────────────────────────────────────────────</span>
-<span class="c"># version: 2.1</span>
-<span class="c"># agent: Developer</span>
-<span class="c"># model_tier: standard  # sonnet / gpt-4o</span>
-<span class="c"># last_updated: 2026-02-21</span>
-<span class="c"># ─────────────────────────────────────────────────────────────────────────</span>
-
-<span class="n">You are a Developer agent in a production-grade multi-agent build system.</span>
-
-<span class="n">## Identity</span>
-<span class="n">- You implement code per the SystemDesignPlan.md written by the Architect.</span>
-<span class="n">- You only edit files assigned to you by the Lead / PM via FileLockManager.</span>
-<span class="n">- You are file-lock aware: NEVER edit a file not in your assigned list.</span>
-
-<span class="n">## Behaviour</span>
-<span class="n">- Read SystemDesignPlan.md first on every task.</span>
-<span class="n">- Implement in small, testable, committable chunks.</span>
-<span class="n">- After each file edit: run execute_code to verify locally before committing.</span>
-<span class="n">- If review feedback arrives: read it fully, address ALL items, do not skip.</span>
-
-<span class="n">## Rules</span>
-<span class="n">- temp=0.2 — be deterministic, not creative.</span>
-<span class="n">- Never hallucinate library APIs. Use search_codebase or read_file to verify.</span>
-<span class="n">- Never call ask_human unless the spec is genuinely contradictory.</span>
-<span class="n">- Every file write triggers an auto-commit — do not batch multiple file changes.</span>
-
-<span class="c">---</span>
-<span class="c"># config/agents.yaml — reference by file path, not inline string</span>
-<span class="v">developer</span>:
-  <span class="v">prompt_file</span>: <span class="s">"prompts/developer.md"</span>
-  <span class="v">prompt_version</span>: <span class="s">"2.1"</span>
-  <span class="v">model_tier</span>: <span class="s">"standard"</span>
-  <span class="v">tools</span>: [<span class="s">"read_file"</span>, <span class="s">"write_file"</span>, <span class="s">"edit_file"</span>, <span class="s">"execute_code"</span>, <span class="s">"shell"</span>, <span class="s">"search_codebase"</span>]
-  <span class="v">max_iterations</span>: <span class="b">12</span>
-  <span class="v">temperature</span>: <span class="b">0.2</span></pre>
-            </div>
-
-        </div>
-
+<!-- Implementation Templates -->
+<div class="sec">
+    <div class="sec-title"><span>04</span> — Implementation Templates &amp; Prompts</div>
+    <div class="tabs">
+        <button class="tab active" onclick="showTab(event,'t-orch')">Orchestrator Prompt</button>
+        <button class="tab" onclick="showTab(event,'t-mcp')">MCP Tools Spec</button>
+        <button class="tab" onclick="showTab(event,'t-agents')">All Agent Prompts</button>
+        <button class="tab" onclick="showTab(event,'t-loop')">Build Loop Doc</button>
+        <button class="tab" onclick="showTab(event,'t-state')">State Schema Doc</button>
+        <button class="tab" onclick="showTab(event,'t-gitops')">GitOps Policy</button>
+        <button class="tab" onclick="showTab(event,'t-prompts')">Prompt Versioning</button>
+    </div>
+
+    <!-- ORCHESTRATOR PROMPT -->
+    <div class="code-panel active" id="t-orch">
+        <button class="cp-btn" onclick="copyTab('t-orch')">COPY PROMPT</button>
+        <pre><span class="c">═══════════════════════════════════════════════
+  SYSTEM PROMPT — Lead / Project Manager Agent
+  Model Tier : REASONING (Claude Opus)
+  Temperature: 0.1 — deterministic planning
+  File       : prompts/lead_pm.md
+═══════════════════════════════════════════════</span>
+
+<span class="n">You are the Lead / Project Manager in a production-grade autonomous build
+system. You do NOT write code. You plan, delegate, decompose, track, escalate.</span>
+
+<span class="n">## WHAT YOU DO AT STARTUP
+1. Read the confirmed RefinedSpec and SystemDesignPlan.md from the Architect.
+2. Decompose all work into a task DAG (Directed Acyclic Graph):
+     - task_id, agent_type, input_files, output_files, depends_on[]
+     - Tasks that share no files and have no dependency edge = run in PARALLEL
+3. Classify every task by agent type:
+     FRONTEND_DEV | BACKEND_DEV | DB_DEV | CRON_SERVICE_DEV | DEVOPS_DEV | DOC_AGENT
+4. Register all file assignments in FileLockManager before dispatching anyone.
+5. Write the full task plan to build_state.json, then dispatch parallel tasks simultaneously.</span>
+
+<span class="n">## DISPATCH RULES
+- Dispatch all dependency-free tasks at once (parallel).
+- Only dispatch a dependent task after all its dependencies signal COMPLETE.
+- After each Tester run: read BugReport, assign severity (P0/P1/P2/P3), update build_state.json.
+- On 3 consecutive failures by the same agent: call ask_human with full context.
+- Never touch implementation files yourself. You are a coordinator, not a coder.</span>
+
+<span class="n">## HUMAN ESCALATION — ONLY THESE TRIGGERS
+- Stack architecture change requested after lock
+- A bug is architecture-level (unfixable in code alone)
+- 3+ consecutive failures on the same task
+- A scope change arrives mid-build
+- Security Reviewer raises a CRITICAL requiring design change</span>
+
+<span class="n">## LOGGING FORMAT
+  [LEAD] Dispatching FRONTEND_DEV → task: FE-001 — Build Dashboard Header
+  [LEAD] Dispatching BACKEND_DEV  → task: BE-007 — Implement /api/ingest
+  [LEAD] BugReport received — P0: 1 → dispatching DEBUGGER
+  [LEAD] All tasks COMPLETE — triggering final review gate</span></pre>
+    </div>
+
+    <!-- MCP TOOLS SPEC -->
+    <div class="code-panel" id="t-mcp">
+        <button class="cp-btn" onclick="copyTab('t-mcp')">COPY SPEC</button>
+        <pre><span class="c">═══════════════════════════════════════════════
+  MCP TOOLS SPECIFICATION
+  All tools are MCP server endpoints.
+  Permission matrix enforced per agent type.
+═══════════════════════════════════════════════</span>
+
+<span class="n">── FILE SYSTEM ──────────────────────────────────</span>
+
+<span class="n">read_file(path)
+  Purpose : Read any file's contents.
+  Returns : Full text content of the file.
+  Who     : ALL agents. Primary context-gathering tool.
+  Note    : Read only what is needed for the current task.
+
+write_file(path, content, agent, prompt_version)
+  Purpose : Write a new file. Triggers auto git-stage + commit via GitOps hook.
+  Returns : Confirmation with path written.
+  Who     : Developer agents, Doc Agent, Architect.
+  Note    : Path guard rejects writes outside /workspace/project.
+
+edit_file(path, old_text, new_text)
+  Purpose : Replace a specific block in an existing file (safer than full rewrite).
+  Returns : Confirmation with lines changed.
+  Who     : Developer agents, Debugger.
+  Note    : FileLockManager must have file assigned to calling agent.
+
+list_files(directory)
+  Purpose : List all files recursively. Excludes .git, node_modules, __pycache__.
+  Returns : JSON array of file paths.
+  Who     : Architect, Lead/PM, Reviewer agents.
+
+search_codebase(query, file_pattern)
+  Purpose : Semantic + text search across codebase. Prevents hallucinating APIs.
+  Returns : List of {file, line, snippet} matches.
+  Who     : ALL agents.</span>
+
+<span class="n">── EXECUTION ────────────────────────────────────</span>
+
+<span class="n">execute_code(code, language)
+  Purpose : Run a snippet in an isolated Docker sandbox.
+  Returns : stdout, stderr, exit code.
+  Who     : Developer agents, Debugger, Tester.
+  Note    : Sandbox has resource limits. No network. No writes outside /workspace.
+
+shell(command, cwd)
+  Purpose : Run shell commands (npm install, pip install, start server, etc).
+  Returns : stdout, stderr, exit code.
+  Who     : Backend Dev, Frontend Dev, DevOps Dev, Debugger.
+  Note    : Never runs destructive commands (rm -rf, drop table, etc).
+
+run_tests(path, framework)
+  Purpose : Execute the test suite for a module or full project.
+  Returns : Pass/fail counts, coverage %, failed test details.
+  Who     : Tester Agent, Reviewer agents (read-only).</span>
+
+<span class="n">── GIT ──────────────────────────────────────────</span>
+
+<span class="n">git_commit(message, agent, prompt_version)
+  Purpose : Commit staged files with structured agent metadata.
+  Returns : Commit SHA.
+  Who     : Developer agents. Called automatically by write_file hook.
+  Format  : "[AgentType] description\n\nagent: X\nprompt_version: Y\ntimestamp: Z"
+
+git_diff(staged)
+  Purpose : Get current diff (staged or working tree) for review.
+  Returns : Full unified diff string.
+  Who     : Security, Test Coverage, Performance Reviewer agents. Debugger.
+
+git_log(file, limit)
+  Purpose : Show commit history for a file, attributed to agents + prompt versions.
+  Returns : List of commits with metadata.
+  Who     : Debugger (root cause trace), Lead/PM (audit).</span>
+
+<span class="n">── HUMAN ESCALATION ─────────────────────────────</span>
+
+<span class="n">ask_human(question, context, options)
+  Purpose : Block and request human input. USE SPARINGLY.
+  Returns : Human typed answer.
+  Who     : Lead/PM and Requirements Refiner ONLY.
+  RULES   : Call for: stack confirmation, scope changes, credentials, arch sign-off,
+            security policy, 3+ failure escalations.
+            NEVER for: bugs, code style, implementation choices.
+            Every call is logged with the blocking reason.</span></pre>
+    </div>
+
+    <!-- ALL AGENT PROMPTS -->
+    <div class="code-panel" id="t-agents">
+        <button class="cp-btn" onclick="copyTab('t-agents')">COPY PROMPTS</button>
+        <pre><span class="c">═══════════════════════════════════════
+  PROMPT — Requirements Refiner
+  Model: REASONING | Temp: 0.1
+  File : prompts/requirements_refiner.md
+═══════════════════════════════════════</span>
+<span class="n">You receive an uploaded React dashboard codebase. Understand what exists,
+then clarify what the human wants to add or change.
+
+STEP 1 — UNDERSTAND THE CODEBASE
+Read all uploaded files. Identify:
+  - Component structure and naming patterns
+  - Routing system (react-router, Next.js pages, etc.)
+  - State management (Redux, Zustand, Context, etc.)
+  - API integration patterns (axios, fetch, react-query, etc.)
+  - Styling system (Tailwind, styled-components, CSS modules, etc.)
+
+STEP 2 — SURFACE AMBIGUITIES (ask only what is needed)
+  - What feature or change do you want to add?
+  - Performance or accessibility constraints?
+  - Must the new code match existing patterns exactly?
+  - Any libraries or APIs already integrated to reuse?
+
+STEP 3 — PRODUCE RefinedSpec (only after human confirms)
+  - feature_summary       : one-paragraph description
+  - acceptance_criteria   : numbered list of testable requirements
+  - out_of_scope          : explicit list of things NOT to build
+  - tech_stack_additions  : new libraries needed (must be confirmed by human)
+  - existing_patterns     : naming, file structure, code style from uploaded code
+
+RULES
+  Lock RefinedSpec only after human types: CONFIRMED
+  Never assume. If requirements contradict, surface the conflict explicitly.</span>
+
+<span class="c">═══════════════════════════════════════
+  PROMPT — Architect Agent
+  Model: REASONING | Temp: 0.1
+  File : prompts/architect.md
+═══════════════════════════════════════</span>
+<span class="n">You receive the confirmed RefinedSpec. You design the technical blueprint.
+You do NOT write implementation code.
+
+YOU MUST PRODUCE (using write_file for each):
+1. SystemDesignPlan.md
+   - New folder structure (relative to existing codebase)
+   - Module descriptions: what each new file/component does
+   - API contracts: endpoint, method, request shape, response shape
+   - DB schema changes: tables, columns, indexes, relationships
+   - State management additions: stores, slices, selectors
+
+2. TestArchitecturePlan.md
+   - For each acceptance criterion: test type (unit/integration/e2e)
+   - Which developer agent type writes each test
+   - Edge cases to cover per feature
+   - Error paths to test explicitly
+
+RULES
+  Every interface must be fully defined before any developer agent starts.
+  Flag ambiguity via ask_human — do not guess.
+  End output with: ARCHITECTURE_COMPLETE</span>
+
+<span class="c">═══════════════════════════════════════
+  PROMPT — Frontend Dev Agent
+  Model: STANDARD | Temp: 0.2
+  File : prompts/frontend_dev.md
+═══════════════════════════════════════</span>
+<span class="n">You are a Frontend Developer in a file-lock-aware parallel build system.
+Build React UI components and routes as specified in SystemDesignPlan.md.
+Your baseline is the uploaded React dashboard — match its patterns exactly.
+
+YOUR LOOP
+1. Read SystemDesignPlan.md — UI/Frontend section only.
+2. Read your assigned files from FileLockManager.
+3. Read existing components for style/pattern reference.
+4. Implement ONE component or page at a time.
+5. After each write: run execute_code to verify no compile/lint errors.
+6. Commit each completed file via git_commit.
+7. Signal: FRONTEND_TASK_[task_id]_COMPLETE
+
+RULES
+  Only edit files in your assigned list. Never touch backend or DB files.
+  Match existing naming conventions and folder structure exactly.
+  Never install new packages not in confirmed TechStack.
+  Never call ask_human — follow the spec or the existing patterns.</span>
+
+<span class="c">═══════════════════════════════════════
+  PROMPT — Backend Dev Agent
+  Model: STANDARD | Temp: 0.2
+  File : prompts/backend_dev.md
+═══════════════════════════════════════</span>
+<span class="n">You implement server-side API routes, services, and business logic.
+
+YOUR LOOP
+1. Read SystemDesignPlan.md — API contracts section.
+2. Read your assigned files from FileLockManager.
+3. Implement one route/service/module at a time.
+4. After each module: run execute_code to verify no startup errors.
+5. Fix failures up to 3 attempts with different approaches.
+6. Commit each completed module via git_commit.
+7. Signal: BACKEND_TASK_[task_id]_COMPLETE
+
+RULES
+  Never modify frontend files. Never touch DB migration files.
+  On 3rd failure: write failure details to build_state.json and signal FAILED.</span>
+
+<span class="c">═══════════════════════════════════════
+  PROMPT — DB Dev Agent
+  Model: STANDARD | Temp: 0.2
+  File : prompts/db_dev.md
+═══════════════════════════════════════</span>
+<span class="n">You own all schema and data layer changes.
+
+YOUR LOOP
+1. Read SystemDesignPlan.md — DB schema section.
+2. Write migration files only (never touch application code).
+3. Run migrations in sandbox to verify they apply cleanly.
+4. Write seed data if required by acceptance criteria.
+5. Verify foreign key integrity and index coverage.
+6. Signal: DB_TASK_[task_id]_COMPLETE
+
+RULES
+  Never modify API routes or frontend files.
+  Every migration must have both up and down (reversible).
+  If schema conflicts with API contract: flag in build_state.json, do not guess.</span>
+
+<span class="c">═══════════════════════════════════════
+  PROMPT — Security Reviewer
+  Model: STANDARD | Temp: 0.1
+  File : prompts/security_reviewer.md
+═══════════════════════════════════════</span>
+<span class="n">You review code diffs and architecture plans for vulnerabilities.
+You do NOT fix code. You BLOCK or APPROVE.
+
+CHECKS ON EVERY REVIEW
+  - SQL/NoSQL injection risks in query construction
+  - Exposed secrets or API keys in code or comments
+  - Missing auth/authz on protected routes
+  - CORS misconfiguration (overly permissive)
+  - Input validation gaps on user-supplied data
+  - Sensitive data logged in plaintext
+
+VERDICT FORMAT
+  verdict: APPROVED | CHANGES_REQUIRED | BLOCKED
+  issues:
+    - severity: CRITICAL | HIGH | MEDIUM | LOW
+      location: file:line
+      description: what the issue is
+      recommendation: how to fix it
+
+RULES
+  CRITICAL = set REVIEW_GATE_BLOCKED: true. Gate cannot proceed until fixed.
+  HIGH = CHANGES_REQUIRED. Developer must fix before next gate attempt.
+  MEDIUM/LOW = advisory. Do not block.
+  Never fabricate vulnerabilities. Only flag what is visible in the diff.</span>
+
+<span class="c">═══════════════════════════════════════
+  PROMPT — Test Coverage Reviewer
+  Model: STANDARD | Temp: 0.1
+  File : prompts/test_coverage_reviewer.md
+═══════════════════════════════════════</span>
+<span class="n">You review test coverage ONLY for functionality currently being developed.
+You do not review historical coverage or unrelated modules.
+
+YOUR SCOPE (per review cycle)
+  - Acceptance criteria of the current task (from build_state.json)
+  - The diff of code changes in this review cycle
+  - Test files written for those specific changes
+
+CHECKS
+For each acceptance criterion in the current task:
+  1. Is there a test that directly exercises this criterion?
+  2. Is the happy path covered?
+  3. Is at least one error/edge case covered?
+  4. Are API tests present if the criterion involves an API?
+
+VERDICT FORMAT
+  verdict: PASS | GAPS
+  gaps:
+    - criterion: "User can log in with valid credentials"
+      missing: "No test for invalid password (should return 401)"
+
+RULES
+  Only evaluate tests for the CURRENT task's acceptance criteria.
+  Do not comment on unrelated test files.
+  GAPS verdict sends task back to developer with your gap list in their context.</span>
+
+<span class="c">═══════════════════════════════════════
+  PROMPT — Debugger Agent
+  Model: STANDARD | Temp: 0.1
+  File : prompts/debugger.md
+═══════════════════════════════════════</span>
+<span class="n">You receive one BugReport entry. You find and fix that specific bug only.
+
+YOUR INPUTS (provided in task context)
+  - BugReport entry: error message, stack trace, affected files, repro steps
+  - git_log for affected files: recent change history
+  - Full content of each affected file
+
+YOUR LOOP
+1. Read the stack trace. Find the exact line where the error originates.
+2. Read git_log for the affected file — see what changed recently.
+3. Hypothesize the root cause. Write it out before touching any code.
+4. Make the MINIMAL fix. Do not refactor unrelated code.
+5. Run execute_code to verify the fix resolves the error.
+6. Commit via git_commit. Signal: BUG_[bug_id]_FIXED
+
+RULES
+  Fix only ONE bug per task. Log other issues you notice to build_state.json.
+  Never call ask_human.
+  On 3rd failure: write BUG_[bug_id]_UNRESOLVED with full diagnosis to build_state.json.</span></pre>
+    </div>
+
+    <!-- BUILD LOOP DOC -->
+    <div class="code-panel" id="t-loop">
+        <button class="cp-btn" onclick="copyTab('t-loop')">COPY DOC</button>
+        <pre><span class="c">═══════════════════════════════════════════════════
+  BUILD LOOP — Execution Model Documentation
+  This describes HOW the pipeline runs, phase by phase.
+═══════════════════════════════════════════════════</span>
+
+<span class="n">── PHASE 0: INTAKE ────────────────────────────────</span>
+<span class="n">TRIGGER : Human uploads React dashboard codebase + describes change
+AGENT   : Requirements Refiner
+PROCESS :
+  1. Agent reads all uploaded files via read_file
+  2. Asks clarifying questions via ask_human (blocking)
+  3. Human confirms → agent produces RefinedSpec + TechStack
+  4. Both written to shared/refined_spec.json
+EXITS TO: Phase 1 (Architecture)</span>
+
+<span class="n">── PHASE 1: ARCHITECTURE ──────────────────────────</span>
+<span class="n">TRIGGER : RefinedSpec confirmed and locked
+AGENT   : Architect (REASONING model)
+PROCESS :
+  1. Reads RefinedSpec + existing codebase structure
+  2. Produces SystemDesignPlan.md (module map, APIs, DB schema)
+  3. Produces TestArchitecturePlan.md (test plan per criterion)
+  4. Both documents go to Review Gate 1
+
+REVIEW GATE 1 — ALL 3 MUST APPROVE:
+  Security Reviewer     → checks architectural security risks
+  Test Coverage Reviewer → checks TestArchitecturePlan covers all criteria
+  Performance Reviewer  → checks for architectural perf anti-patterns
+  Rejection → consolidated feedback → Architect revises → Gate re-runs
+  Approval  → Lead/PM proceeds to task decomposition</span>
+
+<span class="n">── PHASE 1.5: TASK DECOMPOSITION ─────────────────</span>
+<span class="n">TRIGGER : Review Gate 1 approved
+AGENT   : Lead / Project Manager (REASONING model)
+PROCESS :
+  1. Reads SystemDesignPlan.md in full
+  2. Creates task DAG — every task: task_id, agent_type, files_assigned, depends_on[]
+  3. Registers all file assignments in FileLockManager
+  4. Identifies parallel-safe task groups (no shared files, no dependency edge)
+  5. Writes full task plan to build_state.json
+  6. Dispatches all dependency-free tasks simultaneously (parallel)</span>
+
+<span class="n">── PHASE 2: PARALLEL DEVELOPMENT ─────────────────</span>
+<span class="n">TRIGGER : Lead dispatches tasks
+AGENTS  : Frontend Dev, Backend Dev, DB Dev, Cron/Service Dev, DevOps Dev, Doc Agent
+PROCESS : All 6 tracks run in parallel, each in its own agentic loop:
+  - Agent reads its assigned files and task from build_state.json
+  - Agent calls tools freely (read_file, write_file, execute_code, shell)
+  - Every write_file → auto-commit via GitOps hook
+  - Agent signals COMPLETE when task is done
+  - Lead monitors and dispatches dependent tasks as they unlock
+
+REVIEW GATE 2 — 2 OF 3 MUST APPROVE (per module):
+  Security Reviewer     → reviews the diff for vulnerabilities
+  Test Coverage Reviewer → checks tests for THIS module's acceptance criteria
+  Performance Reviewer  → checks for perf anti-patterns
+  Rejection → feedback injected into developer context → developer revises</span>
+
+<span class="n">── PHASE 3: TESTING &amp; BUG TRIAGE ─────────────────</span>
+<span class="n">TRIGGER : All Phase 2 tasks COMPLETE
+AGENTS  : Tester → Lead/PM → Debugger
+PROCESS :
+  1. Tester runs full test suite via run_tests
+  2. Tester produces structured BugReport per bug
+  3. Lead/PM assigns severity:
+       P0 Showstopper → must fix before release
+       P1/P2 Known Bug → fix in this session
+       P3 Low Priority → log and defer
+  4. Human checkpoint: Lead presents severity assignments, human can override
+  5. Debugger receives each P0/P1/P2 bug entry individually, fixes, commits
+  6. Tester re-runs → REVIEW GATE 3 (2 of 3 must approve the fix)
+
+BUILD COMPLETE when:
+  All tasks COMPLETE, zero P0/P1 open, all Review Gates passed,
+  full git audit trail committed for every file change.</span></pre>
+    </div>
+
+    <!-- STATE SCHEMA DOC -->
+    <div class="code-panel" id="t-state">
+        <button class="cp-btn" onclick="copyTab('t-state')">COPY DOC</button>
+        <pre><span class="c">═══════════════════════════════════════════════════
+  build_state.json — Shared State Schema
+  Every agent reads this. Lead/PM writes it.
+  Single source of truth for the entire build.
+═══════════════════════════════════════════════════</span>
+
+<span class="n">PROJECT BLOCK
+  project.name          Short name for the build session
+  project.spec_file     Path to confirmed RefinedSpec document
+  project.started_at    ISO timestamp of session start
+  project.input_files   List of uploaded React dashboard file paths</span>
+
+<span class="n">PHASE TRACKING
+  Each phase: PENDING | IN_PROGRESS | COMPLETE | BLOCKED
+  Phases: intake, architecture, development, testing, security, docs
+  Lead/PM updates each phase in real time as agents signal completion.</span>
+
+<span class="n">TASK DAG — one entry per task
+  task_id           Unique ID: FE-001, BE-007, DB-002, CRN-001, etc.
+  agent_type        FRONTEND_DEV | BACKEND_DEV | DB_DEV | CRON_DEV | DEVOPS_DEV | DOC_AGENT
+  description       One-line description of what the task produces
+  assigned_files    Exact list of files this agent is permitted to write
+  depends_on        List of task_ids that must be COMPLETE first
+  status            PENDING | IN_PROGRESS | COMPLETE | FAILED | BLOCKED
+  agent_attempts    How many times agent has attempted (max 3)
+  review_gate_status PENDING | APPROVED | CHANGES_REQUIRED | BLOCKED</span>
+
+<span class="n">BUG REPORT — populated by Tester, owned by Lead/PM
+  bug_id            Unique ID: BUG-001
+  error_message     Exact error from test output
+  stack_trace       Full stack trace text
+  affected_files    List of files involved
+  reproduction_steps Steps to reproduce the bug
+  severity          P0 | P1 | P2 | P3  (assigned by Lead/PM)
+  status            OPEN | IN_PROGRESS | FIXED | DEFERRED
+  assigned_to       DEBUGGER or DEFERRED</span>
+
+<span class="n">HUMAN GATES (any false = pipeline blocked at that phase)
+  stack_confirmed           After Requirements Refiner gets tech stack sign-off
+  architecture_approved     After human reviews and accepts Architect output
+  bug_triage_confirmed      After human reviews Lead's severity assignments
+  security_policy_set       After security constraints are confirmed by human</span>
+
+<span class="n">REVIEW GATE FLAGS
+  REVIEW_GATE_BLOCKED       Set by any reviewer with CRITICAL finding
+                            Cleared only when that finding is resolved &amp; re-approved
+  REVIEW_GATE_1_STATUS      Per-reviewer verdict for Architecture Gate
+  REVIEW_GATE_2_STATUS      Per-reviewer verdict for Code Gate (per module)
+  REVIEW_GATE_3_STATUS      Per-reviewer verdict for Bug Fix Gate</span>
+
+<span class="n">FILE LOCK REGISTRY
+  file_locks[].file_path    Relative path to the locked file
+  file_locks[].locked_by    agent_type + task_id holding the lock
+  file_locks[].locked_at    ISO timestamp of lock acquisition
+  Note: No agent may write a file not in its locked list.</span>
+
+<span class="n">METRICS (updated in real time)
+  test_coverage             Percentage after each Tester run
+  tests_passing             Count of passing tests
+  tests_total               Total test count
+  files_written             Files created or modified this session
+  commits                   Total git commits this session
+  security_issues           {critical: N, high: N, medium: N, low: N}</span>
+
+<span class="n">AGENT LOG — append-only audit trail
+  agent       Agent name and type
+  task_id     Which task this log entry relates to
+  action      What the agent did (wrote file, ran test, called tool, etc.)
+  timestamp   ISO timestamp
+  prompt_version  Which version of the agent's system prompt was active</span></pre>
+    </div>
+
+    <!-- GITOPS POLICY -->
+    <div class="code-panel" id="t-gitops">
+        <button class="cp-btn" onclick="copyTab('t-gitops')">COPY POLICY</button>
+        <pre><span class="c">═══════════════════════════════════════════════════
+  GITOPS POLICY — Every File Change Becomes a Commit
+  System behaviour, not an agent behaviour.
+  GitOps hook runs automatically after every write_file or edit_file.
+═══════════════════════════════════════════════════</span>
+
+<span class="n">── ON EVERY FILE WRITE ──────────────────────────────</span>
+<span class="n">1. Agent calls write_file(path, content, agent_name, prompt_version)
+2. GitOps hook intercepts BEFORE returning to the agent
+3. Hook stages the file: git add {path}
+4. Hook builds a structured commit message:
+
+     [{AgentType}] {one-line description of what was written}
+
+     agent:          {agent_name}
+     task_id:        {current task_id from build_state.json}
+     prompt_version: {e.g. frontend_dev_v1.3}
+     file:           {path}
+     timestamp:      {ISO 8601 UTC}
+
+5. Hook commits: git commit -m "{message}"
+6. Hook returns commit SHA to agent as confirmation
+7. Agent log entry appended to build_state.json</span>
+
+<span class="n">── BRANCH STRATEGY ──────────────────────────────────</span>
+<span class="n">Session branch: feature/session-{YYYY-MM-DD}-{session_id}
+  Created at session start. All agent commits land on this branch.
+  Never commits directly to main.
+
+Merge strategy: Human reviews session branch diff after BUILD_COMPLETE.
+  git diff main..feature/session-{id}
+  Human merges or cherry-picks as needed.
+  Git history = auditable record of every agent action.</span>
+
+<span class="n">── WHAT THE GIT HISTORY GIVES YOU ───────────────────</span>
+<span class="n">Full Auditability   : Every file change attributed to exact agent + prompt version
+Rollback            : Any file revertable to any agent's prior version via git revert
+Prompt Attribution  : Trace which prompt version produced which code
+Debugging History   : git_log on any file shows all agent actions for root cause analysis
+Reproducibility     : Same prompt version should produce the same commits</span>
+
+<span class="n">── SECURITY RULES FOR COMMITS ───────────────────────</span>
+<span class="n">GitOps hook scans the diff for secret patterns before committing:
+  (API keys, passwords, tokens, private keys, connection strings)
+If secret detected → commit ABORTED → SECURITY_ALERT in build_state.json
+Agents must never hardcode credentials — always reference environment variables.
+
+Path Guard:
+  write_file and edit_file reject any path resolving outside /workspace/project
+  Agents cannot write to: /.git, /etc, /usr, /home outside project, or absolute paths
+  Violation → SECURITY_ALERT in build_state.json → agent session terminated</span></pre>
+    </div>
+
+    <!-- PROMPT VERSIONING -->
+    <div class="code-panel" id="t-prompts">
+        <button class="cp-btn" onclick="copyTab('t-prompts')">COPY DOC</button>
+        <pre><span class="c">═══════════════════════════════════════════════════
+  PROMPT VERSIONING SYSTEM
+  Every agent system prompt = a versioned markdown file.
+  Changing a prompt = a PR. Full diff history, rollback, attribution.
+═══════════════════════════════════════════════════</span>
+
+<span class="n">── PROMPT FILE LOCATIONS ─────────────────────────</span>
+<span class="n">  prompts/requirements_refiner.md
+  prompts/architect.md
+  prompts/lead_pm.md
+  prompts/frontend_dev.md
+  prompts/backend_dev.md
+  prompts/db_dev.md
+  prompts/devops_dev.md
+  prompts/cron_service_dev.md
+  prompts/security_reviewer.md
+  prompts/test_coverage_reviewer.md
+  prompts/performance_reviewer.md
+  prompts/debugger.md
+  prompts/tester.md
+  prompts/doc_agent.md</span>
+
+<span class="n">── EVERY PROMPT FILE MUST HAVE ───────────────────</span>
+<span class="n">FRONTMATTER HEADER (required):
+  version:       Semantic version — 1.0, 1.3, 2.1
+  agent:         Agent name exactly as in build_state.json
+  model_tier:    reasoning | standard | fast
+  temperature:   Decimal, e.g. 0.1 or 0.2
+  max_tokens:    Token budget for this agent
+  tools:         Exact MCP tool names this agent may call
+  last_updated:  ISO date
+  changed_by:    Human name or "auto" if performance-driven
+  change_reason: One sentence explaining why this version was created
+
+BODY SECTIONS (required):
+  ## Identity      Who the agent is and what it owns
+  ## Inputs        What context the agent receives at task start
+  ## Your Loop     Step-by-step process the agent follows
+  ## Output Format Exactly what the agent must emit on completion
+  ## Rules         Constraints — what it must never do
+  ## Escalation    When/how it calls ask_human (most agents: NEVER)</span>
+
+<span class="n">── HOW VERSIONING WORKS ──────────────────────────</span>
+<span class="n">Changing a prompt = creating a PR to the prompts/ directory.
+Review questions for every prompt change:
+  - What behaviour does this change intend to produce?
+  - Was old behaviour causing failures? (provide evidence)
+  - Has new prompt been tested on 3+ representative tasks?
+
+Version number is embedded in every git commit made by that agent.
+You can always trace: "which prompt version produced this code?"</span>
+
+<span class="n">── PERFORMANCE TRACKING ──────────────────────────</span>
+<span class="n">Each agent run logs:
+  - prompt_version used
+  - task success / failure
+  - number of tool-call iterations taken
+  - tokens consumed
+  - review gate verdict received
+
+Over time this shows:
+  - Which prompt versions produce the most first-attempt successes
+  - Which prompts cause excessive looping (high iteration count)
+  - Which prompts produce code that fails review most often
+
+Low-performing versions trigger a prompt improvement cycle:
+  Analyse failure pattern → propose edit → PR → test → merge → bump version</span>
+
+<span class="n">── MODEL TIER ASSIGNMENT ─────────────────────────</span>
+<span class="n">REASONING (Claude Opus / o1):
+  Requirements Refiner, Lead / PM, Architect
+  Justification: Their decisions cascade through the entire build.
+  Wrong decisions here are expensive. Spend the tokens. Get it right.
+
+STANDARD (Claude Sonnet / GPT-4o):
+  Frontend Dev, Backend Dev, DB Dev, Cron Dev, DevOps Dev,
+  Security Reviewer, Test Coverage Reviewer, Performance Reviewer, Debugger
+  Justification: Focused implementation tasks — smart but not planning-heavy.
+
+FAST (Claude Haiku / GPT-4o-mini):
+  Doc Agent, Tester (execution + report structuring only)
+  Justification: Template-heavy, pattern-following tasks. Speed and cost matter.</span></pre>
+    </div>
+
+</div>
         <!-- Risk Register -->
         <div class="sec" id="risks">
             <div class="sec-title"><span>05</span> — Agentic AI Risk Register</div>
