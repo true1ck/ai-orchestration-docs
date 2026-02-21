@@ -1251,6 +1251,136 @@
         [data-theme="light"] ::-webkit-scrollbar-track { background: var(--surface2) !important; }
         [data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25) !important; }
 
+        /* ── FLOW DIAGRAM — LIGHT MODE SPECIFIC FIXES ── */
+        [data-theme="light"] .orch-box {
+            background: rgba(180,83,9,0.05) !important;
+            border-color: rgba(180,83,9,0.35) !important;
+        }
+        [data-theme="light"] .orch-box .label {
+            color: #b45309 !important;
+        }
+        [data-theme="light"] .orch-box .title {
+            color: #b45309 !important;
+        }
+        [data-theme="light"] .orch-box .detail {
+            color: #4b5563 !important;
+        }
+
+        [data-theme="light"] .human-node {
+            background: rgba(99,102,241,0.06) !important;
+            border-color: rgba(99,102,241,0.35) !important;
+        }
+        [data-theme="light"] .human-node .label {
+            color: #6b7280 !important;
+        }
+        [data-theme="light"] .human-node .title {
+            color: #0d1117 !important;
+        }
+        [data-theme="light"] .human-node .detail {
+            color: #4b5563 !important;
+        }
+        [data-theme="light"] .human-node:hover {
+            border-color: rgba(99,102,241,0.6) !important;
+        }
+
+        [data-theme="light"] .dev-box {
+            background: rgba(8,145,178,0.05) !important;
+            border-color: rgba(8,145,178,0.3) !important;
+        }
+        [data-theme="light"] .dev-box .label {
+            color: #0891b2 !important;
+        }
+        [data-theme="light"] .dev-box .title {
+            color: #0d1117 !important;
+        }
+        [data-theme="light"] .dev-box .detail {
+            color: #4b5563 !important;
+        }
+
+        [data-theme="light"] .rev-box,
+        [data-theme="light"] .gate-box {
+            background: rgba(220,38,38,0.04) !important;
+            border-color: rgba(220,38,38,0.25) !important;
+        }
+        [data-theme="light"] .rev-box .label,
+        [data-theme="light"] .gate-box .label {
+            color: #dc2626 !important;
+        }
+        [data-theme="light"] .rev-box .title,
+        [data-theme="light"] .gate-box .title {
+            color: #0d1117 !important;
+        }
+        [data-theme="light"] .rev-box .detail,
+        [data-theme="light"] .gate-box .detail {
+            color: #4b5563 !important;
+        }
+
+        /* Vertical connector lines */
+        [data-theme="light"] .vc {
+            background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.08)) !important;
+        }
+        [data-theme="light"] .vc.arrow::after {
+            color: #6b7280 !important;
+        }
+        [data-theme="light"] .vc-label {
+            color: #6b7280 !important;
+        }
+        [data-theme="light"] .phase-label {
+            color: #9ca3af !important;
+        }
+
+        /* rv (reviewer) badges */
+        [data-theme="light"] .rv {
+            background: var(--surface2) !important;
+            border-color: var(--border2) !important;
+            color: var(--text) !important;
+        }
+        [data-theme="light"] .rv.arch { color: #b45309 !important; border-color: rgba(180,83,9,0.3) !important; }
+        [data-theme="light"] .rv.sec  { color: #dc2626 !important; border-color: rgba(220,38,38,0.3) !important; }
+        [data-theme="light"] .rv.test { color: #16a34a !important; border-color: rgba(22,163,74,0.3) !important; }
+        [data-theme="light"] .rv.perf { color: #2563eb !important; border-color: rgba(37,99,235,0.3) !important; }
+
+        /* Bug chips */
+        [data-theme="light"] .bug-chip.p0 { background: rgba(220,38,38,0.08) !important; border-color: rgba(220,38,38,0.3) !important; color: #dc2626 !important; }
+        [data-theme="light"] .bug-chip.p1 { background: rgba(217,119,6,0.08) !important; border-color: rgba(217,119,6,0.3) !important;  color: #d97706 !important; }
+        [data-theme="light"] .bug-chip.p3 { background: rgba(22,163,74,0.08) !important;  border-color: rgba(22,163,74,0.3) !important;  color: #16a34a !important; }
+
+        /* Inline highlight (was white text) */
+        [data-theme="light"] .inline-highlight {
+            color: #0d1117;
+            font-weight: 600;
+        }
+        /* Keep dark for dark mode */
+        .inline-highlight { color: rgba(255,255,255,0.85); }
+
+        /* cp-card (checkpoint cards) in light mode */
+        [data-theme="light"] .cp-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .cp-card h4 { color: var(--text) !important; }
+        [data-theme="light"] .cp-card p  { color: var(--muted) !important; }
+        [data-theme="light"] .cp-trigger {
+            background: var(--surface2) !important;
+            border-left-color: var(--border2) !important;
+            color: var(--dim) !important;
+        }
+        [data-theme="light"] .cp-type { opacity: 0.9 !important; }
+
+        /* Philosophy items */
+        [data-theme="light"] .phil-item {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .phil-num  { color: var(--dim) !important; }
+        [data-theme="light"] .phil-item h3 { color: var(--text) !important; }
+        [data-theme="light"] .phil-item p  { color: var(--muted) !important; }
+
+        /* Pipeline label */
+        [data-theme="light"] .pipeline-label {
+            color: var(--dim) !important;
+        }
+
         /* ── THEME TOGGLE BUTTON ── */
         #theme-toggle {
             position: fixed;
@@ -1401,7 +1531,7 @@
                     <div class="label">INITIATOR · INPUT</div>
                     <div class="title">👤 Human</div>
                     <div class="detail" style="margin-top:6px;">
-                        uploads <strong style="color:rgba(255,255,255,0.85);">React dashboard code file(s)</strong><br>
+                        uploads <strong class="inline-highlight">React dashboard code file(s)</strong><br>
                         <span style="font-size:9px;letter-spacing:1px;opacity:0.55;">e.g. App.tsx · dashboard.jsx ·
                             components/ · routes.ts</span>
                     </div>
