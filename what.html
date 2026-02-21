@@ -1175,7 +1175,7 @@
     </nav>
     <div class="container">
 
-        <!-- Header -->
+                <!-- Header -->
         <div class="header">
             <div>
                 <div class="header-eyebrow">Architecture Blueprint — Sankhya Team</div>
@@ -1183,8 +1183,8 @@
             </div>
             <div class="header-meta">
                 Presentation: Feb 22, 2026<br>
-                Demo: Task Dashboard<br>
-                Vision: Full Media Stack<br>
+                Demo: Mass Intel Processing<br>
+                Vision: Bulk ZIP Orchestration<br>
                 Stack: MCP · Whisper · Claude
             </div>
         </div>
@@ -1192,48 +1192,36 @@
         <!-- Vision -->
         <div class="vision">
             <p>
-                Ingest <span>YouTube videos, news articles, and images</span> — transcribe, extract,
-                and analyze them through a multi-agent pipeline — to surface real-time media intelligence:
-                summaries, sentiment, trends, and named entities, all in a live monitoring dashboard.
+                Upload a <span>massive intelligence payload (ZIP format)</span> containing mixed media — videos, audio leaks, PDFs, raw images, and text. The Orchestrator autonomously unpacks the archive, classifies every file by MIME type, and dispatches a swarm of specialist agents to transcribe, extract, and analyze the data <strong>in parallel</strong>, surfacing a unified intelligence report on the live dashboard.
             </p>
             <div class="vision-tags">
-                <span class="vtag">MULTI-MODAL INPUT</span>
+                <span class="vtag">BULK ZIP INGESTION</span>
                 <span class="vtag">MCP ORCHESTRATION</span>
-                <span class="vtag">WHISPER TRANSCRIPTION</span>
-                <span class="vtag">VISION ANALYSIS</span>
-                <span class="vtag">LIVE DASHBOARD</span>
-                <span class="vtag">ZERO MANUAL CODE</span>
+                <span class="vtag">PARALLEL EXECUTION</span>
+                <span class="vtag">WHISPER / VISION PIPELINE</span>
+                <span class="vtag">CROSS-FILE AGGREGATION</span>
+                <span class="vtag">ZERO MANUAL TRIAGE</span>
             </div>
         </div>
 
         <!-- Architecture Diagram -->
         <div class="sec-head" style="margin-top:0;">
             <span class="sec-num">01</span>
-            <h2>End-to-End Pipeline</h2>
+            <h2>Bulk Intelligence Pipeline</h2>
         </div>
         <div class="arch-wrapper">
-            <div class="arch-title">// DATA FLOW — INGESTION → AGENTS → DASHBOARD</div>
+            <div class="arch-title">// DATA FLOW — ZIP INGESTION → PARALLEL DASHBOARD</div>
 
             <div class="pipeline">
 
                 <!-- Layer 1: Sources -->
                 <div class="layer">
-                    <div class="layer-label">Input<br>Sources</div>
+                    <div class="layer-label">Input<br>Payload</div>
                     <div class="layer-content">
-                        <div class="src-node youtube">
-                            <div class="src-icon">▶</div>
-                            <div class="src-title">YouTube Video</div>
-                            <div class="src-sub">URL input / yt-dlp</div>
-                        </div>
-                        <div class="src-node news">
-                            <div class="src-icon">📰</div>
-                            <div class="src-title">News Articles</div>
-                            <div class="src-sub">URL / RSS / paste</div>
-                        </div>
-                        <div class="src-node image">
-                            <div class="src-icon">🖼</div>
-                            <div class="src-title">Images</div>
-                            <div class="src-sub">upload / URL scrape</div>
+                        <div class="src-node" style="min-width: 250px;">
+                            <div class="src-icon">📦</div>
+                            <div class="src-title">Raw Intelligence Archive</div>
+                            <div class="src-sub">intel_cache_b.zip (mixed media)</div>
                         </div>
                     </div>
                 </div>
@@ -1241,27 +1229,22 @@
                 <!-- Connector -->
                 <div class="connector">
                     <div></div>
-                    <div class="connector-line"><span class="connector-label">raw media → ingestion tools</span></div>
+                    <div class="connector-line"><span class="connector-label">file upload → orchestrator</span></div>
                 </div>
 
                 <!-- Layer 2: Ingestion -->
                 <div class="layer">
-                    <div class="layer-label">Ingestion<br>Tools</div>
+                    <div class="layer-label">Orchestrator<br>Triage</div>
                     <div class="layer-content">
-                        <div class="proc-node">
-                            <div class="title">yt-dlp → Whisper</div>
-                            <div class="sub">downloads audio, transcribes to text</div>
-                            <div class="tech">openai/whisper</div>
+                        <div class="proc-node" style="border-color: var(--violet);">
+                            <div class="title">Payload Unpacker & Classifier</div>
+                            <div class="sub">Extracts to secure sandbox, runs MIME detection</div>
+                            <div class="tech" style="background: rgba(99,102,241,0.12); color: var(--violet);">mimetypes / magic</div>
                         </div>
                         <div class="proc-node">
-                            <div class="title">Article Scraper</div>
-                            <div class="sub">extracts body text + metadata</div>
-                            <div class="tech">newspaper3k</div>
-                        </div>
-                        <div class="proc-node">
-                            <div class="title">Image Loader</div>
-                            <div class="sub">downloads + base64 encodes</div>
-                            <div class="tech">pillow</div>
+                            <div class="title">DAG Builder</div>
+                            <div class="sub">Builds execution graph for 50+ files</div>
+                            <div class="tech">NetworkX / asyncio</div>
                         </div>
                     </div>
                 </div>
@@ -1269,55 +1252,48 @@
                 <!-- Connector -->
                 <div class="connector">
                     <div></div>
-                    <div class="connector-line"><span class="connector-label">raw text / image bytes → MCP tools</span>
-                    </div>
+                    <div class="connector-line"><span class="connector-label">spawn agents per MIME type → execute in parallel</span></div>
                 </div>
 
                 <!-- Layer 3: MCP Agent Pipeline -->
                 <div class="layer">
-                    <div class="layer-label">MCP<br>Agents</div>
+                    <div class="layer-label">Parallel<br>Swarm</div>
                     <div class="layer-content" style="flex-wrap:wrap; gap:10px;">
-                        <div class="agent-node orch">
-                            <div class="badge">ORCHESTRATOR</div>
-                            <div class="name">🧠 Router</div>
-                            <div class="desc">Routes each input to correct agents, assembles final output</div>
-                            <div class="tool">claude-sonnet-4-6</div>
-                        </div>
                         <div class="agent-node transcriber">
-                            <div class="badge">TOOL 1</div>
-                            <div class="name">🎙 Transcriber</div>
-                            <div class="desc">Cleans whisper output, fixes errors, adds speaker labels</div>
-                            <div class="tool">mcp: clean_transcript</div>
-                        </div>
-                        <div class="agent-node extractor">
-                            <div class="badge">TOOL 2</div>
-                            <div class="name">📰 Extractor</div>
-                            <div class="desc">Pulls key claims, quotes, named entities from articles</div>
-                            <div class="tool">mcp: extract_article</div>
+                            <div class="badge">TOOL 1 · video/mp4, audio/wav</div>
+                            <div class="name">🎙 Transcriber + Cleaner</div>
+                            <div class="desc">Runs Whisper, cleans output, adds speaker labels</div>
+                            <div class="tool">mcp: transcribe_audio</div>
                         </div>
                         <div class="agent-node vision">
-                            <div class="badge">TOOL 3</div>
-                            <div class="name">👁 Vision</div>
-                            <div class="desc">Describes images: people, text, logos, sentiment cues</div>
+                            <div class="badge">TOOL 2 · image/jpeg, image/png</div>
+                            <div class="name">👁 Vision Analyzer</div>
+                            <div class="desc">Describes images, detects text, emotional context</div>
                             <div class="tool">mcp: analyze_image</div>
                         </div>
+                        <div class="agent-node extractor">
+                            <div class="badge">TOOL 3 · application/pdf, text/html</div>
+                            <div class="name">📄 Document Extractor</div>
+                            <div class="desc">OCR / text parsing for reports, pulls names & orgs</div>
+                            <div class="tool">mcp: parse_document</div>
+                        </div>
                         <div class="agent-node analyst">
-                            <div class="badge">TOOL 4</div>
-                            <div class="name">📊 Analyst</div>
-                            <div class="desc">Sentiment score, bias detection, topic classification</div>
-                            <div class="tool">mcp: analyze_content</div>
+                            <div class="badge">TOOL 4 · all text outputs</div>
+                            <div class="name">📊 Content Analyst</div>
+                            <div class="desc">Scores sentiment (–1 to +1), detects tone & bias</div>
+                            <div class="tool">mcp: analyze_context</div>
                         </div>
                         <div class="agent-node categorizer">
-                            <div class="badge">TOOL 5</div>
+                            <div class="badge">TOOL 5 · all text outputs</div>
                             <div class="name">🏷 Categorizer</div>
-                            <div class="desc">Tags content: politics / tech / finance / sports / etc.</div>
+                            <div class="desc">Tags content: politics, tech, finance, conflict, etc.</div>
                             <div class="tool">mcp: categorize</div>
                         </div>
                         <div class="agent-node aggregator">
-                            <div class="badge">TOOL 6</div>
-                            <div class="name">🔗 Aggregator</div>
-                            <div class="desc">Finds cross-source connections, trending topics, contradictions</div>
-                            <div class="tool">mcp: aggregate</div>
+                            <div class="badge">TOOL 6 · runs at completion</div>
+                            <div class="name">🔗 Cross-File Aggregator</div>
+                            <div class="desc">Finds links (e.g. video face matches PDF name)</div>
+                            <div class="tool">mcp: aggregate_Intel</div>
                         </div>
                     </div>
                 </div>
@@ -1325,7 +1301,7 @@
                 <!-- Connector -->
                 <div class="connector">
                     <div></div>
-                    <div class="connector-line"><span class="connector-label">structured JSON → frontend</span></div>
+                    <div class="connector-line"><span class="connector-label">massive parallel JSON stream → frontend</span></div>
                 </div>
 
                 <!-- Layer 4: Output -->
@@ -1333,19 +1309,19 @@
                     <div class="layer-label">Dashboard<br>Output</div>
                     <div class="layer-content">
                         <div class="output-node">
-                            <div class="badge">LIVE VIEW</div>
-                            <div class="name">📡 Media Feed</div>
-                            <div class="desc">Chronological stream of analyzed items with summary cards</div>
+                            <div class="badge">RAPID TRIAGE</div>
+                            <div class="name">📡 Mass Media Feed</div>
+                            <div class="desc">Cards for every file unpacked, summarizing contents</div>
                         </div>
                         <div class="output-node">
-                            <div class="badge">ANALYTICS</div>
-                            <div class="name">📈 Trend Board</div>
-                            <div class="desc">Topic frequency, sentiment over time, entity map</div>
+                            <div class="badge">KNOWLEDGE GRAPH</div>
+                            <div class="name">📈 Entity Network Map</div>
+                            <div class="desc">Visual connections discovered across heterogeneous files</div>
                         </div>
                         <div class="output-node">
                             <div class="badge">EXPORT</div>
-                            <div class="name">📋 Intelligence Report</div>
-                            <div class="desc">AI-generated brief: top stories, narrative conflicts, key quotes</div>
+                            <div class="name">📋 Unified Intelligence Report</div>
+                            <div class="desc">AI-generated summary of the entire leaked payload</div>
                         </div>
                     </div>
                 </div>
@@ -1363,117 +1339,68 @@
             <div class="acard a0">
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">Orchestrator</div>
-                <h3>🧠 Router / Orchestrator</h3>
-                <p>The central brain. Receives raw input with its type (video/article/image), determines which agents to
-                    call, in what order, and with what context. Merges all outputs into the final dashboard payload. Can
-                    loop Analyst back if confidence is low.</p>
+                <h3>🧠 Router / Bulk Orchestrator</h3>
+                <p>The central dispatcher. Receives a raw ZIP payload, decompresses it to a secure sandbox, detects MIME types for dozens of files instantly, and spawns the exact right specialist agents in massive parallel streams. Collates and merges all outputs.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet-4-6</span>
-                    </div>
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">{ url, type, raw_text?
-                            }</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">DashboardCard JSON</span>
-                    </div>
-                    <div class="kv-row"><span class="kv-key">Pattern</span><span class="kv-val">Sequential +
-                            conditional</span></div>
+                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet-4-6</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">{ zip_buffer, timestamp }</span></div>
+                    <div class="kv-row"><span class="kv-key">Scaling</span><span class="kv-val">50+ concurrent agents</span></div>
+                    <div class="kv-row"><span class="kv-key">Pattern</span><span class="kv-val">Scatter-Gather / MapReduce</span></div>
                 </div>
             </div>
 
             <div class="acard a1">
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 1</div>
-                <h3>🎙 Transcript Cleaner</h3>
-                <p>Raw Whisper output is noisy — filler words, speaker errors, run-on sentences. This agent cleans,
-                    segments, and optionally labels speakers. Also extracts key quotes suitable for the dashboard.</p>
+                <h3>🎙 Transcriber + Cleaner</h3>
+                <p>Triggered on every standard A/V file (mp4, mp3, wav). Runs Whisper (or calls API), then acts as a journalist editor—cleaning noisy transcripts, identifying speakers, and highlighting extreme sentiment shifts.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">raw_transcript: str</span>
-                    </div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ segments[],
-                            key_quotes[], duration }</span></div>
-                    <div class="kv-row"><span class="kv-key">Context</span><span class="kv-val">Keep small — text
-                            only</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: mp4/wav</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ transcript, key_quotes[], duration }</span></div>
                 </div>
             </div>
 
             <div class="acard a2">
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 2</div>
-                <h3>📰 Article Extractor</h3>
-                <p>Parses article text and returns structured entities: headline, author, date, named people/orgs, key
-                    claims, and a 3-sentence summary. Designed to handle messy scraped HTML gracefully.</p>
+                <h3>👁 Vision Analyzer</h3>
+                <p>Triggered on every image found inside the ZIP. Uses Claude's vision capabilities to describe the scene, extract visible text, and spot logos or landmarks without human review.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">article_text: str, url:
-                            str</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ summary, entities[],
-                            claims[], author }</span></div>
-                    <div class="kv-row"><span class="kv-key">Context</span><span class="kv-val">Medium — long
-                            articles</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">image_base64: str</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ description, text_ext, logos[] }</span></div>
                 </div>
             </div>
 
             <div class="acard a3">
                 <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 3</div>
-                <h3>👁 Vision Analyzer</h3>
-                <p>Uses Claude's vision capability to describe images: identify people (no facial recognition), text
-                    visible in image, logos, emotional tone, and whether the image supports or contradicts its article's
-                    headline.</p>
+                <h3>📄 Document Extractor</h3>
+                <p>Triggered on PDFs, DOCX, or unstructured web slices inside the dump. Uses OCR (if needed) and parses out people, organizations, dates, and a concise executive summary per document.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">image_base64: str</span>
-                    </div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ description,
-                            text_in_image, tone, logos[] }</span></div>
-                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet
-                            (vision)</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: pdf/txt</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ summary, entities[], dates[] }</span></div>
                 </div>
             </div>
 
             <div class="acard a4">
                 <div class="acard-stripe"></div>
-                <div class="acard-tag">MCP Tool 4</div>
-                <h3>📊 Content Analyst</h3>
-                <p>Core intelligence layer. Scores sentiment (–1 to +1), detects emotional tone, identifies potential
-                    bias signals, flags if content is opinion vs. fact, and generates a 1-line "media angle"
-                    description.</p>
+                <div class="acard-tag">MCP Tool 4 & 5</div>
+                <h3>📊 Analyst & 🏷 Categorizer</h3>
+                <p>Runs sequentially as a post-processor on <em>all</em> text outputs (from videos, images, and documents). Scores bias, assigns taxonomy tags (politics, finance, etc.), and checks language.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text: str, source_type:
-                            str</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ sentiment, tone,
-                            bias_flags[], angle }</span></div>
-                    <div class="kv-row"><span class="kv-key">Risk</span><span class="kv-val">Needs careful
-                            prompting</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text_output: str</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ sentiment, bias, tags[] }</span></div>
                 </div>
             </div>
 
             <div class="acard a5">
                 <div class="acard-stripe"></div>
-                <div class="acard-tag">MCP Tool 5</div>
-                <h3>🏷 Categorizer</h3>
-                <p>Assigns topics from a controlled taxonomy (politics, technology, finance, sports, entertainment,
-                    science, conflict, etc.) with confidence scores. Also detects language and region relevance.</p>
-                <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text: str</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ tags[], language,
-                            region, confidence }</span></div>
-                    <div class="kv-row"><span class="kv-key">Context</span><span class="kv-val">Tiny — fast +
-                            cheap</span></div>
-                </div>
-            </div>
-
-            <div class="acard a6">
-                <div class="acard-stripe"></div>
                 <div class="acard-tag">MCP Tool 6</div>
-                <h3>🔗 Cross-Source Aggregator</h3>
-                <p>Runs periodically across all processed items in session. Identifies which stories are being covered
-                    by multiple sources, detects narrative conflicts, surfaces emerging topics, and generates a session
-                    digest.</p>
+                <h3>🔗 Cross-File Aggregator</h3>
+                <p>The crucial final step. Runs only when all parallel tasks finish. Scans the complete knowledge space to find intersection points—e.g. proving that the organization named in `doc_4.pdf` matches the logo found in `image_12.jpg`.</p>
                 <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">all_items[]:
-                            DashboardCard</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ trending[],
-                            conflicts[], digest }</span></div>
-                    <div class="kv-row"><span class="kv-key">Trigger</span><span class="kv-val">Every 5 new items</span>
-                    </div>
+                    <div class="kv-row"><span class="kv-key">Trigger</span><span class="kv-val">Barrier sync (all complete)</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ unified_report, cross_links[] }</span></div>
                 </div>
             </div>
 
@@ -1482,7 +1409,7 @@
         <!-- Tech Stack -->
         <div class="sec-head">
             <span class="sec-num">03</span>
-            <h2>Tech Stack</h2>
+            <h2>Bulk Processing Tech Stack</h2>
         </div>
         <table class="stack-table">
             <thead>
@@ -1495,59 +1422,52 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>Video Ingest</td>
-                    <td>yt-dlp</td>
-                    <td>Downloads audio/video from YouTube URLs</td>
-                    <td><span class="badge-pill pill-k">pip install yt-dlp</span></td>
+                    <td>Ingestion</td>
+                    <td>Python <code>zipfile</code> + <code>magic</code></td>
+                    <td>Securely unzips payload and robustly detects file MIME types</td>
+                    <td><span class="badge-pill pill-k">handles corrupted exts</span></td>
+                </tr>
+                <tr>
+                    <td>Concurrency</td>
+                    <td>Python <code>asyncio</code></td>
+                    <td>Fires 50+ agent API calls in parallel to crunch the DB faster</td>
+                    <td><span class="badge-pill pill-b">MapReduce pattern</span></td>
                 </tr>
                 <tr>
                     <td>Transcription</td>
                     <td>OpenAI Whisper</td>
-                    <td>Speech → text, multi-language, runs locally</td>
-                    <td><span class="badge-pill pill-r">medium model recommended</span> <span
-                            class="badge-pill pill-k">~1GB RAM</span></td>
+                    <td>Speech → text for discovered audio/video</td>
+                    <td><span class="badge-pill pill-r">GPU scaling needed in prod</span></td>
                 </tr>
                 <tr>
-                    <td>Article Scraping</td>
-                    <td>newspaper3k</td>
-                    <td>Extracts article body, title, author from URLs</td>
-                    <td><span class="badge-pill pill-b">handles paywalls poorly</span> fallback: beautifulsoup</td>
+                    <td>Document Extraction</td>
+                    <td>PyMuPDF / OCR</td>
+                    <td>Pares text layers from PDFs hidden in the payload</td>
+                    <td>Fallback to Tesseract if no text layer</td>
                 </tr>
                 <tr>
                     <td>AI Agents</td>
-                    <td>Claude Sonnet 4.6</td>
-                    <td>All agent calls — vision, text, analysis</td>
-                    <td><span class="badge-pill pill-a">claude-sonnet-4-6</span> single model for all agents</td>
+                    <td>Claude Sonnet 4.7</td>
+                    <td>Vision, extraction, and synthesis logic</td>
+                    <td><span class="badge-pill pill-a">claude-sonnet-4-6</span> handles massive context</td>
                 </tr>
                 <tr>
                     <td>Orchestration</td>
                     <td>MCP Python SDK</td>
-                    <td>Exposes agents as tools, handles calls</td>
-                    <td><span class="badge-pill pill-k">pip install mcp</span> stdio transport</td>
-                </tr>
-                <tr>
-                    <td>Image Processing</td>
-                    <td>Pillow + requests</td>
-                    <td>Download, resize, base64 encode images</td>
-                    <td>Resize to max 1024px before sending to API</td>
+                    <td>Exposes specialized extraction scripts as standard tools</td>
+                    <td><span class="badge-pill pill-k">stdio transport</span></td>
                 </tr>
                 <tr>
                     <td>Backend API</td>
-                    <td>FastAPI</td>
-                    <td>REST endpoint: POST /analyze → triggers pipeline</td>
-                    <td><span class="badge-pill pill-g">async/await</span> WebSocket for live updates</td>
+                    <td>FastAPI + WebSockets</td>
+                    <td>Accepts ZIP via multipart, streams progress back to UI</td>
+                    <td><span class="badge-pill pill-g">Live Dashboard Feel</span></td>
                 </tr>
                 <tr>
                     <td>Frontend</td>
                     <td>React + Tailwind</td>
-                    <td>Live dashboard: feed, sentiment charts, entity tags</td>
-                    <td>Polling or WebSocket for real-time feel</td>
-                </tr>
-                <tr>
-                    <td>Storage</td>
-                    <td>SQLite → Postgres</td>
-                    <td>Stores processed media cards + agent outputs</td>
-                    <td>SQLite fine for demo; Postgres for production</td>
+                    <td>Visualizes the massive influx of intel live</td>
+                    <td>Render feed cards instantly</td>
                 </tr>
             </tbody>
         </table>
@@ -1555,38 +1475,28 @@
         <!-- Cost Estimate -->
         <div class="sec-head">
             <span class="sec-num">04</span>
-            <h2>Demo Cost Estimate (per run)</h2>
+            <h2>Cost Estimate (Bulk Archive Run)</h2>
         </div>
         <div class="cost-grid">
             <div class="cost-card">
-                <div class="layer-name">Whisper</div>
+                <div class="layer-name">Data Extraction (Local)</div>
                 <div class="amount">~$0</div>
-                <div class="note">Runs locally free. GPU speeds it up but CPU works fine for demo.</div>
+                <div class="note">Unzipping, PyMuPDF parsing, and local Whisper run free on CPU/GPU.</div>
             </div>
             <div class="cost-card">
-                <div class="layer-name">Per Video (5 min)</div>
-                <div class="amount">~$0.02</div>
-                <div class="note">Transcript clean + analysis + categorize ≈ 3–5K tokens</div>
+                <div class="layer-name">Agent Sub-Calls</div>
+                <div class="amount">~$0.01 / file</div>
+                <div class="note">Averaging 2,000 tokens for context cleanup and entity extraction per asset.</div>
             </div>
             <div class="cost-card">
-                <div class="layer-name">Per Article</div>
-                <div class="amount">~$0.01</div>
-                <div class="note">Extract + sentiment + categorize ≈ 2–3K tokens</div>
+                <div class="layer-name">Cross-File Aggregator</div>
+                <div class="amount">~$0.10 - $0.20</div>
+                <div class="note">Passes the summarized json of all 50 files into context window.</div>
             </div>
             <div class="cost-card">
-                <div class="layer-name">Per Image</div>
-                <div class="amount">~$0.005</div>
-                <div class="note">Vision call ≈ 500–1K tokens depending on image size</div>
-            </div>
-            <div class="cost-card">
-                <div class="layer-name">Full Demo Run</div>
-                <div class="amount">~$0.50</div>
-                <div class="note">3 videos + 5 articles + 5 images + aggregation = comfortable under $1</div>
-            </div>
-            <div class="cost-card">
-                <div class="layer-name">Full Day Testing</div>
-                <div class="amount">~$5–15</div>
-                <div class="note">Heavy iteration + repeated runs. Well within budget.</div>
+                <div class="layer-name">Typical Cache Dump (50MB)</div>
+                <div class="amount">~$1.50 total</div>
+                <div class="note">Processes 5 videos, 20 images, 15 PDFs simultaneously. Extreme value.</div>
             </div>
         </div>
 
@@ -1597,44 +1507,38 @@
         </div>
         <div class="roadmap">
             <div class="phase">
-                <div class="phase-label">Saturday — Theory + Core</div>
-                <h3>Foundation</h3>
+                <div class="phase-label">Saturday — Core Ingestion & Extraction</div>
+                <h3>Foundation Pipeline</h3>
                 <ul>
-                    <li>Theory presentation slides: what are agents, MCP, orchestrator pattern</li>
-                    <li>Set up MCP server skeleton with all 6 tools stubbed</li>
-                    <li>Wire yt-dlp → Whisper pipeline, verify transcription works</li>
-                    <li>Wire newspaper3k article scraper</li>
-                    <li>Implement Transcriber + Extractor agents with real prompts</li>
-                    <li>Test pipeline: YouTube URL → text → structured JSON</li>
+                    <li>Set up FastAPI backend to handle robust multipart ZIP uploads</li>
+                    <li>Implement Python unpacking logic and `mimetypes` secure classification</li>
+                    <li>Set up MCP server skeleton featuring all 5 specialized tools</li>
+                    <li>Wire up local Whisper (for mp4/wav) and PyMuPDF (for pdf)</li>
+                    <li>Implement asynchronous scatter logic (spawning agents based on filetype)</li>
                 </ul>
             </div>
             <div class="phase">
                 <div class="phase-label">Sunday Morning</div>
-                <h3>Intelligence Layer</h3>
+                <h3>Swarm Logic & Synthesis</h3>
                 <ul>
-                    <li>Implement Vision, Analyst, Categorizer agents</li>
-                    <li>Implement Aggregator (cross-source trends)</li>
-                    <li>Build FastAPI backend with /analyze endpoint</li>
-                    <li>Connect Orchestrator to route all input types</li>
-                    <li>Test end-to-end: 1 video + 2 articles + 1 image</li>
-                    <li>Fix prompt issues / JSON parsing errors</li>
+                    <li>Refine Prompts for Vision Analyzer, Content Analyst, and Categorizer</li>
+                    <li>Implement the **Cross-File Aggregator** (Barrier sync after `asyncio.gather`)</li>
+                    <li>Test end-to-end on sample `leaked_cache.zip` (1 video, 3 docs, 2 images)</li>
+                    <li>Fix context window overflows and JSON parse errors</li>
                 </ul>
             </div>
             <div class="phase">
                 <div class="phase-label">Sunday Afternoon</div>
-                <h3>Dashboard + Demo Prep</h3>
+                <h3>Live Dashboard UI</h3>
                 <ul>
-                    <li>Build React dashboard: feed cards, sentiment indicators, entity tags</li>
-                    <li>Add live WebSocket updates (or polling)</li>
-                    <li>Record a 3-min live demo: input URL → watch agents run → dashboard populates</li>
-                    <li>Prepare 5-slide theory deck</li>
+                    <li>Build React frontend: bulk file dropzone, live progress bars</li>
+                    <li>Connect FastAPI WebSockets to stream intelligence cards in real-time as agents finish</li>
+                    <li>Record 3-minute live mass-processing demo</li>
+                    <li>Prepare 5-slide architecture presentation</li>
                     <li>Dry run full presentation by 6pm</li>
-                    <li>Buffer: debug and polish</li>
                 </ul>
             </div>
-        </div>
-
-        <!-- Footer -->
+        </div>\n        <!-- Footer -->
         <div
             style="border-top: 1px solid var(--border); margin-top: 56px; padding-top: 20px; display:flex; justify-content:space-between; align-items:center;">
             <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">LIVINGAI TEAM · FEB
