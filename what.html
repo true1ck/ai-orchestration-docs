@@ -10,18 +10,21 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg: #f5f0e8;
-            --ink: #1a1612;
-            --ink2: #3d3630;
-            --muted: #8a8070;
-            --border: #d8d0c0;
-            --card: #fffef9;
-            --red: #c0392b;
-            --amber: #d4841a;
-            --green: #2d6a4f;
-            --blue: #1a4a7a;
-            --teal: #1a6a6a;
-            --purple: #5a2d82;
+            --bg: #06080f;
+            --bg2: #0a0d18;
+            --ink: #e2e8f8;
+            --ink2: #a8b4c8;
+            --muted: #5a6a8a;
+            --border: #1a2438;
+            --border2: #243050;
+            --card: #0d1422;
+            --card2: #111928;
+            --red: #ff6b5b;
+            --amber: #f0b429;
+            --green: #4ade80;
+            --blue: #60a5fa;
+            --teal: #34d2c8;
+            --purple: #a78bfa;
         }
 
         * {
@@ -36,17 +39,19 @@
             font-family: 'DM Sans', sans-serif;
             min-height: 100vh;
             background-image:
-                radial-gradient(circle at 20% 20%, rgba(192, 57, 43, 0.04) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(26, 74, 122, 0.04) 0%, transparent 50%);
+                radial-gradient(circle at 15% 15%, rgba(167, 139, 250, 0.07) 0%, transparent 50%),
+                radial-gradient(circle at 85% 80%, rgba(52, 210, 200, 0.06) 0%, transparent 50%);
         }
 
-        /* Halftone texture */
+        /* Subtle grid texture */
         body::after {
             content: '';
             position: fixed;
             inset: 0;
-            background-image: radial-gradient(circle, rgba(26, 22, 18, 0.06) 1px, transparent 1px);
-            background-size: 18px 18px;
+            background-image:
+                linear-gradient(rgba(129, 140, 248, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(129, 140, 248, 0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
             pointer-events: none;
             z-index: 0;
         }
@@ -61,8 +66,8 @@
 
         /* ── HEADER ── */
         .header {
-            border-top: 4px solid var(--ink);
-            border-bottom: 2px solid var(--ink);
+            border-top: 2px solid var(--border2);
+            border-bottom: 1px solid var(--border);
             padding: 32px 0;
             margin-bottom: 56px;
             display: grid;
@@ -136,8 +141,9 @@
 
         /* ── VISION STATEMENT ── */
         .vision {
-            background: var(--ink);
-            color: #f5f0e8;
+            background: linear-gradient(135deg, #0d1a2e, #0a1520);
+            border: 1px solid var(--border2);
+            color: var(--ink);
             border-radius: 6px;
             padding: 36px 40px;
             margin-bottom: 56px;
@@ -150,7 +156,7 @@
             content: '"';
             font-family: 'Playfair Display', serif;
             font-size: 200px;
-            color: rgba(245, 240, 232, 0.04);
+            color: rgba(255, 255, 255, 0.04);
             position: absolute;
             top: -40px;
             left: 20px;
@@ -191,11 +197,11 @@
         /* ── ARCHITECTURE DIAGRAM ── */
         .arch-wrapper {
             background: var(--card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border2);
             border-radius: 8px;
             padding: 40px;
             animation: fadeIn 0.5s 0.2s ease both;
-            box-shadow: 0 2px 20px rgba(26, 22, 18, 0.06);
+            box-shadow: 0 2px 40px rgba(0, 0, 0, 0.3);
         }
 
         .arch-title {
@@ -252,9 +258,9 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: var(--ink);
-            border: 2px solid var(--card);
-            box-shadow: 0 0 0 1px var(--ink);
+            background: var(--teal);
+            border: 2px solid var(--bg);
+            box-shadow: 0 0 0 1px var(--teal);
         }
 
         /* Connector */
@@ -331,10 +337,10 @@
 
         /* Processing nodes */
         .proc-node {
-            border: 1.5px solid var(--border);
+            border: 1.5px solid var(--border2);
             border-radius: 6px;
             padding: 10px 16px;
-            background: var(--bg);
+            background: var(--card2);
             display: flex;
             flex-direction: column;
             gap: 3px;
@@ -345,7 +351,7 @@
 
         .proc-node:hover {
             transform: translateY(-2px);
-            border-color: var(--ink);
+            border-color: var(--teal);
         }
 
         .proc-node .title {
@@ -362,8 +368,9 @@
         .proc-node .tech {
             font-family: 'DM Mono', monospace;
             font-size: 9px;
-            background: var(--ink);
-            color: #f5f0e8;
+            background: rgba(52, 210, 200, 0.12);
+            color: var(--teal);
+            border: 1px solid rgba(52, 210, 200, 0.25);
             padding: 1px 6px;
             border-radius: 2px;
             display: inline-block;
@@ -420,9 +427,9 @@
         }
 
         .agent-node.orch {
-            border-color: var(--ink);
+            border-color: var(--teal);
             border-width: 2px;
-            background: rgba(26, 22, 18, 0.05);
+            background: rgba(52, 210, 200, 0.05);
         }
 
         .agent-node .badge {
@@ -456,8 +463,9 @@
 
         /* Output node */
         .output-node {
-            background: var(--ink);
-            color: #f5f0e8;
+            background: linear-gradient(135deg, rgba(52, 210, 200, 0.12), rgba(167, 139, 250, 0.08));
+            border: 1.5px solid rgba(52, 210, 200, 0.3);
+            color: var(--ink);
             border-radius: 8px;
             padding: 16px 24px;
             display: flex;
@@ -478,17 +486,18 @@
             font-family: 'DM Mono', monospace;
             font-size: 9px;
             letter-spacing: 1px;
-            color: rgba(245, 240, 232, 0.5);
+            color: var(--teal);
         }
 
         .output-node .name {
             font-size: 15px;
             font-weight: 600;
+            color: var(--ink);
         }
 
         .output-node .desc {
             font-size: 11px;
-            color: rgba(245, 240, 232, 0.6);
+            color: var(--muted);
             line-height: 1.4;
         }
 
@@ -502,7 +511,7 @@
 
         .acard {
             background: var(--card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border2);
             border-radius: 8px;
             padding: 24px;
             transition: box-shadow 0.2s, transform 0.2s;
@@ -511,7 +520,7 @@
 
         .acard:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(26, 22, 18, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .acard-stripe {
@@ -548,7 +557,7 @@
         }
 
         .acard.a0 .acard-stripe {
-            background: var(--ink);
+            background: var(--teal);
         }
 
         .acard-tag {
@@ -630,7 +639,7 @@
         }
 
         .stack-table tr:hover td {
-            background: rgba(26, 22, 18, 0.02);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .stack-table td:first-child {
@@ -681,8 +690,8 @@
         }
 
         .pill-k {
-            background: rgba(26, 22, 18, 0.08);
-            color: var(--ink);
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--ink2);
         }
 
         /* ── COST ESTIMATE ── */
@@ -695,7 +704,7 @@
 
         .cost-card {
             background: var(--card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border2);
             border-radius: 8px;
             padding: 20px;
         }
@@ -732,7 +741,7 @@
 
         .phase {
             background: var(--card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border2);
             border-radius: 8px;
             padding: 24px;
         }
@@ -820,10 +829,65 @@
                 text-align: left;
             }
         }
+
+        /* ── BACK NAV ── */
+        .back-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 8, 15, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border2);
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .back-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--teal);
+            text-decoration: none;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border: 1px solid rgba(52, 210, 200, 0.25);
+            border-radius: 5px;
+            background: rgba(52, 210, 200, 0.05);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: rgba(52, 210, 200, 0.1);
+            border-color: rgba(52, 210, 200, 0.5);
+        }
     </style>
 </head>
 
 <body>
+    <nav class="back-nav">
+        <div class="back-nav-left">
+            <span>AI_ORCH / DOCS</span>
+            <span style="color:var(--border2)">/</span>
+            <span>Media Intelligence Platform</span>
+        </div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </nav>
     <div class="container">
 
         <!-- Header -->
@@ -1288,9 +1352,9 @@
         <!-- Footer -->
         <div
             style="border-top: 1px solid var(--border); margin-top: 56px; padding-top: 20px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">SANKHYA CORE TEAM · FEB
+            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">LIVINGAI TEAM · FEB
                 22 PRESENTATION</span>
-            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">TEAM B: AMEYA · SAIRAJ ·
+            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">TEAM B: AMEY · SAIRAJ ·
                 CHANDRESH</span>
         </div>
 

@@ -632,6 +632,44 @@
             }
         }
 
+        /* ── PRESENTATION MODE BUTTON ── */
+        .present-btn {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--dim);
+            background: rgba(129, 140, 248, 0.08);
+            border: 1px solid var(--border2);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .present-btn:hover {
+            color: var(--violet);
+            border-color: rgba(129, 140, 248, 0.5);
+            background: rgba(129, 140, 248, 0.12);
+        }
+
+        body.present-mode {
+            cursor: none;
+        }
+
+        body.present-mode .nav-meta,
+        body.present-mode .footer {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        body.present-mode .present-btn {
+            color: var(--green);
+            border-color: rgba(74, 222, 128, 0.5);
+            background: rgba(74, 222, 128, 0.08);
+            cursor: default;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 640px) {
             .hero h1 {
@@ -671,7 +709,8 @@
                 <div class="dot"></div>
                 <span class="brand">AI_ORCH / DOCS</span>
             </div>
-            <div class="nav-meta">v1.0 · 2025</div>
+            <div class="nav-meta">v1.0 · Feb 2026</div>
+            <button class="present-btn" onclick="togglePresent()" title="Presentation Mode">⛶ Present</button>
         </nav>
 
         <!-- HERO -->
@@ -740,7 +779,7 @@
                 <a href="Doc.html" class="doc-card card-teal">
                     <div class="card-top-bar"></div>
                     <div class="card-icon">⚡</div>
-                    <div class="card-tag">Demo · Sankhya · Feb 2025</div>
+                    <div class="card-tag">Demo · LivingAI · Feb 2026</div>
                     <div class="card-title">MCP Multi-Agent Orchestrator</div>
                     <p class="card-desc">
                         Smart task dashboard powered by an MCP server-based multi-agent system — Planner, Prioritizer,
@@ -817,6 +856,37 @@
         </footer>
 
     </div>
+
+    <script>
+        function togglePresent() {
+            const body = document.body;
+            const btn = document.querySelector('.present-btn');
+            const inPresent = body.classList.toggle('present-mode');
+
+            if (inPresent) {
+                btn.textContent = '✕ Exit';
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(() => { });
+                }
+                body.style.cursor = 'auto';
+            } else {
+                btn.textContent = '⛶ Present';
+                if (document.fullscreenElement && document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => { });
+                }
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                const body = document.body;
+                if (body.classList.contains('present-mode')) {
+                    body.classList.remove('present-mode');
+                    document.querySelector('.present-btn').textContent = '⛶ Present';
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

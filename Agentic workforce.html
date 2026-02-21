@@ -828,9 +828,20 @@
             border: 1px solid var(--border2);
         }
 
-        .rv.sec { color: var(--sec); border-color: rgba(255,123,114,0.3); }
-        .rv.test { color: var(--test); border-color: rgba(255,166,87,0.3); }
-        .rv.perf { color: var(--arch); border-color: rgba(121,192,255,0.3); }
+        .rv.sec {
+            color: var(--sec);
+            border-color: rgba(255, 123, 114, 0.3);
+        }
+
+        .rv.test {
+            color: var(--test);
+            border-color: rgba(255, 166, 87, 0.3);
+        }
+
+        .rv.perf {
+            color: var(--arch);
+            border-color: rgba(121, 192, 255, 0.3);
+        }
 
         .phase-label {
             font-family: 'IBM Plex Mono', monospace;
@@ -865,9 +876,23 @@
             border-radius: 3px;
         }
 
-        .bug-chip.p0 { background: rgba(255,123,114,0.12); border: 1px solid rgba(255,123,114,0.35); color: var(--sec); }
-        .bug-chip.p1 { background: rgba(255,166,87,0.12); border: 1px solid rgba(255,166,87,0.35); color: var(--test); }
-        .bug-chip.p3 { background: rgba(126,231,135,0.08); border: 1px solid rgba(126,231,135,0.25); color: var(--back); }
+        .bug-chip.p0 {
+            background: rgba(255, 123, 114, 0.12);
+            border: 1px solid rgba(255, 123, 114, 0.35);
+            color: var(--sec);
+        }
+
+        .bug-chip.p1 {
+            background: rgba(255, 166, 87, 0.12);
+            border: 1px solid rgba(255, 166, 87, 0.35);
+            color: var(--test);
+        }
+
+        .bug-chip.p3 {
+            background: rgba(126, 231, 135, 0.08);
+            border: 1px solid rgba(126, 231, 135, 0.25);
+            color: var(--back);
+        }
 
         /* ── RISK TABLE ── */
         .risk-grid {
@@ -918,14 +943,14 @@
         }
 
         .status-built {
-            background: rgba(126,231,135,0.1);
-            border: 1px solid rgba(126,231,135,0.3);
+            background: rgba(126, 231, 135, 0.1);
+            border: 1px solid rgba(126, 231, 135, 0.3);
             color: var(--back);
         }
 
         .status-planned {
-            background: rgba(121,192,255,0.08);
-            border: 1px solid rgba(121,192,255,0.25);
+            background: rgba(121, 192, 255, 0.08);
+            border: 1px solid rgba(121, 192, 255, 0.25);
             color: var(--arch);
         }
 
@@ -991,10 +1016,65 @@
                 align-items: center;
             }
         }
+
+        /* ── BACK NAV ── */
+        .back-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(8, 12, 16, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border2);
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .back-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--orch);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border: 1px solid rgba(240, 230, 140, 0.25);
+            border-radius: 5px;
+            background: rgba(240, 230, 140, 0.05);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: rgba(240, 230, 140, 0.1);
+            border-color: rgba(240, 230, 140, 0.5);
+        }
     </style>
 </head>
 
 <body>
+    <nav class="back-nav">
+        <div class="back-nav-left">
+            <span>AI_ORCH / DOCS</span>
+            <span style="color:var(--dim)">/</span>
+            <span>Autonomous Agent Factory</span>
+        </div>
+        <a href="index.html" class="back-link">← Back to Hub</a>
+    </nav>
     <div class="wrap">
 
         <!-- Header -->
@@ -1055,7 +1135,8 @@
                     </div>
                     <div class="phil-item">
                         <h4>Prompt Versioning</h4>
-                        <p>Every agent system prompt lives in <code>prompts/&lt;agent&gt;.md</code>. Changing a prompt = a PR.
+                        <p>Every agent system prompt lives in <code>prompts/&lt;agent&gt;.md</code>. Changing a prompt =
+                            a PR.
                             Full diff history, rollback capability, and prompt performance tracking built in.</p>
                     </div>
                     <div class="phil-item">
@@ -1078,7 +1159,8 @@
         <div class="sec">
             <div class="sec-title"><span>01</span> — Full Autonomous Pipeline</div>
             <div class="flow-diagram">
-                <div class="flow-label">// 4-PHASE GATED PIPELINE · 10 AGENTS · MCP TOOLS · AUTO-COMMIT ON EVERY FILE CHANGE</div>
+                <div class="flow-label">// 4-PHASE GATED PIPELINE · 10 AGENTS · MCP TOOLS · AUTO-COMMIT ON EVERY FILE
+                    CHANGE</div>
 
                 <!-- ── PHASE 0: INTAKE ── -->
                 <div class="phase-label">PHASE 0 — REQUIREMENT INTAKE</div>
@@ -1096,7 +1178,8 @@
                 <div class="orch-box" style="border-color:rgba(240,207,101,0.5);">
                     <div class="label">PHASE 0 · REASONING TIER</div>
                     <div class="title" style="color:var(--orch);">🔎 Requirements Refiner</div>
-                    <div class="detail">clarifies ambiguity · recommends tech stack · critiques conflicts · waits for user confirmation</div>
+                    <div class="detail">clarifies ambiguity · recommends tech stack · critiques conflicts · waits for
+                        user confirmation</div>
                 </div>
 
                 <div class="vc arrow"></div>
@@ -1106,7 +1189,8 @@
                 <div class="orch-box">
                     <div class="label">PLANNING · REASONING TIER</div>
                     <div class="title">🧠 Lead / Project Manager</div>
-                    <div class="detail">decomposes into task graph · assigns agents · file-conflict-safe chunking · manages retries</div>
+                    <div class="detail">decomposes into task graph · assigns agents · file-conflict-safe chunking ·
+                        manages retries</div>
                 </div>
 
                 <!-- ── PHASE 1: ARCHITECTURE ── -->
@@ -1261,11 +1345,13 @@
                 <div class="human-node" style="border-color:rgba(255,123,114,0.4);">
                     <div class="label" style="color:rgba(255,123,114,0.6);">GATES</div>
                     <div class="title" style="color:var(--sec);">🚦 Human Decision Points</div>
-                    <div class="detail">stack confirm · arch sign-off · security policy · credentials · scope changes</div>
+                    <div class="detail">stack confirm · arch sign-off · security policy · credentials · scope changes
+                    </div>
                 </div>
 
                 <div class="vc arrow"></div>
-                <div class="vc-label">approved → agents continue · every file write auto-committed to feature branch</div>
+                <div class="vc-label">approved → agents continue · every file write auto-committed to feature branch
+                </div>
                 <div class="vc arrow"></div>
 
                 <!-- Output -->
@@ -1301,7 +1387,8 @@
                         <td style="color:var(--orch);">Requirements Refiner</td>
                         <td>Intercepts raw user input. Asks clarifying questions if vague. Surfaces conflicts.
                             Recommends tech stack with rationale. Waits for explicit user confirmation before locking
-                            <code>RefinedSpec</code>. Critiques contradictions with past decisions.</td>
+                            <code>RefinedSpec</code>. Critiques contradictions with past decisions.
+                        </td>
                         <td><span class="chip chip-k">ask_human</span></td>
                         <td>Only sees: raw user input + past RefinedSpec from long-term memory.</td>
                         <td>Always — for stack confirmation, ambiguities, and conflict resolution</td>
@@ -1312,8 +1399,10 @@
                         <td>Reads confirmed RefinedSpec. Builds task DAG. Assigns agents. Chunks dev work into
                             file-conflict-safe units (FileLockManager). Assigns bug severity after Tester reports.
                             Re-plans on failures.</td>
-                        <td><span class="chip chip-k">list_files</span> <span class="chip chip-k">git_log</span> <span class="chip chip-k">ask_human</span></td>
-                        <td>Maintains <code>build_state.json</code>. Never loads full code — only summaries and diffs.</td>
+                        <td><span class="chip chip-k">list_files</span> <span class="chip chip-k">git_log</span> <span
+                                class="chip chip-k">ask_human</span></td>
+                        <td>Maintains <code>build_state.json</code>. Never loads full code — only summaries and diffs.
+                        </td>
                         <td>Bug severity triage, scope changes, 3+ consecutive agent failures</td>
                     </tr>
                     <tr>
@@ -1321,8 +1410,10 @@
                         <td style="color:var(--arch);">Architect</td>
                         <td>Reads confirmed TechStack from RefinedSpec. Designs folder structure, API contracts, DB
                             schema, module boundaries. Writes <code>SystemDesignPlan.md</code> and
-                            <code>TestArchitecturePlan.md</code> to shared state before any dev work begins.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">search_codebase</span></td>
+                            <code>TestArchitecturePlan.md</code> to shared state before any dev work begins.
+                        </td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">search_codebase</span></td>
                         <td>Only sees: RefinedSpec + existing architecture docs. No implementation code.</td>
                         <td>Conflicting non-functional requirements, third-party API choices not in TechStack</td>
                     </tr>
@@ -1331,8 +1422,9 @@
                         <td style="color:var(--sec);">Security Reviewer</td>
                         <td>Reviews architecture plans and code diffs for injection risks, exposed secrets, CORS
                             misconfiguration, auth flaws, insecure deps. Runs bandit/safety. <strong>Blocks the
-                            review gate</strong> if critical issues found. Returns structured verdict.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">git_diff</span> <span class="chip chip-k">search_codebase</span></td>
+                                review gate</strong> if critical issues found. Returns structured verdict.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">git_diff</span> <span
+                                class="chip chip-k">search_codebase</span></td>
                         <td>Sees: only the diff or plan under review. Never the full codebase.</td>
                         <td>Critical auth flaw or vulnerability with no clear code-level fix</td>
                     </tr>
@@ -1342,7 +1434,8 @@
                         <td>Reviews test plans and code for coverage gaps, missing edge cases, untested error paths,
                             missing integration tests. Checks that test architecture aligns with the system design.
                             Returns structured verdict with specific gaps.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span>
+                        </td>
                         <td>Sees: TestArchitecturePlan + diff under review. Nothing else.</td>
                         <td>Test reveals a spec logic error that requires requirement change</td>
                     </tr>
@@ -1352,7 +1445,8 @@
                         <td>Reviews architecture and code for N+1 queries, blocking calls in async paths, unbounded
                             memory growth, missing indexes, unscalable patterns. Returns structured verdict with
                             line-level callouts.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span>
+                        </td>
                         <td>Sees: only the diff or plan. No runtime profiling — static analysis only.</td>
                         <td>Architecture-level perf issue that requires design change</td>
                     </tr>
@@ -1362,7 +1456,9 @@
                         <td>Implements code per SystemDesignPlan. File-lock aware — only edits files assigned by Lead.
                             Iterates on review feedback (feedback injected into context). Runs code in sandbox to
                             verify before committing.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span class="chip chip-k">shell</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span
+                                class="chip chip-k">shell</span> <span class="chip chip-k">search_codebase</span></td>
                         <td>Sees: SystemDesignPlan + only files assigned to it by FileLockManager.</td>
                         <td>Never. Fixes its own bugs. Calls ask_human only for genuine spec ambiguity.</td>
                     </tr>
@@ -1372,7 +1468,8 @@
                         <td>Runs in parallel with Developer. Writes README, inline docstrings, OpenAPI docs, setup
                             guide, and <code>AGENTS.md</code> logging every agent's contribution. Triggered after each
                             module is code-complete.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">search_codebase</span></td>
                         <td>Sees: only the module it is documenting. Requests context via search_codebase.</td>
                         <td>Never. Fully autonomous.</td>
                     </tr>
@@ -1382,7 +1479,9 @@
                         <td>Executes the test framework against all code. Produces a structured <code>BugReport</code>
                             with each bug's error, stack trace, affected files, and reproduction steps. Does not fix
                             bugs — only reports them.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">execute_code</span> <span class="chip chip-k">run_tests</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">execute_code</span>
+                            <span class="chip chip-k">run_tests</span>
+                        </td>
                         <td>Sees: test suite + the module under test. Test results only.</td>
                         <td>Test reveals a spec logic error that changes requirements</td>
                     </tr>
@@ -1392,7 +1491,9 @@
                         <td>Receives BugReport entry + git log for affected files + full file contents. Diagnoses root
                             cause using commit history context. Fixes the bug, verifies in sandbox, commits fix. Fix
                             then goes to Review Gate 3.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">edit_file</span> <span class="chip chip-k">shell</span> <span class="chip chip-k">git_log</span> <span class="chip chip-k">execute_code</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">shell</span> <span
+                                class="chip chip-k">git_log</span> <span class="chip chip-k">execute_code</span></td>
                         <td>Sees: BugReport entry + git_log for affected files + those files only.</td>
                         <td>Never. Escalates only to Tester for re-verification.</td>
                     </tr>
@@ -1458,7 +1559,8 @@
                     <p>The Requirements Refiner presents its recommended technology stack (framework, database, infra,
                         testing tools) with rationale for each choice. Human confirms or overrides individual items.
                         <code>RefinedSpec</code> is locked only after explicit confirmation — no assumptions are
-                        built in.</p>
+                        built in.
+                    </p>
                     <div class="cp-trigger">TRIGGER: Requirements Refiner finishes initial analysis</div>
                 </div>
                 <div class="cp-card advisory">
@@ -2151,10 +2253,10 @@ Rules:
         <!-- Footer -->
         <div
             style="border-top:1px solid var(--border2); margin-top:48px; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim);">SANKHYA · TEAM B ·
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim);">LIVINGAI · TEAM B ·
                 AUTONOMOUS BUILD SYSTEM</span>
-            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim);">pip install anthropic
-                mcp yt-dlp openai-whisper</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim);">TEAM B: AMEY · SAIRAJ
+                · CHANDRESH</span>
         </div>
 
     </div>
