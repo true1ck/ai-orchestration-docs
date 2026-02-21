@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Multi-Agent Orchestrator — Sankhya Demo</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a26;
+            --border: #2a2a40;
+            --accent: #5b4fff;
+            --accent2: #ff4f8b;
+            --accent3: #4fffd4;
+            --text: #e8e8f0;
+            --muted: #6b6b8a;
+            --glow: rgba(91, 79, 255, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Syne', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Noise grain overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.4;
+        }
+
+        /* Animated background grid */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(91, 79, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(91, 79, 255, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 60px 60px;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 64px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .header .tag {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 4px 12px;
+            border-radius: 2px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            background: rgba(91, 79, 255, 0.08);
+        }
+
+        .header h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        .header h1 span {
+            color: var(--accent);
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 15px;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent3);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        /* Architecture Diagram */
+        .arch-diagram {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px 32px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.1s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arch-diagram::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse, rgba(91, 79, 255, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Flow Layout */
+        .flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+        }
+
+        /* Nodes */
+        .node {
+            border-radius: 10px;
+            padding: 16px 24px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: default;
+        }
+
+        .node:hover {
+            transform: translateY(-3px);
+        }
+
+        .node-label {
+            font-size: 11px;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+
+        .node-title {
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .node-sub {
+            font-size: 10px;
+            font-family: 'Space Mono', monospace;
+            margin-top: 4px;
+            opacity: 0.5;
+        }
+
+        /* Node types */
+        .node-user {
+            background: rgba(255, 79, 139, 0.12);
+            border: 1.5px solid rgba(255, 79, 139, 0.5);
+            box-shadow: 0 0 24px rgba(255, 79, 139, 0.08);
+        }
+
+        .node-user .node-title {
+            color: var(--accent2);
+        }
+
+        .node-user:hover {
+            box-shadow: 0 8px 32px rgba(255, 79, 139, 0.2);
+        }
+
+        .node-orchestrator {
+            background: rgba(91, 79, 255, 0.15);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 40px rgba(91, 79, 255, 0.2);
+            min-width: 240px;
+            padding: 20px 32px;
+        }
+
+        .node-orchestrator .node-title {
+            color: #a89fff;
+            font-size: 18px;
+        }
+
+        .node-orchestrator:hover {
+            box-shadow: 0 8px 48px rgba(91, 79, 255, 0.35);
+        }
+
+        .node-mcp {
+            background: rgba(79, 255, 212, 0.08);
+            border: 1.5px solid rgba(79, 255, 212, 0.35);
+            box-shadow: 0 0 20px rgba(79, 255, 212, 0.05);
+        }
+
+        .node-mcp .node-title {
+            color: var(--accent3);
+        }
+
+        .node-mcp:hover {
+            box-shadow: 0 8px 28px rgba(79, 255, 212, 0.15);
+        }
+
+        .node-agent {
+            background: rgba(255, 195, 79, 0.08);
+            border: 1.5px solid rgba(255, 195, 79, 0.3);
+            min-width: 160px;
+        }
+
+        .node-agent .node-title {
+            color: #ffc34f;
+            font-size: 13px;
+        }
+
+        .node-agent:hover {
+            box-shadow: 0 6px 24px rgba(255, 195, 79, 0.15);
+        }
+
+        .node-output {
+            background: rgba(120, 255, 100, 0.07);
+            border: 1.5px solid rgba(120, 255, 100, 0.3);
+        }
+
+        .node-output .node-title {
+            color: #78ff64;
+            font-size: 13px;
+        }
+
+        /* Arrows */
+        .arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .arrow-v {
+            width: 2px;
+            height: 32px;
+            background: linear-gradient(180deg, var(--accent), var(--accent3));
+            position: relative;
+            margin: 4px auto;
+        }
+
+        .arrow-v::after {
+            content: '▼';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--accent3);
+        }
+
+        .arrow-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            margin: 2px 0;
+        }
+
+        .arrow-h {
+            width: 32px;
+            height: 2px;
+            background: rgba(255, 195, 79, 0.4);
+            position: relative;
+        }
+
+        .arrow-h::after {
+            content: '▶';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8px;
+            color: rgba(255, 195, 79, 0.6);
+        }
+
+        /* Agents row */
+        .agents-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        .mcp-box {
+            background: rgba(79, 255, 212, 0.05);
+            border: 1px dashed rgba(79, 255, 212, 0.25);
+            border-radius: 12px;
+            padding: 20px 24px;
+            width: 100%;
+            max-width: 780px;
+        }
+
+        .mcp-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--accent3);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 16px;
+            opacity: 0.7;
+        }
+
+        /* Agent Cards */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.2s ease both;
+        }
+
+        .agent-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            transition: border-color 0.2s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .agent-card.orchestrator::before {
+            background: linear-gradient(90deg, var(--accent), #9b4fff);
+        }
+
+        .agent-card.planner::before {
+            background: linear-gradient(90deg, #4fffd4, #4f9fff);
+        }
+
+        .agent-card.prioritizer::before {
+            background: linear-gradient(90deg, #ffc34f, #ff7f4f);
+        }
+
+        .agent-card.reviewer::before {
+            background: linear-gradient(90deg, #ff4f8b, #ff4f4f);
+        }
+
+        .agent-card.summarizer::before {
+            background: linear-gradient(90deg, #78ff64, #4fffd4);
+        }
+
+        .agent-badge {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            padding: 3px 10px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .orchestrator .agent-badge {
+            background: rgba(91, 79, 255, 0.15);
+            color: #a89fff;
+            border: 1px solid rgba(91, 79, 255, 0.3);
+        }
+
+        .planner .agent-badge {
+            background: rgba(79, 255, 212, 0.1);
+            color: var(--accent3);
+            border: 1px solid rgba(79, 255, 212, 0.25);
+        }
+
+        .prioritizer .agent-badge {
+            background: rgba(255, 195, 79, 0.1);
+            color: #ffc34f;
+            border: 1px solid rgba(255, 195, 79, 0.25);
+        }
+
+        .reviewer .agent-badge {
+            background: rgba(255, 79, 139, 0.1);
+            color: var(--accent2);
+            border: 1px solid rgba(255, 79, 139, 0.25);
+        }
+
+        .summarizer .agent-badge {
+            background: rgba(120, 255, 100, 0.1);
+            color: #78ff64;
+            border: 1px solid rgba(120, 255, 100, 0.25);
+        }
+
+        .agent-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .agent-card .description {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .agent-card .tools-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tool-chip {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        /* Code template section */
+        .code-section {
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.3s ease both;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 10px 18px;
+            cursor: pointer;
+            color: var(--muted);
+            border-radius: 6px 6px 0 0;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+            border-bottom: none;
+            transition: all 0.15s;
+            background: transparent;
+            outline: none;
+        }
+
+        .tab.active {
+            color: var(--text);
+            background: var(--surface2);
+            border-color: var(--border);
+            border-bottom-color: var(--surface2);
+            margin-bottom: -1px;
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .code-block {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 28px;
+            display: none;
+            position: relative;
+        }
+
+        .code-block.active {
+            display: block;
+        }
+
+        .code-block pre {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            line-height: 1.75;
+            color: #c9d1d9;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Syntax highlight colors */
+        .k {
+            color: #ff79c6;
+        }
+
+        /* keyword */
+        .s {
+            color: #f1fa8c;
+        }
+
+        /* string */
+        .c {
+            color: #6272a4;
+        }
+
+        /* comment */
+        .n {
+            color: #8be9fd;
+        }
+
+        /* name/function */
+        .v {
+            color: #bd93f9;
+        }
+
+        /* var/const */
+        .b {
+            color: #50fa7b;
+        }
+
+        /* bool/special */
+        .p {
+            color: #ff6e6e;
+        }
+
+        /* param */
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            padding: 5px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.15s;
+        }
+
+        .copy-btn:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        /* Flow steps */
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.35s ease both;
+        }
+
+        .step {
+            background: var(--surface);
+            padding: 20px;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .step:hover {
+            background: var(--surface2);
+        }
+
+        .step-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .step-text {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .step-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Pulse on orchestrator */
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(91, 79, 255, 0.4), 0 0 40px rgba(91, 79, 255, 0.2);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(91, 79, 255, 0), 0 0 40px rgba(91, 79, 255, 0.2);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(91, 79, 255, 0), 0 0 40px rgba(91, 79, 255, 0.2);
+            }
+        }
+
+        .node-orchestrator {
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        /* Connector lines in diagram */
+        .connector-v {
+            width: 2px;
+            min-height: 28px;
+            background: linear-gradient(180deg, rgba(91, 79, 255, 0.6), rgba(79, 255, 212, 0.4));
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .connector-v.down::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top: 6px solid rgba(79, 255, 212, 0.6);
+        }
+
+        .bidirect {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .bi-line {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bi-line::before,
+        .bi-line::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: rgba(91, 79, 255, 0.4);
+        }
+
+        .fan-lines {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            height: 32px;
+            margin: 4px auto;
+        }
+
+        .fan-lines::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 100%;
+            background: rgba(91, 79, 255, 0.3);
+        }
+
+        .fan-line {
+            width: 1px;
+            height: 100%;
+            background: rgba(255, 195, 79, 0.4);
+        }
+
+        @media (max-width: 640px) {
+            .agents-row {
+                flex-direction: column;
+            }
+
+            .flow-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="tag">Sankhya Team — Feb 22 Demo</div>
+            <h1>MCP Multi-Agent<br><span>Orchestrator</span> Architecture</h1>
+            <p>// smart task dashboard · mcp server-based · zero manual code</p>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="arch-diagram">
+            <div class="section-title">01 — Architecture Flow</div>
+            <div class="flow">
+
+                <!-- User -->
+                <div class="flow-row">
+                    <div class="node node-user">
+                        <div class="node-label">Input</div>
+                        <div class="node-title">👤 Human</div>
+                        <div class="node-sub">types project goal</div>
+                    </div>
+                </div>
+
+                <!-- Arrow down -->
+                <div class="connector-v down" style="height:32px;"></div>
+                <div class="bi-line">natural language request</div>
+                <div class="connector-v down" style="height:12px;"></div>
+
+                <!-- Orchestrator -->
+                <div class="flow-row">
+                    <div class="node node-orchestrator">
+                        <div class="node-label">Central Brain</div>
+                        <div class="node-title">🧠 Orchestrator Agent</div>
+                        <div class="node-sub">claude-sonnet-4-6 · intent router</div>
+                    </div>
+                </div>
+
+                <!-- Arrow fan out to MCP -->
+                <div class="connector-v down" style="height:32px;"></div>
+                <div class="bi-line">tool_use calls via MCP protocol</div>
+                <div class="connector-v down" style="height:12px;"></div>
+
+                <!-- MCP server box -->
+                <div class="mcp-box">
+                    <div class="mcp-label">⚡ MCP Server — Exposed Tool Endpoints</div>
+                    <div class="agents-row">
+                        <div class="node node-agent">
+                            <div class="node-label">Tool 1</div>
+                            <div class="node-title">📋 Planner</div>
+                            <div class="node-sub">breaks goal → tasks</div>
+                        </div>
+                        <div class="node node-agent">
+                            <div class="node-label">Tool 2</div>
+                            <div class="node-title">⚡ Prioritizer</div>
+                            <div class="node-sub">assigns urgency</div>
+                        </div>
+                        <div class="node node-agent">
+                            <div class="node-label">Tool 3</div>
+                            <div class="node-title">🔍 Reviewer</div>
+                            <div class="node-sub">QA + completeness</div>
+                        </div>
+                        <div class="node node-agent">
+                            <div class="node-label">Tool 4</div>
+                            <div class="node-title">📊 Summarizer</div>
+                            <div class="node-sub">final report</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arrow down to output -->
+                <div class="connector-v down" style="height:32px;"></div>
+                <div class="bi-line">structured JSON → dashboard</div>
+                <div class="connector-v down" style="height:12px;"></div>
+
+                <!-- Output -->
+                <div class="flow-row">
+                    <div class="node node-output">
+                        <div class="node-label">Output</div>
+                        <div class="node-title">✅ Live Task Dashboard</div>
+                        <div class="node-sub">auto-populated · no manual code</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Execution Steps -->
+        <div class="section-title">02 — Execution Flow (Step by Step)</div>
+        <div class="flow-steps" style="border-radius:10px;overflow:hidden;margin-bottom:48px;">
+            <div class="step">
+                <div class="step-num">STEP 01</div>
+                <div class="step-title">User Input</div>
+                <div class="step-text">User types: "Build a mobile e-commerce app with payments"</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 02</div>
+                <div class="step-title">Orchestrator Routes</div>
+                <div class="step-text">Analyzes intent, decides which MCP tool calls to make and in what order</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 03</div>
+                <div class="step-title">Planner Agent</div>
+                <div class="step-text">Returns structured list of dev tasks: auth, cart, checkout, etc.</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 04</div>
+                <div class="step-title">Prioritizer Agent</div>
+                <div class="step-text">Tags each task with priority + estimated time. Detects blockers.</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 05</div>
+                <div class="step-title">Reviewer Agent</div>
+                <div class="step-text">Checks for missing pieces, edge cases, security concerns.</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 06</div>
+                <div class="step-title">Summarizer Agent</div>
+                <div class="step-text">Produces final dashboard-ready JSON: tasks, owners, timeline.</div>
+            </div>
+        </div>
+
+        <!-- Agent Role Cards -->
+        <div class="section-title">03 — Agent Role Definitions</div>
+        <div class="agents-grid">
+
+            <div class="agent-card orchestrator">
+                <div class="agent-badge">Orchestrator</div>
+                <h3>🧠 Central Router</h3>
+                <p class="description">The brain. Receives the user's natural language goal, decides the sequence of
+                    agent calls, passes context between agents, and assembles the final output. Handles retries if an
+                    agent returns incomplete data.</p>
+                <div class="tools-label">MCP Tools it calls</div>
+                <div class="tools-list">
+                    <span class="tool-chip">plan_tasks</span>
+                    <span class="tool-chip">set_priorities</span>
+                    <span class="tool-chip">review_output</span>
+                    <span class="tool-chip">summarize</span>
+                </div>
+            </div>
+
+            <div class="agent-card planner">
+                <div class="agent-badge">Agent 1</div>
+                <h3>📋 Planner</h3>
+                <p class="description">Receives a project goal string. Returns a JSON array of tasks with title,
+                    description, and category (frontend/backend/devops/etc.). Context window stays small — focused on
+                    decomposition only.</p>
+                <div class="tools-label">Exposed as MCP tool</div>
+                <div class="tools-list">
+                    <span class="tool-chip">plan_tasks(goal)</span>
+                    <span class="tool-chip">→ Task[]</span>
+                </div>
+            </div>
+
+            <div class="agent-card prioritizer">
+                <div class="agent-badge">Agent 2</div>
+                <h3>⚡ Prioritizer</h3>
+                <p class="description">Takes the task list from Planner. Assigns P0/P1/P2 urgency, estimated hours, and
+                    dependency chains. Flags which tasks block others. Output feeds directly into the dashboard's kanban
+                    columns.</p>
+                <div class="tools-label">Exposed as MCP tool</div>
+                <div class="tools-list">
+                    <span class="tool-chip">set_priorities(tasks[])</span>
+                    <span class="tool-chip">→ PrioritizedTask[]</span>
+                </div>
+            </div>
+
+            <div class="agent-card reviewer">
+                <div class="agent-badge">Agent 3</div>
+                <h3>🔍 Reviewer</h3>
+                <p class="description">Acts as a critical QA agent. Reviews the full prioritized plan and returns a list
+                    of gaps, missing edge cases, security concerns, or over-scoped tasks. Orchestrator can loop this
+                    back to Planner if needed.</p>
+                <div class="tools-label">Exposed as MCP tool</div>
+                <div class="tools-list">
+                    <span class="tool-chip">review_plan(tasks[])</span>
+                    <span class="tool-chip">→ ReviewFeedback</span>
+                </div>
+            </div>
+
+            <div class="agent-card summarizer">
+                <div class="agent-badge">Agent 4</div>
+                <h3>📊 Summarizer</h3>
+                <p class="description">Takes all agent outputs and produces the final dashboard JSON: a human-readable
+                    project brief, task counts by category, a markdown changelog, and a completion estimate. This is
+                    what populates the UI.</p>
+                <div class="tools-label">Exposed as MCP tool</div>
+                <div class="tools-list">
+                    <span class="tool-chip">summarize(allData)</span>
+                    <span class="tool-chip">→ DashboardPayload</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Code Templates -->
+        <div class="section-title">04 — Code &amp; Prompt Templates</div>
+        <div class="code-section">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('mcp-server')">MCP Server</button>
+                <button class="tab" onclick="showTab('orchestrator')">Orchestrator</button>
+                <button class="tab" onclick="showTab('agent-prompt')">Agent Prompts</button>
+                <button class="tab" onclick="showTab('client')">Client Usage</button>
+            </div>
+
+            <!-- MCP Server -->
+            <div class="code-block active" id="mcp-server">
+                <button class="copy-btn" onclick="copyCode('mcp-server')">COPY</button>
+                <pre><span class="c"># mcp_server.py — expose each agent as an MCP tool</span>
+<span class="k">from</span> mcp.server <span class="k">import</span> Server, Tool
+<span class="k">from</span> mcp.server.stdio <span class="k">import</span> stdio_server
+<span class="k">import</span> anthropic, json
+
+<span class="v">client</span> = anthropic.Anthropic()
+<span class="v">app</span> = Server(<span class="s">"task-orchestrator"</span>)
+
+<span class="c"># ── Tool 1: Planner ────────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">plan_tasks</span>(<span class="p">goal</span>: str) -> dict:
+    <span class="s">"""Break a project goal into development tasks."""</span>
+    resp = client.messages.create(
+        model=<span class="s">"claude-sonnet-4-6"</span>,
+        max_tokens=<span class="b">1000</span>,
+        system=PLANNER_PROMPT,
+        messages=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: goal}]
+    )
+    <span class="k">return</span> json.loads(resp.content[<span class="b">0</span>].text)
+
+<span class="c"># ── Tool 2: Prioritizer ────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">set_priorities</span>(<span class="p">tasks</span>: list) -> dict:
+    <span class="s">"""Assign priorities and time estimates to tasks."""</span>
+    resp = client.messages.create(
+        model=<span class="s">"claude-sonnet-4-6"</span>,
+        max_tokens=<span class="b">1200</span>,
+        system=PRIORITIZER_PROMPT,
+        messages=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: json.dumps(tasks)}]
+    )
+    <span class="k">return</span> json.loads(resp.content[<span class="b">0</span>].text)
+
+<span class="c"># ── Tool 3: Reviewer ───────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">review_plan</span>(<span class="p">tasks</span>: list) -> dict:
+    <span class="s">"""QA the plan — find gaps, risks, missing tasks."""</span>
+    resp = client.messages.create(
+        model=<span class="s">"claude-sonnet-4-6"</span>,
+        max_tokens=<span class="b">800</span>,
+        system=REVIEWER_PROMPT,
+        messages=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: json.dumps(tasks)}]
+    )
+    <span class="k">return</span> json.loads(resp.content[<span class="b">0</span>].text)
+
+<span class="c"># ── Tool 4: Summarizer ─────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">summarize</span>(<span class="p">all_data</span>: dict) -> dict:
+    <span class="s">"""Produce final dashboard payload from all outputs."""</span>
+    resp = client.messages.create(
+        model=<span class="s">"claude-sonnet-4-6"</span>,
+        max_tokens=<span class="b">1500</span>,
+        system=SUMMARIZER_PROMPT,
+        messages=[{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: json.dumps(all_data)}]
+    )
+    <span class="k">return</span> json.loads(resp.content[<span class="b">0</span>].text)
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    <span class="k">import</span> asyncio
+    asyncio.run(stdio_server(app))</pre>
+            </div>
+
+            <!-- Orchestrator -->
+            <div class="code-block" id="orchestrator">
+                <button class="copy-btn" onclick="copyCode('orchestrator')">COPY</button>
+                <pre><span class="c"># orchestrator.py — calls MCP tools in sequence</span>
+<span class="k">import</span> anthropic, json
+<span class="k">from</span> mcp <span class="k">import</span> ClientSession, StdioServerParameters
+<span class="k">from</span> mcp.client.stdio <span class="k">import</span> stdio_client
+
+<span class="k">async def</span> <span class="n">run_pipeline</span>(<span class="p">user_goal</span>: str):
+    <span class="v">server_params</span> = StdioServerParameters(
+        command=<span class="s">"python"</span>,
+        args=[<span class="s">"mcp_server.py"</span>]
+    )
+
+    <span class="k">async with</span> stdio_client(server_params) <span class="k">as</span> (read, write):
+        <span class="k">async with</span> ClientSession(read, write) <span class="k">as</span> session:
+            <span class="k">await</span> session.initialize()
+
+            <span class="c"># Step 1: Plan</span>
+            <span class="v">tasks</span> = <span class="k">await</span> session.call_tool(
+                <span class="s">"plan_tasks"</span>, {<span class="s">"goal"</span>: user_goal}
+            )
+            print(<span class="s">f"✅ Planner: {len(tasks['tasks'])} tasks created"</span>)
+
+            <span class="c"># Step 2: Prioritize</span>
+            <span class="v">prioritized</span> = <span class="k">await</span> session.call_tool(
+                <span class="s">"set_priorities"</span>, {<span class="s">"tasks"</span>: tasks[<span class="s">"tasks"</span>]}
+            )
+            print(<span class="s">"✅ Prioritizer: urgency + estimates assigned"</span>)
+
+            <span class="c"># Step 3: Review (with optional loop)</span>
+            <span class="v">review</span> = <span class="k">await</span> session.call_tool(
+                <span class="s">"review_plan"</span>, {<span class="s">"tasks"</span>: prioritized[<span class="s">"tasks"</span>]}
+            )
+            <span class="k">if</span> review[<span class="s">"gaps_found"</span>] > <span class="b">0</span>:
+                print(<span class="s">f"⚠️  Reviewer flagged {review['gaps_found']} issues — re-planning..."</span>)
+                <span class="c"># could loop back to planner here</span>
+
+            <span class="c"># Step 4: Summarize → Dashboard</span>
+            <span class="v">dashboard</span> = <span class="k">await</span> session.call_tool(
+                <span class="s">"summarize"</span>, {<span class="s">"all_data"</span>: {
+                    <span class="s">"goal"</span>: user_goal,
+                    <span class="s">"tasks"</span>: prioritized,
+                    <span class="s">"review"</span>: review
+                }}
+            )
+            print(<span class="s">"✅ Dashboard ready!"</span>)
+            <span class="k">return</span> dashboard
+
+<span class="c"># Entry point</span>
+<span class="k">import</span> asyncio
+<span class="v">goal</span> = input(<span class="s">"Enter project goal: "</span>)
+<span class="v">result</span> = asyncio.run(run_pipeline(goal))
+print(json.dumps(result, indent=<span class="b">2</span>))</pre>
+            </div>
+
+            <!-- Agent Prompts -->
+            <div class="code-block" id="agent-prompt">
+                <button class="copy-btn" onclick="copyCode('agent-prompt')">COPY</button>
+                <pre><span class="c"># agent_prompts.py — system prompts for each agent</span>
+
+<span class="v">PLANNER_PROMPT</span> = <span class="s">"""
+You are a software project Planner agent.
+Given a project goal, return ONLY a JSON object:
+{
+  "tasks": [
+    {
+      "id": "T001",
+      "title": "...",
+      "description": "...",
+      "category": "frontend|backend|devops|testing|design"
+    }
+  ]
+}
+No markdown, no explanation. Pure JSON only.
+Be thorough — include auth, error handling, testing tasks.
+"""</span>
+
+<span class="v">PRIORITIZER_PROMPT</span> = <span class="s">"""
+You are a Prioritizer agent. Given a task list JSON,
+return ONLY a JSON object with each task enriched:
+{
+  "tasks": [
+    {
+      ...original fields...,
+      "priority": "P0|P1|P2",
+      "estimated_hours": 4,
+      "depends_on": ["T001"],
+      "rationale": "why this priority"
+    }
+  ]
+}
+P0 = blocker, P1 = high, P2 = nice-to-have.
+No markdown. Pure JSON only.
+"""</span>
+
+<span class="v">REVIEWER_PROMPT</span> = <span class="s">"""
+You are a critical QA Reviewer agent. Given a task plan,
+find gaps, security risks, and missing considerations.
+Return ONLY:
+{
+  "gaps_found": 2,
+  "issues": [
+    {
+      "severity": "high|medium|low",
+      "description": "...",
+      "suggested_task": "..."
+    }
+  ],
+  "approved": true
+}
+Be specific. No markdown. Pure JSON only.
+"""</span>
+
+<span class="v">SUMMARIZER_PROMPT</span> = <span class="s">"""
+You are a Summarizer agent. Given all agent outputs,
+produce a final dashboard-ready JSON:
+{
+  "project_name": "...",
+  "brief": "2-3 sentence project summary",
+  "total_tasks": 12,
+  "total_estimated_hours": 80,
+  "by_category": {"frontend": 4, "backend": 5, ...},
+  "by_priority": {"P0": 3, "P1": 6, "P2": 3},
+  "critical_path": ["T001", "T003", "T007"],
+  "risk_summary": "...",
+  "ready_for_dev": true
+}
+No markdown. Pure JSON only.
+"""</span></pre>
+            </div>
+
+            <!-- Client usage -->
+            <div class="code-block" id="client">
+                <button class="copy-btn" onclick="copyCode('client')">COPY</button>
+                <pre><span class="c"># Example: running the full pipeline</span>
+
+<span class="c"># 1. Start MCP server in background</span>
+<span class="c">#    python mcp_server.py</span>
+
+<span class="c"># 2. Run orchestrator with your goal</span>
+<span class="c">#    python orchestrator.py</span>
+<span class="c">#    > Enter project goal: Build a task management app</span>
+
+<span class="c"># 3. Output (auto-fed to dashboard UI)</span>
+<span class="v">example_output</span> = {
+  <span class="s">"project_name"</span>: <span class="s">"Task Management App"</span>,
+  <span class="s">"brief"</span>: <span class="s">"A full-stack task manager with auth, real-time updates, and team features."</span>,
+  <span class="s">"total_tasks"</span>: <span class="b">14</span>,
+  <span class="s">"total_estimated_hours"</span>: <span class="b">72</span>,
+  <span class="s">"by_category"</span>: {
+    <span class="s">"frontend"</span>: <span class="b">5</span>, <span class="s">"backend"</span>: <span class="b">6</span>,
+    <span class="s">"devops"</span>: <span class="b">2</span>, <span class="s">"testing"</span>: <span class="b">1</span>
+  },
+  <span class="s">"by_priority"</span>: {<span class="s">"P0"</span>: <span class="b">4</span>, <span class="s">"P1"</span>: <span class="b">7</span>, <span class="s">"P2"</span>: <span class="b">3</span>},
+  <span class="s">"critical_path"</span>: [<span class="s">"T001"</span>, <span class="s">"T003"</span>, <span class="s">"T008"</span>, <span class="s">"T012"</span>],
+  <span class="s">"risk_summary"</span>: <span class="s">"Auth and DB schema must be finalized before UI work."</span>,
+  <span class="s">"ready_for_dev"</span>: <span class="b">True</span>
+}
+
+<span class="c"># Dependencies to install</span>
+<span class="c"># pip install anthropic mcp</span></pre>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(id) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function copyCode(id) {
+            const pre = document.getElementById(id).querySelector('pre');
+            const text = pre.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById(id).querySelector('.copy-btn');
+                btn.textContent = 'COPIED!';
+                btn.style.color = '#4fffd4';
+                setTimeout(() => { btn.textContent = 'COPY'; btn.style.color = ''; }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

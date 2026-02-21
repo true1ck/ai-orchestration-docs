@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Intelligence Platform — Architecture</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --ink: #1a1612;
+            --ink2: #3d3630;
+            --muted: #8a8070;
+            --border: #d8d0c0;
+            --card: #fffef9;
+            --red: #c0392b;
+            --amber: #d4841a;
+            --green: #2d6a4f;
+            --blue: #1a4a7a;
+            --teal: #1a6a6a;
+            --purple: #5a2d82;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(192, 57, 43, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(26, 74, 122, 0.04) 0%, transparent 50%);
+        }
+
+        /* Halftone texture */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(26, 22, 18, 0.06) 1px, transparent 1px);
+            background-size: 18px 18px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            border-top: 4px solid var(--ink);
+            border-bottom: 2px solid var(--ink);
+            padding: 32px 0;
+            margin-bottom: 56px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: end;
+            gap: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .header-eyebrow {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 5vw, 64px);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .header h1 em {
+            font-style: italic;
+            color: var(--red);
+        }
+
+        .header-meta {
+            text-align: right;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 2;
+        }
+
+        /* ── SECTION HEADERS ── */
+        .sec-head {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            margin-top: 56px;
+        }
+
+        .sec-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .sec-head h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .sec-head::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── VISION STATEMENT ── */
+        .vision {
+            background: var(--ink);
+            color: #f5f0e8;
+            border-radius: 6px;
+            padding: 36px 40px;
+            margin-bottom: 56px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s 0.1s ease both;
+        }
+
+        .vision::before {
+            content: '"';
+            font-family: 'Playfair Display', serif;
+            font-size: 200px;
+            color: rgba(245, 240, 232, 0.04);
+            position: absolute;
+            top: -40px;
+            left: 20px;
+            line-height: 1;
+        }
+
+        .vision p {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(18px, 2.5vw, 26px);
+            line-height: 1.5;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .vision p span {
+            color: #e8a070;
+        }
+
+        .vision-tags {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .vtag {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border: 1px solid rgba(245, 240, 232, 0.2);
+            border-radius: 2px;
+            color: rgba(245, 240, 232, 0.6);
+        }
+
+        /* ── ARCHITECTURE DIAGRAM ── */
+        .arch-wrapper {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 40px;
+            animation: fadeIn 0.5s 0.2s ease both;
+            box-shadow: 0 2px 20px rgba(26, 22, 18, 0.06);
+        }
+
+        .arch-title {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        /* Pipeline layers */
+        .pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .layer {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 4px;
+        }
+
+        .layer-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-align: right;
+            padding-top: 16px;
+            line-height: 1.6;
+        }
+
+        .layer-content {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 12px;
+            border-left: 2px solid var(--border);
+            position: relative;
+        }
+
+        .layer-content::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--ink);
+            border: 2px solid var(--card);
+            box-shadow: 0 0 0 1px var(--ink);
+        }
+
+        /* Connector */
+        .connector {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 20px;
+            height: 28px;
+            margin-bottom: 4px;
+        }
+
+        .connector-line {
+            border-left: 2px dashed var(--border);
+            margin-left: 0;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            margin-left: 12px;
+        }
+
+        .connector-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        /* Source nodes */
+        .src-node {
+            border: 1.5px solid;
+            border-radius: 6px;
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 120px;
+            transition: transform 0.15s;
+            cursor: default;
+        }
+
+        .src-node:hover {
+            transform: translateY(-2px);
+        }
+
+        .src-node.youtube {
+            border-color: #c0392b;
+            background: rgba(192, 57, 43, 0.05);
+        }
+
+        .src-node.news {
+            border-color: var(--blue);
+            background: rgba(26, 74, 122, 0.05);
+        }
+
+        .src-node.image {
+            border-color: var(--teal);
+            background: rgba(26, 106, 106, 0.05);
+        }
+
+        .src-icon {
+            font-size: 18px;
+        }
+
+        .src-title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .src-sub {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+        }
+
+        /* Processing nodes */
+        .proc-node {
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 16px;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 140px;
+            transition: border-color 0.15s, transform 0.15s;
+            cursor: default;
+        }
+
+        .proc-node:hover {
+            transform: translateY(-2px);
+            border-color: var(--ink);
+        }
+
+        .proc-node .title {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .proc-node .sub {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+        }
+
+        .proc-node .tech {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            background: var(--ink);
+            color: #f5f0e8;
+            padding: 1px 6px;
+            border-radius: 2px;
+            display: inline-block;
+            margin-top: 4px;
+            width: fit-content;
+        }
+
+        /* Agent nodes */
+        .agent-node {
+            border-radius: 6px;
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 150px;
+            flex: 1;
+            border: 1.5px solid;
+            transition: transform 0.15s;
+            cursor: default;
+        }
+
+        .agent-node:hover {
+            transform: translateY(-3px);
+        }
+
+        .agent-node.transcriber {
+            border-color: var(--red);
+            background: rgba(192, 57, 43, 0.05);
+        }
+
+        .agent-node.extractor {
+            border-color: var(--blue);
+            background: rgba(26, 74, 122, 0.05);
+        }
+
+        .agent-node.vision {
+            border-color: var(--teal);
+            background: rgba(26, 106, 106, 0.05);
+        }
+
+        .agent-node.analyst {
+            border-color: var(--amber);
+            background: rgba(212, 132, 26, 0.05);
+        }
+
+        .agent-node.categorizer {
+            border-color: var(--purple);
+            background: rgba(90, 45, 130, 0.05);
+        }
+
+        .agent-node.aggregator {
+            border-color: var(--green);
+            background: rgba(45, 106, 79, 0.05);
+        }
+
+        .agent-node.orch {
+            border-color: var(--ink);
+            border-width: 2px;
+            background: rgba(26, 22, 18, 0.05);
+        }
+
+        .agent-node .badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        .agent-node .name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .agent-node .desc {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .agent-node .tool {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            background: rgba(0, 0, 0, 0.07);
+            padding: 2px 6px;
+            border-radius: 2px;
+            margin-top: 4px;
+            width: fit-content;
+        }
+
+        /* Output node */
+        .output-node {
+            background: var(--ink);
+            color: #f5f0e8;
+            border-radius: 8px;
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 240px;
+            flex: 1;
+            max-width: 360px;
+            transition: transform 0.15s;
+            cursor: default;
+        }
+
+        .output-node:hover {
+            transform: translateY(-2px);
+        }
+
+        .output-node .badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: rgba(245, 240, 232, 0.5);
+        }
+
+        .output-node .name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .output-node .desc {
+            font-size: 11px;
+            color: rgba(245, 240, 232, 0.6);
+            line-height: 1.4;
+        }
+
+        /* ── AGENT DETAIL CARDS ── */
+        .agents-detail {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            animation: fadeIn 0.5s 0.3s ease both;
+        }
+
+        .acard {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            transition: box-shadow 0.2s, transform 0.2s;
+            position: relative;
+        }
+
+        .acard:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(26, 22, 18, 0.08);
+        }
+
+        .acard-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .acard.a1 .acard-stripe {
+            background: var(--red);
+        }
+
+        .acard.a2 .acard-stripe {
+            background: var(--blue);
+        }
+
+        .acard.a3 .acard-stripe {
+            background: var(--teal);
+        }
+
+        .acard.a4 .acard-stripe {
+            background: var(--amber);
+        }
+
+        .acard.a5 .acard-stripe {
+            background: var(--purple);
+        }
+
+        .acard.a6 .acard-stripe {
+            background: var(--green);
+        }
+
+        .acard.a0 .acard-stripe {
+            background: var(--ink);
+        }
+
+        .acard-tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .acard h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .acard p {
+            font-size: 13px;
+            color: var(--ink2);
+            line-height: 1.65;
+            margin-bottom: 14px;
+        }
+
+        .acard .kv {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .acard .kv-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .kv-key {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted);
+            width: 70px;
+            flex-shrink: 0;
+            padding-top: 1px;
+        }
+
+        .kv-val {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--ink);
+        }
+
+        /* ── STACK TABLE ── */
+        .stack-table {
+            width: 100%;
+            border-collapse: collapse;
+            animation: fadeIn 0.5s 0.35s ease both;
+            font-size: 13px;
+        }
+
+        .stack-table th {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 2px solid var(--ink);
+            padding: 10px 16px;
+            text-align: left;
+        }
+
+        .stack-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        .stack-table tr:hover td {
+            background: rgba(26, 22, 18, 0.02);
+        }
+
+        .stack-table td:first-child {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            width: 140px;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+        }
+
+        .stack-table td:nth-child(2) {
+            font-weight: 500;
+            width: 180px;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 30px;
+            margin: 2px 2px 2px 0;
+        }
+
+        .pill-r {
+            background: rgba(192, 57, 43, 0.1);
+            color: var(--red);
+        }
+
+        .pill-b {
+            background: rgba(26, 74, 122, 0.1);
+            color: var(--blue);
+        }
+
+        .pill-g {
+            background: rgba(45, 106, 79, 0.1);
+            color: var(--green);
+        }
+
+        .pill-a {
+            background: rgba(212, 132, 26, 0.1);
+            color: var(--amber);
+        }
+
+        .pill-t {
+            background: rgba(26, 106, 106, 0.1);
+            color: var(--teal);
+        }
+
+        .pill-k {
+            background: rgba(26, 22, 18, 0.08);
+            color: var(--ink);
+        }
+
+        /* ── COST ESTIMATE ── */
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            animation: fadeIn 0.5s 0.4s ease both;
+        }
+
+        .cost-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .cost-card .layer-name {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .cost-card .amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .cost-card .note {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* ── ROADMAP ── */
+        .roadmap {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            animation: fadeIn 0.5s 0.45s ease both;
+        }
+
+        .phase {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .phase-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .phase h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .phase ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .phase ul li {
+            font-size: 12px;
+            color: var(--ink2);
+            padding-left: 14px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .phase ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .layer {
+                grid-template-columns: 1fr;
+            }
+
+            .layer-label {
+                text-align: left;
+                padding-top: 0;
+            }
+
+            .layer-content {
+                border-left: none;
+                padding-left: 0;
+            }
+
+            .layer-content::before {
+                display: none;
+            }
+
+            .roadmap {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                grid-template-columns: 1fr;
+            }
+
+            .header-meta {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <div class="header-eyebrow">Architecture Blueprint — Sankhya Team</div>
+                <h1>Media <em>Intelligence</em><br>Platform</h1>
+            </div>
+            <div class="header-meta">
+                Presentation: Feb 22, 2026<br>
+                Demo: Task Dashboard<br>
+                Vision: Full Media Stack<br>
+                Stack: MCP · Whisper · Claude
+            </div>
+        </div>
+
+        <!-- Vision -->
+        <div class="vision">
+            <p>
+                Ingest <span>YouTube videos, news articles, and images</span> — transcribe, extract,
+                and analyze them through a multi-agent pipeline — to surface real-time media intelligence:
+                summaries, sentiment, trends, and named entities, all in a live monitoring dashboard.
+            </p>
+            <div class="vision-tags">
+                <span class="vtag">MULTI-MODAL INPUT</span>
+                <span class="vtag">MCP ORCHESTRATION</span>
+                <span class="vtag">WHISPER TRANSCRIPTION</span>
+                <span class="vtag">VISION ANALYSIS</span>
+                <span class="vtag">LIVE DASHBOARD</span>
+                <span class="vtag">ZERO MANUAL CODE</span>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="sec-head" style="margin-top:0;">
+            <span class="sec-num">01</span>
+            <h2>End-to-End Pipeline</h2>
+        </div>
+        <div class="arch-wrapper">
+            <div class="arch-title">// DATA FLOW — INGESTION → AGENTS → DASHBOARD</div>
+
+            <div class="pipeline">
+
+                <!-- Layer 1: Sources -->
+                <div class="layer">
+                    <div class="layer-label">Input<br>Sources</div>
+                    <div class="layer-content">
+                        <div class="src-node youtube">
+                            <div class="src-icon">▶</div>
+                            <div class="src-title">YouTube Video</div>
+                            <div class="src-sub">URL input / yt-dlp</div>
+                        </div>
+                        <div class="src-node news">
+                            <div class="src-icon">📰</div>
+                            <div class="src-title">News Articles</div>
+                            <div class="src-sub">URL / RSS / paste</div>
+                        </div>
+                        <div class="src-node image">
+                            <div class="src-icon">🖼</div>
+                            <div class="src-title">Images</div>
+                            <div class="src-sub">upload / URL scrape</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connector -->
+                <div class="connector">
+                    <div></div>
+                    <div class="connector-line"><span class="connector-label">raw media → ingestion tools</span></div>
+                </div>
+
+                <!-- Layer 2: Ingestion -->
+                <div class="layer">
+                    <div class="layer-label">Ingestion<br>Tools</div>
+                    <div class="layer-content">
+                        <div class="proc-node">
+                            <div class="title">yt-dlp → Whisper</div>
+                            <div class="sub">downloads audio, transcribes to text</div>
+                            <div class="tech">openai/whisper</div>
+                        </div>
+                        <div class="proc-node">
+                            <div class="title">Article Scraper</div>
+                            <div class="sub">extracts body text + metadata</div>
+                            <div class="tech">newspaper3k</div>
+                        </div>
+                        <div class="proc-node">
+                            <div class="title">Image Loader</div>
+                            <div class="sub">downloads + base64 encodes</div>
+                            <div class="tech">pillow</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connector -->
+                <div class="connector">
+                    <div></div>
+                    <div class="connector-line"><span class="connector-label">raw text / image bytes → MCP tools</span>
+                    </div>
+                </div>
+
+                <!-- Layer 3: MCP Agent Pipeline -->
+                <div class="layer">
+                    <div class="layer-label">MCP<br>Agents</div>
+                    <div class="layer-content" style="flex-wrap:wrap; gap:10px;">
+                        <div class="agent-node orch">
+                            <div class="badge">ORCHESTRATOR</div>
+                            <div class="name">🧠 Router</div>
+                            <div class="desc">Routes each input to correct agents, assembles final output</div>
+                            <div class="tool">claude-sonnet-4-6</div>
+                        </div>
+                        <div class="agent-node transcriber">
+                            <div class="badge">TOOL 1</div>
+                            <div class="name">🎙 Transcriber</div>
+                            <div class="desc">Cleans whisper output, fixes errors, adds speaker labels</div>
+                            <div class="tool">mcp: clean_transcript</div>
+                        </div>
+                        <div class="agent-node extractor">
+                            <div class="badge">TOOL 2</div>
+                            <div class="name">📰 Extractor</div>
+                            <div class="desc">Pulls key claims, quotes, named entities from articles</div>
+                            <div class="tool">mcp: extract_article</div>
+                        </div>
+                        <div class="agent-node vision">
+                            <div class="badge">TOOL 3</div>
+                            <div class="name">👁 Vision</div>
+                            <div class="desc">Describes images: people, text, logos, sentiment cues</div>
+                            <div class="tool">mcp: analyze_image</div>
+                        </div>
+                        <div class="agent-node analyst">
+                            <div class="badge">TOOL 4</div>
+                            <div class="name">📊 Analyst</div>
+                            <div class="desc">Sentiment score, bias detection, topic classification</div>
+                            <div class="tool">mcp: analyze_content</div>
+                        </div>
+                        <div class="agent-node categorizer">
+                            <div class="badge">TOOL 5</div>
+                            <div class="name">🏷 Categorizer</div>
+                            <div class="desc">Tags content: politics / tech / finance / sports / etc.</div>
+                            <div class="tool">mcp: categorize</div>
+                        </div>
+                        <div class="agent-node aggregator">
+                            <div class="badge">TOOL 6</div>
+                            <div class="name">🔗 Aggregator</div>
+                            <div class="desc">Finds cross-source connections, trending topics, contradictions</div>
+                            <div class="tool">mcp: aggregate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connector -->
+                <div class="connector">
+                    <div></div>
+                    <div class="connector-line"><span class="connector-label">structured JSON → frontend</span></div>
+                </div>
+
+                <!-- Layer 4: Output -->
+                <div class="layer">
+                    <div class="layer-label">Dashboard<br>Output</div>
+                    <div class="layer-content">
+                        <div class="output-node">
+                            <div class="badge">LIVE VIEW</div>
+                            <div class="name">📡 Media Feed</div>
+                            <div class="desc">Chronological stream of analyzed items with summary cards</div>
+                        </div>
+                        <div class="output-node">
+                            <div class="badge">ANALYTICS</div>
+                            <div class="name">📈 Trend Board</div>
+                            <div class="desc">Topic frequency, sentiment over time, entity map</div>
+                        </div>
+                        <div class="output-node">
+                            <div class="badge">EXPORT</div>
+                            <div class="name">📋 Intelligence Report</div>
+                            <div class="desc">AI-generated brief: top stories, narrative conflicts, key quotes</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Agent Detail Cards -->
+        <div class="sec-head">
+            <span class="sec-num">02</span>
+            <h2>Agent Role Definitions</h2>
+        </div>
+        <div class="agents-detail">
+
+            <div class="acard a0">
+                <div class="acard-stripe"></div>
+                <div class="acard-tag">Orchestrator</div>
+                <h3>🧠 Router / Orchestrator</h3>
+                <p>The central brain. Receives raw input with its type (video/article/image), determines which agents to
+                    call, in what order, and with what context. Merges all outputs into the final dashboard payload. Can
+                    loop Analyst back if confidence is low.</p>
+                <div class="kv">
+                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet-4-6</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">{ url, type, raw_text?
+                            }</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">DashboardCard JSON</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Pattern</span><span class="kv-val">Sequential +
+                            conditional</span></div>
+                </div>
+            </div>
+
+            <div class="acard a1">
+                <div class="acard-stripe"></div>
+                <div class="acard-tag">MCP Tool 1</div>
+                <h3>🎙 Transcript Cleaner</h3>
+                <p>Raw Whisper output is noisy — filler words, speaker errors, run-on sentences. This agent cleans,
+                    segments, and optionally labels speakers. Also extracts key quotes suitable for the dashboard.</p>
+                <div class="kv">
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">raw_transcript: str</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ segments[],
+                            key_quotes[], duration }</span></div>
+                    <div class="kv-row"><span class="kv-key">Context</span><span class="kv-val">Keep small — text
+                            only</span></div>
+                </div>
+            </div>
+
+            <div class="acard a2">
+                <div class="acard-stripe"></div>
+                <div class="acard-tag">MCP Tool 2</div>
+                <h3>📰 Article Extractor</h3>
+                <p>Parses article text and returns structured entities: headline, author, date, named people/orgs, key
+                    claims, and a 3-sentence summary. Designed to handle messy scraped HTML gracefully.</p>
+                <div class="kv">
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">article_text: str, url:
+                            str</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ summary, entities[],
+                            claims[], author }</span></div>
+                    <div class="kv-row"><span class="kv-key">Context</span><span class="kv-val">Medium — long
+                            articles</span></div>
+                </div>
+            </div>
+
+            <div class="acard a3">
+                <div class="acard-stripe"></div>
+                <div class="acard-tag">MCP Tool 3</div>
+                <h3>👁 Vision Analyzer</h3>
+                <p>Uses Claude's vision capability to describe images: identify people (no facial recognition), text
+                    visible in image, logos, emotional tone, and whether the image supports or contradicts its article's
+                    headline.</p>
+                <div class="kv">
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">image_base64: str</span>
+                    </div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ description,
+                            text_in_image, tone, logos[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet
+                            (vision)</span></div>
+                </div>
+            </div>
+
+            <div class="acard a4">
+                <div class="acard-stripe"></div>
+                <div class="acard-tag">MCP Tool 4</div>
+                <h3>📊 Content Analyst</h3>
+                <p>Core intelligence layer. Scores sentiment (–1 to +1), detects emotional tone, identifies potential
+                    bias signals, flags if content is opinion vs. fact, and generates a 1-line "media angle"
+                    description.</p>
+                <div class="kv">
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text: str, source_type:
+                            str</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ sentiment, tone,
+                            bias_flags[], angle }</span></div>
+                    <div class="kv-row"><span class="kv-key">Risk</span><span class="kv-val">Needs careful
+                            prompting</span></div>
+                </div>
+            </div>
+
+            <div class="acard a5">
+                <div class="acard-stripe"></div>
+                <div class="acard-tag">MCP Tool 5</div>
+                <h3>🏷 Categorizer</h3>
+                <p>Assigns topics from a controlled taxonomy (politics, technology, finance, sports, entertainment,
+                    science, conflict, etc.) with confidence scores. Also detects language and region relevance.</p>
+                <div class="kv">
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text: str</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ tags[], language,
+                            region, confidence }</span></div>
+                    <div class="kv-row"><span class="kv-key">Context</span><span class="kv-val">Tiny — fast +
+                            cheap</span></div>
+                </div>
+            </div>
+
+            <div class="acard a6">
+                <div class="acard-stripe"></div>
+                <div class="acard-tag">MCP Tool 6</div>
+                <h3>🔗 Cross-Source Aggregator</h3>
+                <p>Runs periodically across all processed items in session. Identifies which stories are being covered
+                    by multiple sources, detects narrative conflicts, surfaces emerging topics, and generates a session
+                    digest.</p>
+                <div class="kv">
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">all_items[]:
+                            DashboardCard</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ trending[],
+                            conflicts[], digest }</span></div>
+                    <div class="kv-row"><span class="kv-key">Trigger</span><span class="kv-val">Every 5 new items</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="sec-head">
+            <span class="sec-num">03</span>
+            <h2>Tech Stack</h2>
+        </div>
+        <table class="stack-table">
+            <thead>
+                <tr>
+                    <th>Layer</th>
+                    <th>Tool / Library</th>
+                    <th>Purpose</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Video Ingest</td>
+                    <td>yt-dlp</td>
+                    <td>Downloads audio/video from YouTube URLs</td>
+                    <td><span class="badge-pill pill-k">pip install yt-dlp</span></td>
+                </tr>
+                <tr>
+                    <td>Transcription</td>
+                    <td>OpenAI Whisper</td>
+                    <td>Speech → text, multi-language, runs locally</td>
+                    <td><span class="badge-pill pill-r">medium model recommended</span> <span
+                            class="badge-pill pill-k">~1GB RAM</span></td>
+                </tr>
+                <tr>
+                    <td>Article Scraping</td>
+                    <td>newspaper3k</td>
+                    <td>Extracts article body, title, author from URLs</td>
+                    <td><span class="badge-pill pill-b">handles paywalls poorly</span> fallback: beautifulsoup</td>
+                </tr>
+                <tr>
+                    <td>AI Agents</td>
+                    <td>Claude Sonnet 4.6</td>
+                    <td>All agent calls — vision, text, analysis</td>
+                    <td><span class="badge-pill pill-a">claude-sonnet-4-6</span> single model for all agents</td>
+                </tr>
+                <tr>
+                    <td>Orchestration</td>
+                    <td>MCP Python SDK</td>
+                    <td>Exposes agents as tools, handles calls</td>
+                    <td><span class="badge-pill pill-k">pip install mcp</span> stdio transport</td>
+                </tr>
+                <tr>
+                    <td>Image Processing</td>
+                    <td>Pillow + requests</td>
+                    <td>Download, resize, base64 encode images</td>
+                    <td>Resize to max 1024px before sending to API</td>
+                </tr>
+                <tr>
+                    <td>Backend API</td>
+                    <td>FastAPI</td>
+                    <td>REST endpoint: POST /analyze → triggers pipeline</td>
+                    <td><span class="badge-pill pill-g">async/await</span> WebSocket for live updates</td>
+                </tr>
+                <tr>
+                    <td>Frontend</td>
+                    <td>React + Tailwind</td>
+                    <td>Live dashboard: feed, sentiment charts, entity tags</td>
+                    <td>Polling or WebSocket for real-time feel</td>
+                </tr>
+                <tr>
+                    <td>Storage</td>
+                    <td>SQLite → Postgres</td>
+                    <td>Stores processed media cards + agent outputs</td>
+                    <td>SQLite fine for demo; Postgres for production</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Cost Estimate -->
+        <div class="sec-head">
+            <span class="sec-num">04</span>
+            <h2>Demo Cost Estimate (per run)</h2>
+        </div>
+        <div class="cost-grid">
+            <div class="cost-card">
+                <div class="layer-name">Whisper</div>
+                <div class="amount">~$0</div>
+                <div class="note">Runs locally free. GPU speeds it up but CPU works fine for demo.</div>
+            </div>
+            <div class="cost-card">
+                <div class="layer-name">Per Video (5 min)</div>
+                <div class="amount">~$0.02</div>
+                <div class="note">Transcript clean + analysis + categorize ≈ 3–5K tokens</div>
+            </div>
+            <div class="cost-card">
+                <div class="layer-name">Per Article</div>
+                <div class="amount">~$0.01</div>
+                <div class="note">Extract + sentiment + categorize ≈ 2–3K tokens</div>
+            </div>
+            <div class="cost-card">
+                <div class="layer-name">Per Image</div>
+                <div class="amount">~$0.005</div>
+                <div class="note">Vision call ≈ 500–1K tokens depending on image size</div>
+            </div>
+            <div class="cost-card">
+                <div class="layer-name">Full Demo Run</div>
+                <div class="amount">~$0.50</div>
+                <div class="note">3 videos + 5 articles + 5 images + aggregation = comfortable under $1</div>
+            </div>
+            <div class="cost-card">
+                <div class="layer-name">Full Day Testing</div>
+                <div class="amount">~$5–15</div>
+                <div class="note">Heavy iteration + repeated runs. Well within budget.</div>
+            </div>
+        </div>
+
+        <!-- Build Roadmap -->
+        <div class="sec-head">
+            <span class="sec-num">05</span>
+            <h2>2-Day Build Plan (Sat–Sun)</h2>
+        </div>
+        <div class="roadmap">
+            <div class="phase">
+                <div class="phase-label">Saturday — Theory + Core</div>
+                <h3>Foundation</h3>
+                <ul>
+                    <li>Theory presentation slides: what are agents, MCP, orchestrator pattern</li>
+                    <li>Set up MCP server skeleton with all 6 tools stubbed</li>
+                    <li>Wire yt-dlp → Whisper pipeline, verify transcription works</li>
+                    <li>Wire newspaper3k article scraper</li>
+                    <li>Implement Transcriber + Extractor agents with real prompts</li>
+                    <li>Test pipeline: YouTube URL → text → structured JSON</li>
+                </ul>
+            </div>
+            <div class="phase">
+                <div class="phase-label">Sunday Morning</div>
+                <h3>Intelligence Layer</h3>
+                <ul>
+                    <li>Implement Vision, Analyst, Categorizer agents</li>
+                    <li>Implement Aggregator (cross-source trends)</li>
+                    <li>Build FastAPI backend with /analyze endpoint</li>
+                    <li>Connect Orchestrator to route all input types</li>
+                    <li>Test end-to-end: 1 video + 2 articles + 1 image</li>
+                    <li>Fix prompt issues / JSON parsing errors</li>
+                </ul>
+            </div>
+            <div class="phase">
+                <div class="phase-label">Sunday Afternoon</div>
+                <h3>Dashboard + Demo Prep</h3>
+                <ul>
+                    <li>Build React dashboard: feed cards, sentiment indicators, entity tags</li>
+                    <li>Add live WebSocket updates (or polling)</li>
+                    <li>Record a 3-min live demo: input URL → watch agents run → dashboard populates</li>
+                    <li>Prepare 5-slide theory deck</li>
+                    <li>Dry run full presentation by 6pm</li>
+                    <li>Buffer: debug and polish</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+            style="border-top: 1px solid var(--border); margin-top: 56px; padding-top: 20px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">SANKHYA CORE TEAM · FEB
+                22 PRESENTATION</span>
+            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">TEAM B: AMEYA · SAIRAJ ·
+                CHANDRESH</span>
+        </div>
+
+    </div>
+</body>
+
+</html>

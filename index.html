@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Orchestration — Documentation Hub</title>
+    <meta name="description"
+        content="Central hub for AI Orchestration architecture documentation — Agentic Workforce, MCP Multi-Agent Orchestrator, and Media Intelligence Platform.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #05070d;
+            --bg2: #090d16;
+            --surface: #0d1422;
+            --surface2: #121929;
+            --border: #1e2840;
+            --border2: #263354;
+            --text: #e2e8f8;
+            --muted: #6b7fa8;
+            --dim: #3d4d6e;
+
+            /* Brand accents */
+            --gold: #f0cf65;
+            --violet: #818cf8;
+            --teal: #34d2c8;
+            --rose: #f472b6;
+            --green: #4ade80;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── ANIMATED BACKGROUND ── */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(129, 140, 248, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(129, 140, 248, 0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            animation: orb-drift 20s ease-in-out infinite alternate;
+        }
+
+        .bg-orb.orb1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.5), transparent 70%);
+            top: -200px;
+            left: -100px;
+            animation-duration: 22s;
+        }
+
+        .bg-orb.orb2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(52, 210, 200, 0.4), transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            animation-duration: 18s;
+            animation-delay: -5s;
+        }
+
+        .bg-orb.orb3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(240, 207, 101, 0.25), transparent 70%);
+            top: 40%;
+            right: 20%;
+            animation-duration: 25s;
+            animation-delay: -10s;
+        }
+
+        @keyframes orb-drift {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(40px, 30px) scale(1.08);
+            }
+        }
+
+        /* Scanline texture */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(0, 0, 0, 0.04) 3px,
+                    rgba(0, 0, 0, 0.04) 4px);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* ── LAYOUT ── */
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 64px 32px 80px;
+        }
+
+        /* ── NAV ── */
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 96px;
+            animation: rise 0.5s ease both;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--violet);
+            border-radius: 50%;
+            animation: pulse-dot 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(129, 140, 248, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(129, 140, 248, 0);
+            }
+        }
+
+        .nav-logo .brand {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+
+        .nav-meta {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--dim);
+            letter-spacing: 1px;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            margin-bottom: 88px;
+            animation: rise 0.5s 0.05s ease both;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--violet);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            background: rgba(129, 140, 248, 0.06);
+            padding: 6px 14px;
+            border-radius: 100px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .hero-badge span {
+            width: 6px;
+            height: 6px;
+            background: var(--violet);
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 .hi {
+            background: linear-gradient(135deg, var(--violet) 0%, var(--teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 17px;
+            color: var(--muted);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ── STATS ── */
+        .stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--text);
+        }
+
+        .stat-num.c-violet {
+            color: var(--violet);
+        }
+
+        .stat-num.c-teal {
+            color: var(--teal);
+        }
+
+        .stat-num.c-gold {
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .stat-div {
+            width: 1px;
+            height: 36px;
+            background: var(--border2);
+        }
+
+        /* ── DOCS GRID ── */
+        .docs-heading {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .docs-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* ── DOC CARD ── */
+        .doc-card {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+            animation: rise 0.5s ease both;
+        }
+
+        .doc-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .doc-card:nth-child(2) {
+            animation-delay: 0.18s;
+        }
+
+        .doc-card:nth-child(3) {
+            animation-delay: 0.26s;
+        }
+
+        .doc-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .doc-card.card-violet::before {
+            background: radial-gradient(ellipse at top left, rgba(129, 140, 248, 0.07), transparent 60%);
+        }
+
+        .doc-card.card-teal::before {
+            background: radial-gradient(ellipse at top left, rgba(52, 210, 200, 0.07), transparent 60%);
+        }
+
+        .doc-card.card-gold::before {
+            background: radial-gradient(ellipse at top left, rgba(240, 207, 101, 0.07), transparent 60%);
+        }
+
+        .doc-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .doc-card.card-violet:hover {
+            border-color: rgba(129, 140, 248, 0.5);
+            box-shadow: 0 20px 60px rgba(129, 140, 248, 0.12);
+        }
+
+        .doc-card.card-teal:hover {
+            border-color: rgba(52, 210, 200, 0.5);
+            box-shadow: 0 20px 60px rgba(52, 210, 200, 0.12);
+        }
+
+        .doc-card.card-gold:hover {
+            border-color: rgba(240, 207, 101, 0.5);
+            box-shadow: 0 20px 60px rgba(240, 207, 101, 0.10);
+        }
+
+        .doc-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Top bar */
+        .card-top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .doc-card:hover .card-top-bar {
+            opacity: 1;
+        }
+
+        .card-violet .card-top-bar {
+            background: linear-gradient(90deg, var(--violet), var(--teal));
+        }
+
+        .card-teal .card-top-bar {
+            background: linear-gradient(90deg, var(--teal), var(--green));
+        }
+
+        .card-gold .card-top-bar {
+            background: linear-gradient(90deg, var(--gold), var(--rose));
+        }
+
+        /* Card icon */
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            border: 1px solid;
+        }
+
+        .card-violet .card-icon {
+            background: rgba(129, 140, 248, 0.1);
+            border-color: rgba(129, 140, 248, 0.25);
+        }
+
+        .card-teal .card-icon {
+            background: rgba(52, 210, 200, 0.1);
+            border-color: rgba(52, 210, 200, 0.25);
+        }
+
+        .card-gold .card-icon {
+            background: rgba(240, 207, 101, 0.1);
+            border-color: rgba(240, 207, 101, 0.25);
+        }
+
+        /* Card tag */
+        .card-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .card-violet .card-tag {
+            color: var(--violet);
+        }
+
+        .card-teal .card-tag {
+            color: var(--teal);
+        }
+
+        .card-gold .card-tag {
+            color: var(--gold);
+        }
+
+        /* Card title */
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        /* Card pills */
+        .card-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 24px;
+        }
+
+        .pill {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 3px 9px;
+            border-radius: 4px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+        }
+
+        /* Card CTA */
+        .card-cta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cta-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .card-violet .cta-text {
+            color: var(--violet);
+        }
+
+        .card-teal .cta-text {
+            color: var(--teal);
+        }
+
+        .card-gold .cta-text {
+            color: var(--gold);
+        }
+
+        .cta-arrow {
+            font-size: 18px;
+            transition: transform 0.25s;
+            line-height: 1;
+        }
+
+        .card-violet .cta-arrow {
+            color: var(--violet);
+        }
+
+        .card-teal .cta-arrow {
+            color: var(--teal);
+        }
+
+        .card-gold .cta-arrow {
+            color: var(--gold);
+        }
+
+        .doc-card:hover .cta-arrow {
+            transform: translateX(5px);
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            margin-top: 80px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            animation: rise 0.5s 0.4s ease both;
+        }
+
+        .footer-left {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--dim);
+            letter-spacing: 0.5px;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--dim);
+        }
+
+        .footer-right .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 640px) {
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .stats {
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+
+            .nav-meta {
+                display: none;
+            }
+
+            .footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-layer">
+        <div class="bg-grid"></div>
+        <div class="bg-orb orb1"></div>
+        <div class="bg-orb orb2"></div>
+        <div class="bg-orb orb3"></div>
+    </div>
+
+    <div class="wrap">
+
+        <!-- NAV -->
+        <nav class="nav">
+            <div class="nav-logo">
+                <div class="dot"></div>
+                <span class="brand">AI_ORCH / DOCS</span>
+            </div>
+            <div class="nav-meta">v1.0 · 2025</div>
+        </nav>
+
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-badge">
+                <span></span>
+                Documentation Hub
+            </div>
+            <h1>AI Orchestration<br><span class="hi">Architecture Docs</span></h1>
+            <p class="hero-sub">
+                Deep-dive technical documentation for agentic AI systems —
+                from multi-agent orchestration to media intelligence pipelines.
+            </p>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num c-violet">3</div>
+                    <div class="stat-label">Docs</div>
+                </div>
+                <div class="stat-div"></div>
+                <div class="stat">
+                    <div class="stat-num c-teal">8+</div>
+                    <div class="stat-label">Agent Types</div>
+                </div>
+                <div class="stat-div"></div>
+                <div class="stat">
+                    <div class="stat-num c-gold">∞</div>
+                    <div class="stat-label">Scale</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- DOCS -->
+        <section>
+            <div class="docs-heading">
+                <span>◈</span> All Documents
+            </div>
+
+            <div class="docs-grid">
+
+                <!-- Card 1: Agentic Workforce -->
+                <a href="Agentic workforce.html" class="doc-card card-violet">
+                    <div class="card-top-bar"></div>
+                    <div class="card-icon">🤖</div>
+                    <div class="card-tag">Architecture · Build System</div>
+                    <div class="card-title">Autonomous Agent Factory</div>
+                    <p class="card-desc">
+                        Full build system architecture for an autonomous agentic workforce — orchestration layers,
+                        specialist agents, MCP tools, human checkpoints, and prompt templates.
+                    </p>
+                    <div class="card-pills">
+                        <span class="pill">Orchestrator</span>
+                        <span class="pill">Architect Agent</span>
+                        <span class="pill">Backend Agent</span>
+                        <span class="pill">Security Agent</span>
+                        <span class="pill">MCP Tools</span>
+                    </div>
+                    <div class="card-cta">
+                        <span class="cta-text">OPEN DOCUMENT →</span>
+                        <span class="cta-arrow">→</span>
+                    </div>
+                </a>
+
+                <!-- Card 2: MCP Orchestrator -->
+                <a href="Doc.html" class="doc-card card-teal">
+                    <div class="card-top-bar"></div>
+                    <div class="card-icon">⚡</div>
+                    <div class="card-tag">Demo · Sankhya · Feb 2025</div>
+                    <div class="card-title">MCP Multi-Agent Orchestrator</div>
+                    <p class="card-desc">
+                        Smart task dashboard powered by an MCP server-based multi-agent system — Planner, Prioritizer,
+                        Reviewer, and Summarizer agents working in concert with zero manual code.
+                    </p>
+                    <div class="card-pills">
+                        <span class="pill">Planner Agent</span>
+                        <span class="pill">Reviewer Agent</span>
+                        <span class="pill">Summarizer</span>
+                        <span class="pill">MCP Server</span>
+                    </div>
+                    <div class="card-cta">
+                        <span class="cta-text">OPEN DOCUMENT →</span>
+                        <span class="cta-arrow">→</span>
+                    </div>
+                </a>
+
+                <!-- Card 3: Media Intelligence -->
+                <a href="what.html" class="doc-card card-gold">
+                    <div class="card-top-bar"></div>
+                    <div class="card-icon">📡</div>
+                    <div class="card-tag">Platform · Media · Intelligence</div>
+                    <div class="card-title">Media Intelligence Platform</div>
+                    <p class="card-desc">
+                        Architecture for a multi-modal media intelligence system — ingesting YouTube, news, and image
+                        sources through transcription, extraction, vision, and analysis agents.
+                    </p>
+                    <div class="card-pills">
+                        <span class="pill">Transcriber</span>
+                        <span class="pill">Vision Agent</span>
+                        <span class="pill">Analyst Agent</span>
+                        <span class="pill">Aggregator</span>
+                    </div>
+                    <div class="card-cta">
+                        <span class="cta-text">OPEN DOCUMENT →</span>
+                        <span class="cta-arrow">→</span>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-left">AI Orchestration Documentation Hub · Chandresh Kerkar</div>
+            <div class="footer-right">
+                <div class="live-dot"></div>
+                Hosted on GitHub Pages · Free
+            </div>
+        </footer>
+
+    </div>
+</body>
+
+</html>

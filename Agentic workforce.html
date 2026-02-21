@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Agent Factory — Build System Architecture</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080c10;
+            --surface: #0d1117;
+            --surface2: #161b22;
+            --surface3: #1c2433;
+            --border: #21262d;
+            --border2: #30363d;
+            --text: #e6edf3;
+            --muted: #7d8590;
+            --dim: #484f58;
+
+            /* Agent colors */
+            --orch: #f0e68c;
+            /* gold */
+            --arch: #79c0ff;
+            /* blue */
+            --back: #7ee787;
+            /* green */
+            --front: #d2a8ff;
+            /* purple */
+            --test: #ffa657;
+            /* orange */
+            --sec: #ff7b72;
+            /* red */
+            --doc: #a5d6ff;
+            /* light blue */
+            --review: #ffb3d1;
+            /* pink */
+            --human: #ffffff;
+            /* white */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Scanline effect */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.03) 2px,
+                    rgba(0, 0, 0, 0.03) 4px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* ── HEADER ── */
+        .hdr {
+            margin-bottom: 64px;
+            animation: rise 0.5s ease;
+        }
+
+        .hdr-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border2);
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+        }
+
+        .hdr-badge {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--orch);
+            border: 1px solid rgba(240, 230, 140, 0.3);
+            padding: 4px 10px;
+            margin-bottom: 16px;
+            display: inline-block;
+            letter-spacing: 2px;
+        }
+
+        .hdr h1 {
+            font-size: clamp(28px, 4vw, 52px);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.5px;
+        }
+
+        .hdr h1 .hi {
+            color: var(--orch);
+        }
+
+        .hdr-right {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 2;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .hdr-sub {
+            font-size: 15px;
+            color: var(--muted);
+            max-width: 700px;
+            line-height: 1.65;
+        }
+
+        .hdr-sub strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* ── SECTION ── */
+        .sec {
+            margin-bottom: 64px;
+            animation: rise 0.5s ease both;
+        }
+
+        .sec:nth-child(2) {
+            animation-delay: 0.05s;
+        }
+
+        .sec:nth-child(3) {
+            animation-delay: 0.1s;
+        }
+
+        .sec:nth-child(4) {
+            animation-delay: 0.15s;
+        }
+
+        .sec:nth-child(5) {
+            animation-delay: 0.2s;
+        }
+
+        .sec:nth-child(6) {
+            animation-delay: 0.25s;
+        }
+
+        .sec-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sec-title span {
+            color: var(--orch);
+        }
+
+        .sec-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border2);
+        }
+
+        /* ── PHILOSOPHY BOX ── */
+        .philosophy {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-left: 3px solid var(--orch);
+            border-radius: 6px;
+            padding: 28px 32px;
+            margin-bottom: 40px;
+        }
+
+        .philosophy h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--orch);
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .phil-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .phil-item h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .phil-item p {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* ── MAIN FLOW DIAGRAM ── */
+        .flow-diagram {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            padding: 40px;
+            overflow-x: auto;
+        }
+
+        .flow-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--dim);
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Big orchestrator */
+        .orch-box {
+            background: rgba(240, 230, 140, 0.07);
+            border: 2px solid rgba(240, 230, 140, 0.4);
+            border-radius: 8px;
+            padding: 20px 28px;
+            text-align: center;
+            max-width: 420px;
+            margin: 0 auto 8px;
+            position: relative;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(240, 230, 140, 0.15);
+            }
+
+            50% {
+                box-shadow: 0 0 32px 4px rgba(240, 230, 140, 0.12);
+            }
+        }
+
+        .orch-box .label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: rgba(240, 230, 140, 0.5);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .orch-box .title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--orch);
+            margin-bottom: 4px;
+        }
+
+        .orch-box .detail {
+            font-size: 11px;
+            color: var(--muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        /* Human checkpoint */
+        .human-node {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 14px 20px;
+            text-align: center;
+            max-width: 200px;
+            margin: 0 auto 8px;
+            transition: border-color 0.2s;
+        }
+
+        .human-node:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .human-node .label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .human-node .title {
+            font-size: 13px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .human-node .detail {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: 'IBM Plex Mono', monospace;
+            margin-top: 3px;
+        }
+
+        /* Vertical connector */
+        .vc {
+            width: 1px;
+            height: 28px;
+            background: linear-gradient(180deg, var(--border2), rgba(255, 255, 255, 0.15));
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .vc.arrow::after {
+            content: '▼';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            color: var(--dim);
+        }
+
+        .vc-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: var(--dim);
+            text-align: center;
+            margin: 2px 0;
+            letter-spacing: 1px;
+        }
+
+        /* Agent layer */
+        .agent-layer {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        /* Agent nodes in diagram */
+        .ag {
+            border: 1px solid;
+            border-radius: 6px;
+            padding: 12px 16px;
+            min-width: 130px;
+            text-align: center;
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: default;
+        }
+
+        .ag:hover {
+            transform: translateY(-3px);
+        }
+
+        .ag .ag-icon {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .ag .ag-name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .ag .ag-role {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            opacity: 0.6;
+        }
+
+        .ag.arch {
+            border-color: rgba(121, 192, 255, 0.4);
+            background: rgba(121, 192, 255, 0.06);
+        }
+
+        .ag.back {
+            border-color: rgba(126, 231, 135, 0.4);
+            background: rgba(126, 231, 135, 0.06);
+        }
+
+        .ag.front {
+            border-color: rgba(210, 168, 255, 0.4);
+            background: rgba(210, 168, 255, 0.06);
+        }
+
+        .ag.test {
+            border-color: rgba(255, 166, 87, 0.4);
+            background: rgba(255, 166, 87, 0.06);
+        }
+
+        .ag.sec {
+            border-color: rgba(255, 123, 114, 0.4);
+            background: rgba(255, 123, 114, 0.06);
+        }
+
+        .ag.doc {
+            border-color: rgba(165, 214, 255, 0.4);
+            background: rgba(165, 214, 255, 0.06);
+        }
+
+        .ag.rev {
+            border-color: rgba(255, 179, 209, 0.4);
+            background: rgba(255, 179, 209, 0.06);
+        }
+
+        .ag.arch .ag-name {
+            color: var(--arch);
+        }
+
+        .ag.back .ag-name {
+            color: var(--back);
+        }
+
+        .ag.front .ag-name {
+            color: var(--front);
+        }
+
+        .ag.test .ag-name {
+            color: var(--test);
+        }
+
+        .ag.sec .ag-name {
+            color: var(--sec);
+        }
+
+        .ag.doc .ag-name {
+            color: var(--doc);
+        }
+
+        .ag.rev .ag-name {
+            color: var(--review);
+        }
+
+        /* MCP tools layer */
+        .mcp-layer {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border2);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 8px 0;
+        }
+
+        .mcp-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: var(--dim);
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .mcp-tools {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mcp-tool {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 3px;
+        }
+
+        /* Output layer */
+        .output-layer {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .out-node {
+            background: rgba(126, 231, 135, 0.07);
+            border: 1px solid rgba(126, 231, 135, 0.3);
+            border-radius: 6px;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--back);
+            font-weight: 500;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        /* ── AGENT DETAIL TABLE ── */
+        .agent-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .agent-table th {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--dim);
+            border-bottom: 1px solid var(--border2);
+            padding: 10px 16px;
+            text-align: left;
+        }
+
+        .agent-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .agent-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .agent-table td:first-child {
+            font-size: 15px;
+            width: 40px;
+        }
+
+        .agent-table td:nth-child(2) {
+            font-weight: 600;
+            width: 160px;
+        }
+
+        .chip {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            margin: 2px 2px 2px 0;
+        }
+
+        .chip-y {
+            background: rgba(240, 230, 140, 0.12);
+            color: var(--orch);
+        }
+
+        .chip-b {
+            background: rgba(121, 192, 255, 0.12);
+            color: var(--arch);
+        }
+
+        .chip-g {
+            background: rgba(126, 231, 135, 0.12);
+            color: var(--back);
+        }
+
+        .chip-p {
+            background: rgba(210, 168, 255, 0.12);
+            color: var(--front);
+        }
+
+        .chip-o {
+            background: rgba(255, 166, 87, 0.12);
+            color: var(--test);
+        }
+
+        .chip-r {
+            background: rgba(255, 123, 114, 0.12);
+            color: var(--sec);
+        }
+
+        .chip-k {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--muted);
+        }
+
+        /* ── HUMAN CHECKPOINTS ── */
+        .checkpoints {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .cp-card {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            padding: 20px 22px;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .cp-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .cp-card.critical {
+            border-left: 3px solid var(--sec);
+        }
+
+        .cp-card.advisory {
+            border-left: 3px solid var(--test);
+        }
+
+        .cp-card.review {
+            border-left: 3px solid var(--arch);
+        }
+
+        .cp-type {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .cp-card.critical .cp-type {
+            color: var(--sec);
+        }
+
+        .cp-card.advisory .cp-type {
+            color: var(--test);
+        }
+
+        .cp-card.review .cp-type {
+            color: var(--arch);
+        }
+
+        .cp-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .cp-card p {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .cp-trigger {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--dim);
+            background: var(--surface3);
+            padding: 6px 10px;
+            border-radius: 4px;
+            border-left: 2px solid var(--border2);
+        }
+
+        /* ── PROMPT TEMPLATES ── */
+        .tabs {
+            display: flex;
+            gap: 1px;
+            background: var(--border);
+            border-radius: 6px 6px 0 0;
+            overflow: hidden;
+        }
+
+        .tab {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 10px 18px;
+            cursor: pointer;
+            color: var(--muted);
+            background: var(--surface2);
+            border: none;
+            outline: none;
+            transition: all 0.15s;
+            letter-spacing: 0.5px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .tab.active {
+            color: var(--text);
+            background: var(--surface3);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .code-panel {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 28px;
+            display: none;
+            position: relative;
+        }
+
+        .code-panel.active {
+            display: block;
+        }
+
+        .code-panel pre {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #c9d1d9;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .cp-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 4px 12px;
+            background: var(--surface3);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.15s;
+        }
+
+        .cp-btn:hover {
+            color: var(--text);
+            border-color: var(--orch);
+        }
+
+        /* Syntax */
+        .k {
+            color: #ff7b72;
+        }
+
+        .s {
+            color: #a5d6ff;
+        }
+
+        .c {
+            color: #484f58;
+            font-style: italic;
+        }
+
+        .n {
+            color: #7ee787;
+        }
+
+        .v {
+            color: #d2a8ff;
+        }
+
+        .b {
+            color: #79c0ff;
+        }
+
+        .y {
+            color: #f0e68c;
+        }
+
+        .o {
+            color: #ffa657;
+        }
+
+        /* ── RISK TABLE ── */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .risk-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px;
+        }
+
+        .risk-card .severity {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .sev-high {
+            color: var(--sec);
+        }
+
+        .sev-med {
+            color: var(--test);
+        }
+
+        .sev-low {
+            color: var(--back);
+        }
+
+        .risk-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .risk-card p {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .risk-card .mitigation {
+            font-size: 11px;
+            color: var(--arch);
+            margin-top: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        /* Animations */
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Context window bar */
+        .cw-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .cw-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        @media(max-width: 768px) {
+            .hdr-top {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .hdr-right {
+                text-align: left;
+            }
+
+            .agent-layer {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+
+        <!-- Header -->
+        <div class="hdr">
+            <div class="hdr-top">
+                <div>
+                    <div class="hdr-badge">AUTONOMOUS BUILD SYSTEM</div>
+                    <h1>The <span class="hi">Agent Factory</span><br>That Builds Itself</h1>
+                </div>
+                <div class="hdr-right">
+                    Team B · Feb 22 Demo<br>
+                    claude-sonnet-4-6<br>
+                    MCP Orchestration<br>
+                    Human-in-loop: minimal
+                </div>
+            </div>
+            <p class="hdr-sub">
+                An orchestrator coordinates <strong>7 specialized coding agents</strong> to design, build, test, secure,
+                and document the
+                media intelligence platform — entirely autonomously. Humans are only consulted at
+                <strong>critical architectural decisions</strong>, ambiguous requirements, or when agents reach genuine
+                impasses.
+                Everything else: the agents decide, build, review, and ship.
+            </p>
+        </div>
+
+        <!-- Philosophy -->
+        <div class="sec">
+            <div class="sec-title"><span>00</span> — Core Design Philosophy</div>
+            <div class="philosophy">
+                <h3>// PRINCIPLES GOVERNING THE AGENT FACTORY</h3>
+                <div class="phil-grid">
+                    <div class="phil-item">
+                        <h4>Context is King</h4>
+                        <p>Each agent only receives what it needs — no agent sees the full codebase. Orchestrator
+                            manages context slicing to stay within windows.</p>
+                    </div>
+                    <div class="phil-item">
+                        <h4>Fail Forward</h4>
+                        <p>Agents write code, run tests, see failures, fix them autonomously. Human is never called for
+                            a bug fix. Only for decisions that change scope.</p>
+                    </div>
+                    <div class="phil-item">
+                        <h4>Every Commit = Prompt</h4>
+                        <p>Each git commit is tagged with the agent that made it + the exact prompt used. Full
+                            reproducibility and prompt versioning baked in.</p>
+                    </div>
+                    <div class="phil-item">
+                        <h4>Minimal Human Surface</h4>
+                        <p>Human checkpoints: architecture sign-off, security policy, third-party integrations.
+                            Everything else is agent-decided and agent-executed.</p>
+                    </div>
+                    <div class="phil-item">
+                        <h4>Agents Review Agents</h4>
+                        <p>No agent ships code without a Reviewer Agent signing off. The Security Agent blocks merges.
+                            No human code review needed for iteration.</p>
+                    </div>
+                    <div class="phil-item">
+                        <h4>Prompt Versioning</h4>
+                        <p>Every agent system prompt is versioned in <code>/.prompts/</code>. Changing a prompt = a PR.
+                            Agents can improve their own prompts if perf drops.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Flow Diagram -->
+        <div class="sec">
+            <div class="sec-title"><span>01</span> — Full Autonomous Pipeline</div>
+            <div class="flow-diagram">
+                <div class="flow-label">// HUMAN GIVES GOAL → AGENTS BUILD EVERYTHING → HUMAN REVIEWS ONLY CRITICAL
+                    GATES</div>
+
+                <!-- Human input -->
+                <div class="human-node">
+                    <div class="label">INITIATOR</div>
+                    <div class="title">👤 Human</div>
+                    <div class="detail">types project spec</div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">project spec + constraints</div>
+                <div class="vc arrow"></div>
+
+                <!-- Orchestrator -->
+                <div class="orch-box">
+                    <div class="label">MASTER ORCHESTRATOR</div>
+                    <div class="title">🧠 Build Orchestrator</div>
+                    <div class="detail">plans phases · routes tasks · manages state · detects impasses</div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">dispatches to specialized agents via MCP</div>
+                <div class="vc arrow"></div>
+
+                <!-- Agent layer -->
+                <div class="agent-layer">
+                    <div class="ag arch">
+                        <div class="ag-icon">📐</div>
+                        <div class="ag-name">Architect</div>
+                        <div class="ag-role">system design</div>
+                    </div>
+                    <div class="ag back">
+                        <div class="ag-icon">⚙️</div>
+                        <div class="ag-name">Backend Dev</div>
+                        <div class="ag-role">api + services</div>
+                    </div>
+                    <div class="ag front">
+                        <div class="ag-icon">🎨</div>
+                        <div class="ag-name">Frontend Dev</div>
+                        <div class="ag-role">ui + dashboard</div>
+                    </div>
+                    <div class="ag test">
+                        <div class="ag-icon">🧪</div>
+                        <div class="ag-name">Tester</div>
+                        <div class="ag-role">write + run tests</div>
+                    </div>
+                    <div class="ag sec">
+                        <div class="ag-icon">🔒</div>
+                        <div class="ag-name">Security</div>
+                        <div class="ag-role">audit + harden</div>
+                    </div>
+                    <div class="ag doc">
+                        <div class="ag-icon">📝</div>
+                        <div class="ag-name">Documenter</div>
+                        <div class="ag-role">docs + comments</div>
+                    </div>
+                    <div class="ag rev">
+                        <div class="ag-icon">🔍</div>
+                        <div class="ag-name">Reviewer</div>
+                        <div class="ag-role">QA gate</div>
+                    </div>
+                </div>
+
+                <div class="vc arrow" style="margin-top:8px;"></div>
+                <div class="vc-label">tools agents call autonomously</div>
+                <div class="vc arrow"></div>
+
+                <!-- MCP Tool Layer -->
+                <div class="mcp-layer">
+                    <div class="mcp-title">⚡ MCP TOOL LAYER — agents call these freely, no human involvement</div>
+                    <div class="mcp-tools">
+                        <span class="mcp-tool">write_file</span>
+                        <span class="mcp-tool">read_file</span>
+                        <span class="mcp-tool">list_files</span>
+                        <span class="mcp-tool">run_command</span>
+                        <span class="mcp-tool">run_tests</span>
+                        <span class="mcp-tool">git_commit</span>
+                        <span class="mcp-tool">git_diff</span>
+                        <span class="mcp-tool">search_codebase</span>
+                        <span class="mcp-tool">install_deps</span>
+                        <span class="mcp-tool">check_errors</span>
+                        <span class="mcp-tool">read_logs</span>
+                        <span class="mcp-tool">ask_human</span>
+                    </div>
+                </div>
+
+                <div class="vc arrow" style="margin-top:12px;"></div>
+                <div class="vc-label">human checkpoint gates (see section 03)</div>
+                <div class="vc arrow"></div>
+
+                <!-- Human review gate -->
+                <div class="human-node" style="border-color:rgba(255,123,114,0.4);">
+                    <div class="label" style="color:rgba(255,123,114,0.6);">GATE</div>
+                    <div class="title" style="color:var(--sec);">🚦 Decision Points</div>
+                    <div class="detail">arch · security · scope changes</div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">approved → agents continue autonomously</div>
+                <div class="vc arrow"></div>
+
+                <!-- Output -->
+                <div class="output-layer">
+                    <div class="out-node">✅ Working Codebase</div>
+                    <div class="out-node">📋 Full Test Suite</div>
+                    <div class="out-node">📚 Documentation</div>
+                    <div class="out-node">🔒 Security Report</div>
+                    <div class="out-node">📝 Prompt Changelog</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Agent Details Table -->
+        <div class="sec">
+            <div class="sec-title"><span>02</span> — Agent Roles & Responsibilities</div>
+            <table class="agent-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Agent</th>
+                        <th>What It Does Autonomously</th>
+                        <th>MCP Tools It Uses</th>
+                        <th>Context Window Strategy</th>
+                        <th>Calls Human When</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🧠</td>
+                        <td style="color:var(--orch);">Build Orchestrator</td>
+                        <td>Owns the entire build plan. Reads spec, creates phase list, dispatches tasks to agents,
+                            merges outputs, tracks what's done, retries failures, decides when to escalate to human.
+                        </td>
+                        <td><span class="chip chip-k">all tools</span></td>
+                        <td>Maintains a running <code>build_state.json</code>. Never loads full code — only summaries.
+                        </td>
+                        <td>Genuinely ambiguous requirement, or 3+ agent retry failures</td>
+                    </tr>
+                    <tr>
+                        <td>📐</td>
+                        <td style="color:var(--arch);">Architect Agent</td>
+                        <td>Designs folder structure, API contracts, DB schema, module boundaries, tech stack decisions.
+                            Writes <code>ARCHITECTURE.md</code> and all interface definitions before Backend starts.
+                        </td>
+                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">read_file</span></td>
+                        <td>Only sees: project spec + existing architecture docs. No code.</td>
+                        <td>Conflicting non-functional requirements (scale vs. cost), third-party API choices</td>
+                    </tr>
+                    <tr>
+                        <td>⚙️</td>
+                        <td style="color:var(--back);">Backend Dev Agent</td>
+                        <td>Implements all server-side code: FastAPI routes, MCP server, Whisper pipeline, article
+                            scraper, agent logic, DB models. Runs server, checks logs, fixes errors in a loop until
+                            tests pass.</td>
+                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">run_command</span>
+                            <span class="chip chip-k">run_tests</span> <span class="chip chip-k">read_logs</span> <span
+                                class="chip chip-k">install_deps</span></td>
+                        <td>Sees: ARCHITECTURE.md + only the files it's currently editing. Requests other files via
+                            tool.</td>
+                        <td>Never. Fixes its own bugs. Escalates only if architecture is broken.</td>
+                    </tr>
+                    <tr>
+                        <td>🎨</td>
+                        <td style="color:var(--front);">Frontend Dev Agent</td>
+                        <td>Builds the React dashboard: live media feed, sentiment cards, entity tags, trend charts.
+                            Connects to backend API. Runs dev server, iterates until UI matches spec. Writes CSS and
+                            components.</td>
+                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">run_command</span>
+                            <span class="chip chip-k">check_errors</span> <span class="chip chip-k">read_file</span>
+                        </td>
+                        <td>Sees: API contract from Architect + only its own frontend files.</td>
+                        <td>Never. Iterates autonomously. Escalates only if API contract is wrong.</td>
+                    </tr>
+                    <tr>
+                        <td>🧪</td>
+                        <td style="color:var(--test);">Tester Agent</td>
+                        <td>Writes unit tests, integration tests, and E2E tests for every module. Runs them, reads
+                            failures, fixes test or raises issue to the relevant Dev agent. Maintains test coverage
+                            above 80%.</td>
+                        <td><span class="chip chip-k">write_file</span> <span class="chip chip-k">run_tests</span> <span
+                                class="chip chip-k">read_logs</span> <span class="chip chip-k">search_codebase</span>
+                        </td>
+                        <td>Sees: the module it's testing + test results. Nothing else.</td>
+                        <td>Test reveals a logic error that changes the spec</td>
+                    </tr>
+                    <tr>
+                        <td>🔒</td>
+                        <td style="color:var(--sec);">Security Agent</td>
+                        <td>Audits all code for injection risks, exposed secrets, insecure deps, CORS misconfig. Runs
+                            bandit/safety. Writes a security report. <strong>Can block merges.</strong> Hardened code
+                            before it ships.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">run_command</span>
+                            <span class="chip chip-k">write_file</span> <span class="chip chip-k">git_diff</span></td>
+                        <td>Sees: git diff of the files being reviewed. No full codebase needed.</td>
+                        <td>Critical vulnerability with no clear fix (e.g. architectural auth flaw)</td>
+                    </tr>
+                    <tr>
+                        <td>📝</td>
+                        <td style="color:var(--doc);">Documenter Agent</td>
+                        <td>Writes README, inline docstrings, API docs (OpenAPI), setup guide, and a
+                            <code>AGENTS.md</code> file logging every agent's contribution. Runs after each module is
+                            complete.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: only the file it's documenting. Requests context via search tool.</td>
+                        <td>Never. Fully autonomous.</td>
+                    </tr>
+                    <tr>
+                        <td>🔍</td>
+                        <td style="color:var(--review);">Reviewer Agent</td>
+                        <td>The final gate before any code is committed. Reviews diffs for logic errors, code quality,
+                            naming, DRY violations. Returns APPROVED or CHANGES_REQUESTED with specific feedback. Acts
+                            as the QA wall.</td>
+                        <td><span class="chip chip-k">git_diff</span> <span class="chip chip-k">read_file</span> <span
+                                class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: only the diff. Never the full repo.</td>
+                        <td>Never. If it blocks, the dev agent fixes and resubmits.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Human Checkpoints -->
+        <div class="sec">
+            <div class="sec-title"><span>03</span> — Human Checkpoint Gates</div>
+            <div class="checkpoints">
+                <div class="cp-card critical">
+                    <div class="cp-type">🔴 CRITICAL — MUST ASK</div>
+                    <h4>Architecture Sign-Off</h4>
+                    <p>Before any code is written, Architect Agent presents the system design: folder structure, DB
+                        schema, API surface, tech choices. Human approves or requests changes. This happens once and
+                        unlocks the build.</p>
+                    <div class="cp-trigger">TRIGGER: Architect finishes ARCHITECTURE.md</div>
+                </div>
+                <div class="cp-card critical">
+                    <div class="cp-type">🔴 CRITICAL — MUST ASK</div>
+                    <h4>Security Policy Decision</h4>
+                    <p>Security Agent surfaces a policy question: "Should API keys be stored in .env or a secrets
+                        manager? Should we add rate limiting?" These are business decisions, not code decisions. Human
+                        decides once.</p>
+                    <div class="cp-trigger">TRIGGER: Security Agent finds a policy ambiguity</div>
+                </div>
+                <div class="cp-card critical">
+                    <div class="cp-type">🔴 CRITICAL — MUST ASK</div>
+                    <h4>Third-Party Credentials</h4>
+                    <p>Agents cannot create API keys. When pipeline requires YouTube Data API, Whisper API, or any
+                        external service, agents pause and ask human to provide credentials. Then proceed autonomously.
+                    </p>
+                    <div class="cp-trigger">TRIGGER: Any external API integration point</div>
+                </div>
+                <div class="cp-card advisory">
+                    <div class="cp-type">🟡 ADVISORY — CAN SKIP</div>
+                    <h4>Scope Expansion Request</h4>
+                    <p>If an agent determines the spec requires a feature not in the original brief (e.g., "real-time
+                        websocket support seems necessary"), it raises a scope question rather than silently building
+                        it.</p>
+                    <div class="cp-trigger">TRIGGER: Agent detects missing requirement</div>
+                </div>
+                <div class="cp-card advisory">
+                    <div class="cp-type">🟡 ADVISORY — CAN SKIP</div>
+                    <h4>Cost/Performance Tradeoff</h4>
+                    <p>When the Architect faces a genuine tradeoff (e.g., "SQLite is simpler but won't scale; Postgres
+                        adds 2 hours of build time") it surfaces the options with a recommendation and waits for human
+                        approval.</p>
+                    <div class="cp-trigger">TRIGGER: Architect detects design tradeoff</div>
+                </div>
+                <div class="cp-card review">
+                    <div class="cp-type">🔵 REVIEW — END OF PHASE</div>
+                    <h4>Phase Completion Review</h4>
+                    <p>At the end of each build phase (backend done, frontend done, tests passing), orchestrator
+                        presents a summary: what was built, test results, security report, known issues. Human says
+                        "continue" or "fix X first."</p>
+                    <div class="cp-trigger">TRIGGER: Orchestrator marks phase COMPLETE</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Templates -->
+        <div class="sec">
+            <div class="sec-title"><span>04</span> — Implementation Templates</div>
+            <div class="tabs">
+                <button class="tab active" onclick="showTab(event,'t-orch')">Orchestrator</button>
+                <button class="tab" onclick="showTab(event,'t-mcp')">MCP Tools</button>
+                <button class="tab" onclick="showTab(event,'t-agents')">Agent Prompts</button>
+                <button class="tab" onclick="showTab(event,'t-loop')">Build Loop</button>
+                <button class="tab" onclick="showTab(event,'t-state')">State Schema</button>
+            </div>
+
+            <!-- Orchestrator -->
+            <div class="code-panel active" id="t-orch">
+                <button class="cp-btn" onclick="copyTab('t-orch')">COPY</button>
+                <pre><span class="c"># orchestrator.py — the master build controller</span>
+<span class="k">import</span> asyncio, json
+<span class="k">from</span> mcp <span class="k">import</span> ClientSession, StdioServerParameters
+<span class="k">from</span> mcp.client.stdio <span class="k">import</span> stdio_client
+<span class="k">import</span> anthropic
+
+<span class="v">client</span> = anthropic.Anthropic()
+
+<span class="n">ORCHESTRATOR_PROMPT</span> = <span class="s">"""
+You are a software build orchestrator. You manage a team of AI agents
+building a media intelligence platform. You have access to MCP tools.
+
+Your workflow:
+1. Read the project spec
+2. Call architect_agent to design the system
+3. Present architecture to human via ask_human tool — WAIT for approval
+4. Dispatch backend_agent to build services (it loops until tests pass)
+5. Dispatch frontend_agent to build dashboard
+6. Dispatch tester_agent to write + run all tests
+7. Dispatch security_agent to audit — it can BLOCK merges
+8. Dispatch documenter_agent for all docs
+9. Present phase summary to human for sign-off
+
+Rules:
+- Never write code yourself. Only route to agents.
+- Only call ask_human for: arch approval, security policy, credentials, scope changes
+- Track state in build_state.json at all times
+- If an agent fails 3 times, escalate to human with context
+- Each completed task = a git commit with agent tag + prompt version
+"""</span>
+
+<span class="k">async def</span> <span class="n">run_build</span>(spec: str):
+    <span class="v">server</span> = StdioServerParameters(command=<span class="s">"python"</span>, args=[<span class="s">"mcp_tools.py"</span>])
+
+    <span class="k">async with</span> stdio_client(server) <span class="k">as</span> (r, w):
+        <span class="k">async with</span> ClientSession(r, w) <span class="k">as</span> session:
+            <span class="k">await</span> session.initialize()
+
+            <span class="c"># Get all tools and pass to Claude</span>
+            <span class="v">tools</span> = <span class="k">await</span> session.list_tools()
+            <span class="v">mcp_tools</span> = [t.dict() <span class="k">for</span> t <span class="k">in</span> tools.tools]
+
+            <span class="v">messages</span> = [{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: <span class="s">f"Build this: {spec}"</span>}]
+
+            <span class="c"># Agentic loop — runs until orchestrator says DONE</span>
+            <span class="k">while True</span>:
+                <span class="v">resp</span> = client.messages.create(
+                    model=<span class="s">"claude-sonnet-4-6"</span>,
+                    max_tokens=<span class="b">4096</span>,
+                    system=ORCHESTRATOR_PROMPT,
+                    tools=mcp_tools,
+                    messages=messages
+                )
+
+                <span class="c"># Collect text and tool calls</span>
+                <span class="k">for</span> block <span class="k">in</span> resp.content:
+                    <span class="k">if</span> block.type == <span class="s">"text"</span>:
+                        print(<span class="s">f"\n🧠 Orchestrator: {block.text}"</span>)
+                    <span class="k">elif</span> block.type == <span class="s">"tool_use"</span>:
+                        <span class="v">result</span> = <span class="k">await</span> session.call_tool(block.name, block.input)
+                        messages.append({<span class="s">"role"</span>: <span class="s">"assistant"</span>, <span class="s">"content"</span>: resp.content})
+                        messages.append({
+                            <span class="s">"role"</span>: <span class="s">"user"</span>,
+                            <span class="s">"content"</span>: [{
+                                <span class="s">"type"</span>: <span class="s">"tool_result"</span>,
+                                <span class="s">"tool_use_id"</span>: block.id,
+                                <span class="s">"content"</span>: str(result.content)
+                            }]
+                        })
+
+                <span class="k">if</span> resp.stop_reason == <span class="s">"end_turn"</span>:
+                    print(<span class="s">"\n✅ Build complete!"</span>)
+                    <span class="k">break</span>
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    <span class="v">spec</span> = open(<span class="s">"PROJECT_SPEC.md"</span>).read()
+    asyncio.run(run_build(spec))</pre>
+            </div>
+
+            <!-- MCP Tools -->
+            <div class="code-panel" id="t-mcp">
+                <button class="cp-btn" onclick="copyTab('t-mcp')">COPY</button>
+                <pre><span class="c"># mcp_tools.py — all tools agents can call autonomously</span>
+<span class="k">from</span> mcp.server <span class="k">import</span> Server
+<span class="k">from</span> mcp.server.stdio <span class="k">import</span> stdio_server
+<span class="k">import</span> subprocess, os, json
+
+<span class="v">app</span> = Server(<span class="s">"build-tools"</span>)
+
+<span class="c"># ── File System ─────────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">write_file</span>(path: str, content: str, agent: str, prompt_version: str) -> str:
+    <span class="s">"""Write file. Automatically tags the commit with agent + prompt version."""</span>
+    os.makedirs(os.path.dirname(path) <span class="k">or</span> <span class="s">"."</span>, exist_ok=<span class="b">True</span>)
+    open(path, <span class="s">"w"</span>).write(content)
+    <span class="c"># Auto-stage for git</span>
+    subprocess.run([<span class="s">"git"</span>, <span class="s">"add"</span>, path], check=<span class="b">True</span>)
+    <span class="k">return</span> <span class="s">f"Written: {path}"</span>
+
+@app.tool()
+<span class="k">async def</span> <span class="n">read_file</span>(path: str) -> str:
+    <span class="s">"""Read file contents."""</span>
+    <span class="k">return</span> open(path).read() <span class="k">if</span> os.path.exists(path) <span class="k">else</span> <span class="s">f"FILE_NOT_FOUND: {path}"</span>
+
+@app.tool()
+<span class="k">async def</span> <span class="n">list_files</span>(directory: str = <span class="s">"."</span>) -> str:
+    <span class="s">"""List files in directory."""</span>
+    <span class="v">result</span> = []
+    <span class="k">for</span> root, dirs, files <span class="k">in</span> os.walk(directory):
+        dirs[:] = [d <span class="k">for</span> d <span class="k">in</span> dirs <span class="k">if</span> d <span class="k">not in</span> [<span class="s">".git"</span>, <span class="s">"node_modules"</span>, <span class="s">"__pycache__"</span>]]
+        <span class="k">for</span> f <span class="k">in</span> files:
+            result.append(os.path.join(root, f))
+    <span class="k">return</span> json.dumps(result)
+
+<span class="c"># ── Execution ────────────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">run_command</span>(cmd: str, cwd: str = <span class="s">"."</span>) -> str:
+    <span class="s">"""Run a shell command. Returns stdout + stderr."""</span>
+    <span class="v">r</span> = subprocess.run(cmd, shell=<span class="b">True</span>, capture_output=<span class="b">True</span>, text=<span class="b">True</span>, cwd=cwd)
+    <span class="k">return</span> <span class="s">f"STDOUT:\n{r.stdout}\nSTDERR:\n{r.stderr}\nEXIT: {r.returncode}"</span>
+
+@app.tool()
+<span class="k">async def</span> <span class="n">run_tests</span>(path: str = <span class="s">"."</span>) -> str:
+    <span class="s">"""Run pytest and return results."""</span>
+    <span class="v">r</span> = subprocess.run(<span class="s">f"pytest {path} -v --tb=short"</span>,
+                        shell=<span class="b">True</span>, capture_output=<span class="b">True</span>, text=<span class="b">True</span>)
+    <span class="k">return</span> <span class="s">f"{r.stdout}\n{r.stderr}"</span>
+
+<span class="c"># ── Git ──────────────────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">git_commit</span>(message: str, agent: str, prompt_version: str) -> str:
+    <span class="s">"""Commit staged files with agent metadata."""</span>
+    full_msg = <span class="s">f"{message}\n\nAgent: {agent}\nPrompt: {prompt_version}"</span>
+    subprocess.run([<span class="s">"git"</span>, <span class="s">"commit"</span>, <span class="s">"-m"</span>, full_msg], check=<span class="b">True</span>)
+    <span class="k">return</span> <span class="s">"Committed"</span>
+
+@app.tool()
+<span class="k">async def</span> <span class="n">git_diff</span>(staged: bool = <span class="b">False</span>) -> str:
+    <span class="s">"""Get current git diff for review."""</span>
+    <span class="v">cmd</span> = <span class="s">"git diff --staged"</span> <span class="k">if</span> staged <span class="k">else</span> <span class="s">"git diff"</span>
+    <span class="v">r</span> = subprocess.run(cmd, shell=<span class="b">True</span>, capture_output=<span class="b">True</span>, text=<span class="b">True</span>)
+    <span class="k">return</span> r.stdout
+
+<span class="c"># ── Human Escalation ─────────────────────────────</span>
+@app.tool()
+<span class="k">async def</span> <span class="n">ask_human</span>(question: str, context: str, options: list = <span class="b">None</span>) -> str:
+    <span class="s">"""
+    Block and ask the human a question. Use SPARINGLY.
+    Only for: architecture approval, security policy, credentials, scope changes.
+    Never for: bugs, code style, implementation details.
+    """</span>
+    print(<span class="s">f"\n{'='*60}"</span>)
+    print(<span class="s">f"🚦 HUMAN INPUT REQUIRED"</span>)
+    print(<span class="s">f"Context: {context}"</span>)
+    print(<span class="s">f"\nQuestion: {question}"</span>)
+    <span class="k">if</span> options:
+        <span class="k">for</span> i, opt <span class="k">in</span> enumerate(options):
+            print(<span class="s">f"  {i+1}. {opt}"</span>)
+    <span class="k">return</span> input(<span class="s">"\nYour answer: "</span>)</pre>
+            </div>
+
+            <!-- Agent Prompts -->
+            <div class="code-panel" id="t-agents">
+                <button class="cp-btn" onclick="copyTab('t-agents')">COPY</button>
+                <pre><span class="c"># agent_prompts.py — system prompts for each specialized agent</span>
+
+<span class="n">ARCHITECT_PROMPT</span> = <span class="s">"""
+You are a software Architect agent. You receive a project spec and produce
+a complete technical design. Do NOT write implementation code.
+
+You MUST output:
+1. ARCHITECTURE.md — folder structure, module descriptions
+2. api_contract.json — all API endpoints, request/response schemas
+3. db_schema.sql — all tables, indexes, relationships
+4. tech_decisions.md — stack choices with rationale
+
+Rules:
+- Choose the simplest stack that meets requirements
+- Every interface must be fully specified before dev agents start
+- Flag any ambiguous requirements for human approval
+- Use write_file tool for each output file
+- End with: ARCHITECTURE_COMPLETE
+"""</span>
+
+<span class="n">BACKEND_PROMPT</span> = <span class="s">"""
+You are a Backend Developer agent. You implement server-side code ONLY.
+You have access to the filesystem and can run commands.
+
+Your loop:
+1. Read ARCHITECTURE.md and api_contract.json
+2. Implement one module at a time
+3. run_command to start server and check for errors
+4. run_tests on each module before moving to next
+5. Fix any errors you find — never give up after first failure
+6. git_commit each completed module
+
+Rules:
+- Never ask human for help with bugs
+- Retry failed implementations up to 3 times with different approaches
+- Always check run_tests passes before marking a module done
+- Use read_logs to diagnose runtime errors
+- End each module with: MODULE_[name]_COMPLETE
+"""</span>
+
+<span class="n">FRONTEND_PROMPT</span> = <span class="s">"""
+You are a Frontend Developer agent. You build the React dashboard UI.
+You have access to the filesystem and can run commands.
+
+Your loop:
+1. Read api_contract.json to understand backend interfaces
+2. Scaffold React app with correct folder structure
+3. Build each component — media card, sentiment display, trend chart
+4. run_command npm start and check for compile errors
+5. Fix errors autonomously
+6. Ensure every API endpoint is wired up
+
+Rules:
+- Do not build features not in the spec
+- Keep components small and composable
+- Never ask human about UI decisions — use your best judgment
+- End with: FRONTEND_COMPLETE
+"""</span>
+
+<span class="n">TESTER_PROMPT</span> = <span class="s">"""
+You are a Testing agent. You write and run comprehensive tests.
+
+Your loop:
+1. Read each module's code
+2. Write unit tests for every function
+3. Write integration tests for API endpoints
+4. run_tests — read failures — fix tests or report bugs to orchestrator
+5. Maintain >80% coverage
+
+Rules:
+- If a test reveals a spec violation, report it — don't hide it
+- Write test names that document behavior, not implementation
+- Never skip tests because they're hard to write
+- End with: TESTS_COMPLETE — coverage: [X]%
+"""</span>
+
+<span class="n">SECURITY_PROMPT</span> = <span class="s">"""
+You are a Security Auditor agent. You review ALL code before it ships.
+
+Your checks:
+- SQL injection / NoSQL injection risks
+- Exposed API keys or secrets in code
+- Insecure dependencies (run: safety check)
+- Missing authentication / authorization
+- CORS misconfiguration
+- Input validation gaps
+- run_command bandit -r . for static analysis
+
+Output: security_report.md with:
+- CRITICAL issues (block merge)
+- HIGH issues (fix before ship)
+- MEDIUM issues (fix in next sprint)
+- PASSED checks
+
+Rules:
+- CRITICAL issues = set flag MERGE_BLOCKED in build_state.json
+- Never approve code with CRITICAL issues
+- Escalate to human ONLY if an architectural change is needed to fix a critical
+"""</span>
+
+<span class="n">REVIEWER_PROMPT</span> = <span class="s">"""
+You are a Code Reviewer agent. You review diffs before any commit lands.
+
+Read the git diff and check for:
+- Logic errors that tests might miss
+- Naming that obscures intent
+- DRY violations (same logic in 2+ places)
+- Functions that do more than one thing
+- Missing error handling
+
+Return either:
+APPROVED — with brief summary
+CHANGES_REQUESTED — with specific line-by-line feedback
+
+Rules:
+- Be precise, not pedantic
+- Do not block for style issues — only correctness and clarity
+- Never ask human — the dev agent will fix and resubmit
+"""</span></pre>
+            </div>
+
+            <!-- Build Loop -->
+            <div class="code-panel" id="t-loop">
+                <button class="cp-btn" onclick="copyTab('t-loop')">COPY</button>
+                <pre><span class="c"># build_loop.py — how the orchestrator dispatches sub-agents</span>
+<span class="c"># Each sub-agent is itself an agentic loop with its own MCP session</span>
+
+<span class="k">async def</span> <span class="n">run_agent</span>(agent_name: str, prompt: str, task: str, session) -> str:
+    <span class="s">"""
+    Run a specialized agent as its own agentic loop.
+    Agent calls MCP tools freely until it outputs its COMPLETE signal.
+    """</span>
+    <span class="v">messages</span> = [{<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: task}]
+    <span class="v">tools</span> = <span class="k">await</span> session.list_tools()
+
+    <span class="k">while True</span>:
+        <span class="v">resp</span> = client.messages.create(
+            model=<span class="s">"claude-sonnet-4-6"</span>,
+            max_tokens=<span class="b">4096</span>,
+            system=prompt,
+            tools=[t.dict() <span class="k">for</span> t <span class="k">in</span> tools.tools],
+            messages=messages
+        )
+
+        <span class="v">full_text</span> = <span class="s">""</span>
+        <span class="k">for</span> block <span class="k">in</span> resp.content:
+            <span class="k">if</span> block.type == <span class="s">"text"</span>:
+                full_text += block.text
+                print(<span class="s">f"  [{agent_name}]: {block.text[:120]}..."</span>)
+            <span class="k">elif</span> block.type == <span class="s">"tool_use"</span>:
+                print(<span class="s">f"  [{agent_name}] → {block.name}({list(block.input.keys())})"</span>)
+                <span class="v">result</span> = <span class="k">await</span> session.call_tool(block.name, block.input)
+                messages.append({<span class="s">"role"</span>: <span class="s">"assistant"</span>, <span class="s">"content"</span>: resp.content})
+                messages.append({<span class="s">"role"</span>: <span class="s">"user"</span>, <span class="s">"content"</span>: [{
+                    <span class="s">"type"</span>: <span class="s">"tool_result"</span>,
+                    <span class="s">"tool_use_id"</span>: block.id,
+                    <span class="s">"content"</span>: str(result.content)
+                }]})
+
+        <span class="c"># Agent signals completion via text output</span>
+        <span class="k">if</span> <span class="s">"_COMPLETE"</span> <span class="k">in</span> full_text <span class="k">or</span> resp.stop_reason == <span class="s">"end_turn"</span>:
+            <span class="k">return</span> full_text
+
+<span class="c"># ── Build Phase Sequence ─────────────────────────</span>
+<span class="k">async def</span> <span class="n">full_build_pipeline</span>(spec: str, session):
+    
+    <span class="c"># Phase 1: Design</span>
+    print(<span class="s">"\n📐 Phase 1: Architecture"</span>)
+    <span class="k">await</span> run_agent(<span class="s">"Architect"</span>, ARCHITECT_PROMPT, spec, session)
+    <span class="c"># HUMAN GATE: ask_human is called inside the agent via MCP tool</span>
+
+    <span class="c"># Phase 2: Build (parallel where possible)</span>
+    print(<span class="s">"\n⚙️  Phase 2: Backend"</span>)
+    <span class="k">await</span> run_agent(<span class="s">"BackendDev"</span>, BACKEND_PROMPT,
+                    <span class="s">"Implement all backend services per ARCHITECTURE.md"</span>, session)
+
+    print(<span class="s">"\n🎨 Phase 3: Frontend"</span>)
+    <span class="k">await</span> run_agent(<span class="s">"FrontendDev"</span>, FRONTEND_PROMPT,
+                    <span class="s">"Build React dashboard per api_contract.json"</span>, session)
+
+    <span class="c"># Phase 3: QA + Security</span>
+    print(<span class="s">"\n🧪 Phase 4: Tests"</span>)
+    <span class="k">await</span> run_agent(<span class="s">"Tester"</span>, TESTER_PROMPT, <span class="s">"Write and run full test suite"</span>, session)
+
+    print(<span class="s">"\n🔒 Phase 5: Security"</span>)
+    <span class="k">await</span> run_agent(<span class="s">"Security"</span>, SECURITY_PROMPT, <span class="s">"Audit all code"</span>, session)
+
+    <span class="c"># Check if security blocked</span>
+    <span class="v">state</span> = json.loads(open(<span class="s">"build_state.json"</span>).read())
+    <span class="k">if</span> state.get(<span class="s">"MERGE_BLOCKED"</span>):
+        print(<span class="s">"\n🚨 Security blocked merge. Backend agent fixing..."</span>)
+        <span class="k">await</span> run_agent(<span class="s">"BackendDev"</span>, BACKEND_PROMPT,
+                        <span class="s">"Fix all CRITICAL issues in security_report.md"</span>, session)
+
+    <span class="c"># Phase 4: Docs</span>
+    print(<span class="s">"\n📝 Phase 6: Documentation"</span>)
+    <span class="k">await</span> run_agent(<span class="s">"Documenter"</span>, DOC_PROMPT, <span class="s">"Document entire codebase"</span>, session)
+
+    print(<span class="s">"\n✅ BUILD COMPLETE — awaiting human review"</span>)</pre>
+            </div>
+
+            <!-- State Schema -->
+            <div class="code-panel" id="t-state">
+                <button class="cp-btn" onclick="copyTab('t-state')">COPY</button>
+                <pre><span class="c">// build_state.json — shared truth for all agents</span>
+<span class="c">// Orchestrator writes this; agents read it to understand current state</span>
+{
+  <span class="s">"project"</span>: {
+    <span class="s">"name"</span>: <span class="s">"media-intelligence-platform"</span>,
+    <span class="s">"spec_file"</span>: <span class="s">"PROJECT_SPEC.md"</span>,
+    <span class="s">"started_at"</span>: <span class="s">"2026-02-22T12:00:00Z"</span>
+  },
+
+  <span class="s">"phases"</span>: {
+    <span class="s">"architecture"</span>: <span class="s">"COMPLETE"</span>,    <span class="c">// PENDING | IN_PROGRESS | COMPLETE | BLOCKED</span>
+    <span class="s">"backend"</span>:      <span class="s">"IN_PROGRESS"</span>,
+    <span class="s">"frontend"</span>:     <span class="s">"PENDING"</span>,
+    <span class="s">"testing"</span>:      <span class="s">"PENDING"</span>,
+    <span class="s">"security"</span>:     <span class="s">"PENDING"</span>,
+    <span class="s">"documentation"</span>:<span class="s">"PENDING"</span>
+  },
+
+  <span class="s">"human_gates"</span>: {
+    <span class="s">"architecture_approved"</span>: <span class="b">true</span>,
+    <span class="s">"security_policy_set"</span>:   <span class="b">false</span>,   <span class="c">// blocks security phase</span>
+    <span class="s">"credentials_provided"</span>:  <span class="b">false</span>    <span class="c">// blocks integrations</span>
+  },
+
+  <span class="s">"MERGE_BLOCKED"</span>: <span class="b">false</span>,             <span class="c">// Security agent sets this</span>
+
+  <span class="s">"metrics"</span>: {
+    <span class="s">"test_coverage"</span>: <span class="b">0</span>,
+    <span class="s">"tests_passing"</span>: <span class="b">0</span>,
+    <span class="s">"tests_total"</span>:   <span class="b">0</span>,
+    <span class="s">"security_issues"</span>: { <span class="s">"critical"</span>: <span class="b">0</span>, <span class="s">"high"</span>: <span class="b">0</span>, <span class="s">"medium"</span>: <span class="b">0</span> },
+    <span class="s">"files_written"</span>: <span class="b">0</span>,
+    <span class="s">"commits"</span>:       <span class="b">0</span>
+  },
+
+  <span class="s">"agent_log"</span>: [
+    {
+      <span class="s">"agent"</span>:      <span class="s">"Architect"</span>,
+      <span class="s">"action"</span>:     <span class="s">"wrote ARCHITECTURE.md"</span>,
+      <span class="s">"timestamp"</span>:  <span class="s">"2026-02-22T12:05:00Z"</span>,
+      <span class="s">"prompt_ver"</span>: <span class="s">"architect_v1.2"</span>
+    }
+  ],
+
+  <span class="s">"known_issues"</span>: [],      <span class="c">// agents write issues here for orchestrator</span>
+  <span class="s">"completed_modules"</span>: []  <span class="c">// backend/frontend tracks finished pieces</span>
+}</pre>
+            </div>
+        </div>
+
+        <!-- Risk Mitigations -->
+        <div class="sec">
+            <div class="sec-title"><span>05</span> — Known Risks & Mitigations</div>
+            <div class="risk-grid">
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH RISK</div>
+                    <h4>Context Window Overflow</h4>
+                    <p>Backend agent reads whole codebase → hits token limit → hallucinates or fails.</p>
+                    <div class="mitigation">→ Agents only load files they request via read_file. Orchestrator passes
+                        summaries, not raw code.</div>
+                </div>
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH RISK</div>
+                    <h4>Infinite Bug Loop</h4>
+                    <p>Agent tries to fix a bug, makes it worse, re-attempts, creates cascade of errors.</p>
+                    <div class="mitigation">→ Max 3 retries per task. On 3rd failure, orchestrator escalates to human
+                        with full context.</div>
+                </div>
+                <div class="risk-card">
+                    <div class="severity sev-high">⚠ HIGH RISK</div>
+                    <h4>Agent Hallucinating APIs</h4>
+                    <p>Backend agent calls a library method that doesn't exist. Tests fail but agent keeps guessing.</p>
+                    <div class="mitigation">→ run_command pip show [lib] + read docs before using. Tester catches
+                        hallucinated APIs.</div>
+                </div>
+                <div class="risk-card">
+                    <div class="severity sev-med">○ MEDIUM RISK</div>
+                    <h4>Prompt Drift Across Agents</h4>
+                    <p>Architect designs something, Backend interprets it differently, Frontend has a third
+                        interpretation.</p>
+                    <div class="mitigation">→ api_contract.json is the single source of truth. All agents read it before
+                        starting.</div>
+                </div>
+                <div class="risk-card">
+                    <div class="severity sev-med">○ MEDIUM RISK</div>
+                    <h4>Cost Explosion</h4>
+                    <p>Agents in tight retry loops consuming thousands of tokens for simple bugs.</p>
+                    <div class="mitigation">→ Budget cap in orchestrator: if token_spend > $20, pause and ask human. Log
+                        all API calls.</div>
+                </div>
+                <div class="risk-card">
+                    <div class="severity sev-low">● LOW RISK</div>
+                    <h4>Security Agent Over-Blocking</h4>
+                    <p>Security agent flags false positives and blocks the build indefinitely.</p>
+                    <div class="mitigation">→ Security agent can only block CRITICAL issues. HIGH and MEDIUM are
+                        advisory-only.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+            style="border-top:1px solid var(--border2); margin-top:48px; padding-top:20px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim);">SANKHYA · TEAM B ·
+                AUTONOMOUS BUILD SYSTEM</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim);">pip install anthropic
+                mcp yt-dlp openai-whisper</span>
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(e, id) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            e.target.classList.add('active');
+        }
+
+        function copyTab(id) {
+            const pre = document.getElementById(id).querySelector('pre');
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                const btn = document.getElementById(id).querySelector('.cp-btn');
+                btn.textContent = 'COPIED!';
+                btn.style.color = '#7ee787';
+                setTimeout(() => { btn.textContent = 'COPY'; btn.style.color = ''; }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
