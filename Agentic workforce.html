@@ -1020,6 +1020,33 @@
 </head>
 
 <body>
+    <a href="index.html" class="back-btn">← Home</a>
+    <style>
+        .back-btn {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            z-index: 9999;
+            background: rgba(100, 220, 160, 0.08);
+            color: #7ee786;
+            border: 1px solid rgba(100, 220, 160, 0.3);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .back-btn:hover {
+            background: rgba(100, 220, 160, 0.25);
+            color: #fff;
+            border-color: rgba(100, 220, 160, 0.7);
+            transform: translateY(-2px);
+        }
+    </style>
     <div class="wrap">
 
         <!-- Header -->
@@ -1374,7 +1401,8 @@
                             existing code patterns. Recommends tech stack additions with rationale. Waits for explicit
                             user confirmation before locking <code>RefinedSpec</code>.</td>
                         <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span>
-                            <span class="chip chip-k">ask_human</span></td>
+                            <span class="chip chip-k">ask_human</span>
+                        </td>
                         <td>Sees: uploaded React codebase + new requirements + past RefinedSpec from long-term memory.
                         </td>
                         <td>Always — for stack additions, ambiguities, and conflict resolution with existing code</td>
@@ -1613,23 +1641,23 @@
             </div>
         </div>
 
-<!-- Implementation Templates -->
-<div class="sec">
-    <div class="sec-title"><span>04</span> — Implementation Templates &amp; Prompts</div>
-    <div class="tabs">
-        <button class="tab active" onclick="showTab(event,'t-orch')">Orchestrator Prompt</button>
-        <button class="tab" onclick="showTab(event,'t-mcp')">MCP Tools Spec</button>
-        <button class="tab" onclick="showTab(event,'t-agents')">All Agent Prompts</button>
-        <button class="tab" onclick="showTab(event,'t-loop')">Build Loop Doc</button>
-        <button class="tab" onclick="showTab(event,'t-state')">State Schema Doc</button>
-        <button class="tab" onclick="showTab(event,'t-gitops')">GitOps Policy</button>
-        <button class="tab" onclick="showTab(event,'t-prompts')">Prompt Versioning</button>
-    </div>
+        <!-- Implementation Templates -->
+        <div class="sec">
+            <div class="sec-title"><span>04</span> — Implementation Templates &amp; Prompts</div>
+            <div class="tabs">
+                <button class="tab active" onclick="showTab(event,'t-orch')">Orchestrator Prompt</button>
+                <button class="tab" onclick="showTab(event,'t-mcp')">MCP Tools Spec</button>
+                <button class="tab" onclick="showTab(event,'t-agents')">All Agent Prompts</button>
+                <button class="tab" onclick="showTab(event,'t-loop')">Build Loop Doc</button>
+                <button class="tab" onclick="showTab(event,'t-state')">State Schema Doc</button>
+                <button class="tab" onclick="showTab(event,'t-gitops')">GitOps Policy</button>
+                <button class="tab" onclick="showTab(event,'t-prompts')">Prompt Versioning</button>
+            </div>
 
-    <!-- ORCHESTRATOR PROMPT -->
-    <div class="code-panel active" id="t-orch">
-        <button class="cp-btn" onclick="copyTab('t-orch')">COPY PROMPT</button>
-        <pre><span class="c">═══════════════════════════════════════════════
+            <!-- ORCHESTRATOR PROMPT -->
+            <div class="code-panel active" id="t-orch">
+                <button class="cp-btn" onclick="copyTab('t-orch')">COPY PROMPT</button>
+                <pre><span class="c">═══════════════════════════════════════════════
   SYSTEM PROMPT — Lead / Project Manager Agent
   Model Tier : REASONING (Claude Opus)
   Temperature: 0.1 — deterministic planning
@@ -1668,12 +1696,12 @@ system. You do NOT write code. You plan, delegate, decompose, track, escalate.</
   [LEAD] Dispatching BACKEND_DEV  → task: BE-007 — Implement /api/ingest
   [LEAD] BugReport received — P0: 1 → dispatching DEBUGGER
   [LEAD] All tasks COMPLETE — triggering final review gate</span></pre>
-    </div>
+            </div>
 
-    <!-- MCP TOOLS SPEC -->
-    <div class="code-panel" id="t-mcp">
-        <button class="cp-btn" onclick="copyTab('t-mcp')">COPY SPEC</button>
-        <pre><span class="c">═══════════════════════════════════════════════
+            <!-- MCP TOOLS SPEC -->
+            <div class="code-panel" id="t-mcp">
+                <button class="cp-btn" onclick="copyTab('t-mcp')">COPY SPEC</button>
+                <pre><span class="c">═══════════════════════════════════════════════
   MCP TOOLS SPECIFICATION
   All tools are MCP server endpoints.
   Permission matrix enforced per agent type.
@@ -1756,12 +1784,12 @@ git_log(file, limit)
             security policy, 3+ failure escalations.
             NEVER for: bugs, code style, implementation choices.
             Every call is logged with the blocking reason.</span></pre>
-    </div>
+            </div>
 
-    <!-- ALL AGENT PROMPTS -->
-    <div class="code-panel" id="t-agents">
-        <button class="cp-btn" onclick="copyTab('t-agents')">COPY PROMPTS</button>
-        <pre><span class="c">═══════════════════════════════════════
+            <!-- ALL AGENT PROMPTS -->
+            <div class="code-panel" id="t-agents">
+                <button class="cp-btn" onclick="copyTab('t-agents')">COPY PROMPTS</button>
+                <pre><span class="c">═══════════════════════════════════════
   PROMPT — Requirements Refiner
   Model: REASONING | Temp: 0.1
   File : prompts/requirements_refiner.md
@@ -1970,12 +1998,12 @@ RULES
   Fix only ONE bug per task. Log other issues you notice to build_state.json.
   Never call ask_human.
   On 3rd failure: write BUG_[bug_id]_UNRESOLVED with full diagnosis to build_state.json.</span></pre>
-    </div>
+            </div>
 
-    <!-- BUILD LOOP DOC -->
-    <div class="code-panel" id="t-loop">
-        <button class="cp-btn" onclick="copyTab('t-loop')">COPY DOC</button>
-        <pre><span class="c">═══════════════════════════════════════════════════
+            <!-- BUILD LOOP DOC -->
+            <div class="code-panel" id="t-loop">
+                <button class="cp-btn" onclick="copyTab('t-loop')">COPY DOC</button>
+                <pre><span class="c">═══════════════════════════════════════════════════
   BUILD LOOP — Execution Model Documentation
   This describes HOW the pipeline runs, phase by phase.
 ═══════════════════════════════════════════════════</span>
@@ -2050,12 +2078,12 @@ PROCESS :
 BUILD COMPLETE when:
   All tasks COMPLETE, zero P0/P1 open, all Review Gates passed,
   full git audit trail committed for every file change.</span></pre>
-    </div>
+            </div>
 
-    <!-- STATE SCHEMA DOC -->
-    <div class="code-panel" id="t-state">
-        <button class="cp-btn" onclick="copyTab('t-state')">COPY DOC</button>
-        <pre><span class="c">═══════════════════════════════════════════════════
+            <!-- STATE SCHEMA DOC -->
+            <div class="code-panel" id="t-state">
+                <button class="cp-btn" onclick="copyTab('t-state')">COPY DOC</button>
+                <pre><span class="c">═══════════════════════════════════════════════════
   build_state.json — Shared State Schema
   Every agent reads this. Lead/PM writes it.
   Single source of truth for the entire build.
@@ -2125,12 +2153,12 @@ BUILD COMPLETE when:
   action      What the agent did (wrote file, ran test, called tool, etc.)
   timestamp   ISO timestamp
   prompt_version  Which version of the agent's system prompt was active</span></pre>
-    </div>
+            </div>
 
-    <!-- GITOPS POLICY -->
-    <div class="code-panel" id="t-gitops">
-        <button class="cp-btn" onclick="copyTab('t-gitops')">COPY POLICY</button>
-        <pre><span class="c">═══════════════════════════════════════════════════
+            <!-- GITOPS POLICY -->
+            <div class="code-panel" id="t-gitops">
+                <button class="cp-btn" onclick="copyTab('t-gitops')">COPY POLICY</button>
+                <pre><span class="c">═══════════════════════════════════════════════════
   GITOPS POLICY — Every File Change Becomes a Commit
   System behaviour, not an agent behaviour.
   GitOps hook runs automatically after every write_file or edit_file.
@@ -2181,12 +2209,12 @@ Path Guard:
   write_file and edit_file reject any path resolving outside /workspace/project
   Agents cannot write to: /.git, /etc, /usr, /home outside project, or absolute paths
   Violation → SECURITY_ALERT in build_state.json → agent session terminated</span></pre>
-    </div>
+            </div>
 
-    <!-- PROMPT VERSIONING -->
-    <div class="code-panel" id="t-prompts">
-        <button class="cp-btn" onclick="copyTab('t-prompts')">COPY DOC</button>
-        <pre><span class="c">═══════════════════════════════════════════════════
+            <!-- PROMPT VERSIONING -->
+            <div class="code-panel" id="t-prompts">
+                <button class="cp-btn" onclick="copyTab('t-prompts')">COPY DOC</button>
+                <pre><span class="c">═══════════════════════════════════════════════════
   PROMPT VERSIONING SYSTEM
   Every agent system prompt = a versioned markdown file.
   Changing a prompt = a PR. Full diff history, rollback, attribution.
@@ -2268,9 +2296,9 @@ STANDARD (Claude Sonnet / GPT-4o):
 FAST (Claude Haiku / GPT-4o-mini):
   Doc Agent, Tester (execution + report structuring only)
   Justification: Template-heavy, pattern-following tasks. Speed and cost matter.</span></pre>
-    </div>
+            </div>
 
-</div>
+        </div>
         <!-- Risk Register -->
         <div class="sec" id="risks">
             <div class="sec-title"><span>05</span> — Agentic AI Risk Register</div>

@@ -820,6 +820,33 @@
 </head>
 
 <body>
+    <a href="index.html" class="back-btn">← Home</a>
+    <style>
+        .back-btn {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            z-index: 9999;
+            background: rgba(91, 79, 255, 0.15);
+            color: #a599ff;
+            border: 1px solid rgba(91, 79, 255, 0.4);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+        }
+
+        .back-btn:hover {
+            background: rgba(91, 79, 255, 0.35);
+            color: #fff;
+            border-color: rgba(91, 79, 255, 0.8);
+            transform: translateY(-2px);
+        }
+    </style>
     <div class="grid-bg"></div>
     <nav class="back-nav" style="z-index:101;">
         <div class="back-nav-left">
