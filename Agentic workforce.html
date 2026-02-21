@@ -828,9 +828,20 @@
             border: 1px solid var(--border2);
         }
 
-        .rv.sec { color: var(--sec); border-color: rgba(255,123,114,0.3); }
-        .rv.test { color: var(--test); border-color: rgba(255,166,87,0.3); }
-        .rv.perf { color: var(--arch); border-color: rgba(121,192,255,0.3); }
+        .rv.sec {
+            color: var(--sec);
+            border-color: rgba(255, 123, 114, 0.3);
+        }
+
+        .rv.test {
+            color: var(--test);
+            border-color: rgba(255, 166, 87, 0.3);
+        }
+
+        .rv.perf {
+            color: var(--arch);
+            border-color: rgba(121, 192, 255, 0.3);
+        }
 
         .phase-label {
             font-family: 'IBM Plex Mono', monospace;
@@ -865,9 +876,23 @@
             border-radius: 3px;
         }
 
-        .bug-chip.p0 { background: rgba(255,123,114,0.12); border: 1px solid rgba(255,123,114,0.35); color: var(--sec); }
-        .bug-chip.p1 { background: rgba(255,166,87,0.12); border: 1px solid rgba(255,166,87,0.35); color: var(--test); }
-        .bug-chip.p3 { background: rgba(126,231,135,0.08); border: 1px solid rgba(126,231,135,0.25); color: var(--back); }
+        .bug-chip.p0 {
+            background: rgba(255, 123, 114, 0.12);
+            border: 1px solid rgba(255, 123, 114, 0.35);
+            color: var(--sec);
+        }
+
+        .bug-chip.p1 {
+            background: rgba(255, 166, 87, 0.12);
+            border: 1px solid rgba(255, 166, 87, 0.35);
+            color: var(--test);
+        }
+
+        .bug-chip.p3 {
+            background: rgba(126, 231, 135, 0.08);
+            border: 1px solid rgba(126, 231, 135, 0.25);
+            color: var(--back);
+        }
 
         /* ── RISK TABLE ── */
         .risk-grid {
@@ -918,14 +943,14 @@
         }
 
         .status-built {
-            background: rgba(126,231,135,0.1);
-            border: 1px solid rgba(126,231,135,0.3);
+            background: rgba(126, 231, 135, 0.1);
+            border: 1px solid rgba(126, 231, 135, 0.3);
             color: var(--back);
         }
 
         .status-planned {
-            background: rgba(121,192,255,0.08);
-            border: 1px solid rgba(121,192,255,0.25);
+            background: rgba(121, 192, 255, 0.08);
+            border: 1px solid rgba(121, 192, 255, 0.25);
             color: var(--arch);
         }
 
@@ -1055,7 +1080,8 @@
                     </div>
                     <div class="phil-item">
                         <h4>Prompt Versioning</h4>
-                        <p>Every agent system prompt lives in <code>prompts/&lt;agent&gt;.md</code>. Changing a prompt = a PR.
+                        <p>Every agent system prompt lives in <code>prompts/&lt;agent&gt;.md</code>. Changing a prompt =
+                            a PR.
                             Full diff history, rollback capability, and prompt performance tracking built in.</p>
                     </div>
                     <div class="phil-item">
@@ -1078,25 +1104,31 @@
         <div class="sec">
             <div class="sec-title"><span>01</span> — Full Autonomous Pipeline</div>
             <div class="flow-diagram">
-                <div class="flow-label">// 4-PHASE GATED PIPELINE · 10 AGENTS · MCP TOOLS · AUTO-COMMIT ON EVERY FILE CHANGE</div>
+                <div class="flow-label">// 4-PHASE GATED PIPELINE · 14 AGENTS · MCP TOOLS · PARALLEL DEV SPAWNING ·
+                    AUTO-COMMIT ON EVERY FILE CHANGE</div>
 
                 <!-- ── PHASE 0: INTAKE ── -->
                 <div class="phase-label">PHASE 0 — REQUIREMENT INTAKE</div>
 
-                <div class="human-node">
-                    <div class="label">INITIATOR</div>
+                <div class="human-node" style="max-width:320px;">
+                    <div class="label">INITIATOR · INPUT</div>
                     <div class="title">👤 Human</div>
-                    <div class="detail">types raw project goal</div>
+                    <div class="detail" style="margin-top:6px;">
+                        uploads <strong style="color:rgba(255,255,255,0.85);">React dashboard code file(s)</strong><br>
+                        <span style="font-size:9px;letter-spacing:1px;opacity:0.55;">e.g. App.tsx · dashboard.jsx ·
+                            components/ · routes.ts</span>
+                    </div>
                 </div>
 
                 <div class="vc arrow"></div>
-                <div class="vc-label">raw requirement</div>
+                <div class="vc-label">codebase snapshot → Requirements Refiner</div>
                 <div class="vc arrow"></div>
 
                 <div class="orch-box" style="border-color:rgba(240,207,101,0.5);">
                     <div class="label">PHASE 0 · REASONING TIER</div>
                     <div class="title" style="color:var(--orch);">🔎 Requirements Refiner</div>
-                    <div class="detail">clarifies ambiguity · recommends tech stack · critiques conflicts · waits for user confirmation</div>
+                    <div class="detail">clarifies ambiguity · recommends tech stack · critiques conflicts · waits for
+                        user confirmation</div>
                 </div>
 
                 <div class="vc arrow"></div>
@@ -1106,7 +1138,8 @@
                 <div class="orch-box">
                     <div class="label">PLANNING · REASONING TIER</div>
                     <div class="title">🧠 Lead / Project Manager</div>
-                    <div class="detail">decomposes into task graph · assigns agents · file-conflict-safe chunking · manages retries</div>
+                    <div class="detail">decomposes into task graph · assigns agents · file-conflict-safe chunking ·
+                        manages retries</div>
                 </div>
 
                 <!-- ── PHASE 1: ARCHITECTURE ── -->
@@ -1138,18 +1171,52 @@
                 </div>
 
                 <div class="vc arrow"></div>
-                <div class="vc-label">all 3 approved → FileLockManager assigns files</div>
+                <div class="vc-label">all 3 approved → Lead/PM decomposes into task DAG</div>
+
+                <!-- ── PHASE 1.5: LEAD SPAWNING ── -->
+                <div class="orch-box" style="max-width:480px;">
+                    <div class="label">TASK DECOMPOSITION · LEAD / PM</div>
+                    <div class="title">🧠 Lead spawns Developer Agents</div>
+                    <div class="detail" style="margin-top:8px;">
+                        analyses SystemDesignPlan · classifies every task by domain ·
+                        assigns agent type per task · resolves file conflicts via FileLockManager ·
+                        dispatches all tracks in <strong style="color:var(--orch);">parallel</strong>
+                    </div>
+                </div>
+
+                <div class="vc arrow"></div>
+                <div class="vc-label">parallel dispatch → 6 specialist developer tracks</div>
 
                 <!-- ── PHASE 2: DEVELOPMENT ── -->
                 <div class="phase-label">PHASE 2 — PARALLEL DEVELOPMENT</div>
 
                 <div class="mcp-layer">
-                    <div class="mcp-title">📂 FileLockManager — no two agents touch the same file</div>
-                    <div class="parallel-row">
+                    <div class="mcp-title">📂 FileLockManager — no two agents edit the same file simultaneously</div>
+                    <div class="parallel-row" style="gap:10px;margin-top:14px;">
+                        <div class="ag front">
+                            <div class="ag-icon">🎨</div>
+                            <div class="ag-name">Frontend Dev</div>
+                            <div class="ag-role">React · UI · routes · state</div>
+                        </div>
                         <div class="ag back">
                             <div class="ag-icon">⚙️</div>
-                            <div class="ag-name">Developer × N</div>
-                            <div class="ag-role">file-lock aware · iterates on feedback</div>
+                            <div class="ag-name">Backend Dev</div>
+                            <div class="ag-role">API · services · auth · middleware</div>
+                        </div>
+                        <div class="ag arch">
+                            <div class="ag-icon">🗄️</div>
+                            <div class="ag-name">DB Dev</div>
+                            <div class="ag-role">schema · migrations · queries · indexes</div>
+                        </div>
+                        <div class="ag test">
+                            <div class="ag-icon">⏱️</div>
+                            <div class="ag-name">Cron / Service Dev</div>
+                            <div class="ag-role">background jobs · queues · workers</div>
+                        </div>
+                        <div class="ag sec">
+                            <div class="ag-icon">🚀</div>
+                            <div class="ag-name">DevOps Dev</div>
+                            <div class="ag-role">Docker · CI/CD · infra · env configs</div>
                         </div>
                         <div class="ag doc">
                             <div class="ag-icon">📝</div>
@@ -1261,11 +1328,13 @@
                 <div class="human-node" style="border-color:rgba(255,123,114,0.4);">
                     <div class="label" style="color:rgba(255,123,114,0.6);">GATES</div>
                     <div class="title" style="color:var(--sec);">🚦 Human Decision Points</div>
-                    <div class="detail">stack confirm · arch sign-off · security policy · credentials · scope changes</div>
+                    <div class="detail">stack confirm · arch sign-off · security policy · credentials · scope changes
+                    </div>
                 </div>
 
                 <div class="vc arrow"></div>
-                <div class="vc-label">approved → agents continue · every file write auto-committed to feature branch</div>
+                <div class="vc-label">approved → agents continue · every file write auto-committed to feature branch
+                </div>
                 <div class="vc arrow"></div>
 
                 <!-- Output -->
@@ -1299,12 +1368,16 @@
                     <tr>
                         <td>🔎</td>
                         <td style="color:var(--orch);">Requirements Refiner</td>
-                        <td>Intercepts raw user input. Asks clarifying questions if vague. Surfaces conflicts.
-                            Recommends tech stack with rationale. Waits for explicit user confirmation before locking
-                            <code>RefinedSpec</code>. Critiques contradictions with past decisions.</td>
-                        <td><span class="chip chip-k">ask_human</span></td>
-                        <td>Only sees: raw user input + past RefinedSpec from long-term memory.</td>
-                        <td>Always — for stack confirmation, ambiguities, and conflict resolution</td>
+                        <td>Ingests the uploaded <strong>React dashboard codebase</strong> (files, components, routes).
+                            Reads and understands the existing code structure. Asks clarifying questions: what to add,
+                            what to change, what constraints apply. Surfaces conflicts between new requirements and
+                            existing code patterns. Recommends tech stack additions with rationale. Waits for explicit
+                            user confirmation before locking <code>RefinedSpec</code>.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span>
+                            <span class="chip chip-k">ask_human</span></td>
+                        <td>Sees: uploaded React codebase + new requirements + past RefinedSpec from long-term memory.
+                        </td>
+                        <td>Always — for stack additions, ambiguities, and conflict resolution with existing code</td>
                     </tr>
                     <tr>
                         <td>🧠</td>
@@ -1312,8 +1385,10 @@
                         <td>Reads confirmed RefinedSpec. Builds task DAG. Assigns agents. Chunks dev work into
                             file-conflict-safe units (FileLockManager). Assigns bug severity after Tester reports.
                             Re-plans on failures.</td>
-                        <td><span class="chip chip-k">list_files</span> <span class="chip chip-k">git_log</span> <span class="chip chip-k">ask_human</span></td>
-                        <td>Maintains <code>build_state.json</code>. Never loads full code — only summaries and diffs.</td>
+                        <td><span class="chip chip-k">list_files</span> <span class="chip chip-k">git_log</span> <span
+                                class="chip chip-k">ask_human</span></td>
+                        <td>Maintains <code>build_state.json</code>. Never loads full code — only summaries and diffs.
+                        </td>
                         <td>Bug severity triage, scope changes, 3+ consecutive agent failures</td>
                     </tr>
                     <tr>
@@ -1321,8 +1396,10 @@
                         <td style="color:var(--arch);">Architect</td>
                         <td>Reads confirmed TechStack from RefinedSpec. Designs folder structure, API contracts, DB
                             schema, module boundaries. Writes <code>SystemDesignPlan.md</code> and
-                            <code>TestArchitecturePlan.md</code> to shared state before any dev work begins.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">search_codebase</span></td>
+                            <code>TestArchitecturePlan.md</code> to shared state before any dev work begins.
+                        </td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">search_codebase</span></td>
                         <td>Only sees: RefinedSpec + existing architecture docs. No implementation code.</td>
                         <td>Conflicting non-functional requirements, third-party API choices not in TechStack</td>
                     </tr>
@@ -1331,20 +1408,25 @@
                         <td style="color:var(--sec);">Security Reviewer</td>
                         <td>Reviews architecture plans and code diffs for injection risks, exposed secrets, CORS
                             misconfiguration, auth flaws, insecure deps. Runs bandit/safety. <strong>Blocks the
-                            review gate</strong> if critical issues found. Returns structured verdict.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">git_diff</span> <span class="chip chip-k">search_codebase</span></td>
+                                review gate</strong> if critical issues found. Returns structured verdict.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">git_diff</span> <span
+                                class="chip chip-k">search_codebase</span></td>
                         <td>Sees: only the diff or plan under review. Never the full codebase.</td>
                         <td>Critical auth flaw or vulnerability with no clear code-level fix</td>
                     </tr>
                     <tr>
                         <td>🧪</td>
                         <td style="color:var(--test);">Test Coverage Reviewer</td>
-                        <td>Reviews test plans and code for coverage gaps, missing edge cases, untested error paths,
-                            missing integration tests. Checks that test architecture aligns with the system design.
-                            Returns structured verdict with specific gaps.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span></td>
-                        <td>Sees: TestArchitecturePlan + diff under review. Nothing else.</td>
-                        <td>Test reveals a spec logic error that requires requirement change</td>
+                        <td>Reviews test coverage <strong>only for the functionality currently being developed</strong>
+                            in this review cycle — not the entire codebase. Checks that every acceptance criteria
+                            in the current task has a corresponding test, edge cases are covered, and error paths
+                            are tested. Returns structured verdict: PASS / GAPS with specific missing tests listed.
+                            Does not evaluate unrelated modules.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span>
+                        </td>
+                        <td>Sees: current task's acceptance criteria + diff under review + existing test files for those
+                            modules only.</td>
+                        <td>Test reveals a spec logic error that requires a requirement change</td>
                     </tr>
                     <tr>
                         <td>⚡</td>
@@ -1352,19 +1434,71 @@
                         <td>Reviews architecture and code for N+1 queries, blocking calls in async paths, unbounded
                             memory growth, missing indexes, unscalable patterns. Returns structured verdict with
                             line-level callouts.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">search_codebase</span>
+                        </td>
                         <td>Sees: only the diff or plan. No runtime profiling — static analysis only.</td>
                         <td>Architecture-level perf issue that requires design change</td>
                     </tr>
                     <tr>
+                        <td>🎨</td>
+                        <td style="color:var(--front);">Frontend Dev</td>
+                        <td>Builds React dashboard components, pages, routes, and state management. Reads the uploaded
+                            dashboard codebase as its baseline. Implements UI changes per SystemDesignPlan.
+                            Runs dev server in sandbox to verify rendering before committing.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span
+                                class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: input React codebase + SystemDesignPlan UI section + only its assigned component
+                            files.</td>
+                        <td>Never. Iterates on review feedback autonomously.</td>
+                    </tr>
+                    <tr>
                         <td>⚙️</td>
-                        <td style="color:var(--back);">Developer</td>
-                        <td>Implements code per SystemDesignPlan. File-lock aware — only edits files assigned by Lead.
-                            Iterates on review feedback (feedback injected into context). Runs code in sandbox to
-                            verify before committing.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span class="chip chip-k">shell</span> <span class="chip chip-k">search_codebase</span></td>
-                        <td>Sees: SystemDesignPlan + only files assigned to it by FileLockManager.</td>
-                        <td>Never. Fixes its own bugs. Calls ask_human only for genuine spec ambiguity.</td>
+                        <td style="color:var(--back);">Backend Dev</td>
+                        <td>Implements API routes, services, auth, middleware, and business logic. File-lock aware —
+                            only edits files assigned by Lead. Runs server in sandbox, checks logs, fixes errors
+                            in a loop until tests pass.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span
+                                class="chip chip-k">shell</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td>Sees: SystemDesignPlan API section + only its assigned service/route files.</td>
+                        <td>Never. Calls ask_human only for genuine spec ambiguity.</td>
+                    </tr>
+                    <tr>
+                        <td>🗄️</td>
+                        <td style="color:var(--arch);">DB Dev</td>
+                        <td>Designs and implements database schema, migrations, seed data, indexes, and query
+                            optimisation. Ensures referential integrity. Runs migrations in sandbox and verifies
+                            with query tests before committing.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span
+                                class="chip chip-k">shell</span></td>
+                        <td>Sees: SystemDesignPlan DB schema section + only its assigned migration/model files.</td>
+                        <td>Never. Escalates only if schema conflicts with API contracts.</td>
+                    </tr>
+                    <tr>
+                        <td>⏱️</td>
+                        <td style="color:var(--test);">Cron / Service Dev</td>
+                        <td>Implements background jobs, task queues, event-driven workers, and scheduled cron tasks.
+                            Ensures jobs are idempotent, have retry logic, and dead-letter handling. Tests jobs
+                            by triggering them in sandbox.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">execute_code</span> <span
+                                class="chip chip-k">shell</span></td>
+                        <td>Sees: SystemDesignPlan async/jobs section + only its assigned worker files.</td>
+                        <td>Never. Escalates only if a queue dependency is missing from the system design.</td>
+                    </tr>
+                    <tr>
+                        <td>🚀</td>
+                        <td style="color:var(--sec);">DevOps Dev</td>
+                        <td>Writes Dockerfiles, docker-compose, CI/CD pipeline configs (GitHub Actions / GitLab CI),
+                            environment variable templates, and infrastructure-as-code. Validates the build pipeline
+                            runs end-to-end in sandbox before committing.</td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">shell</span> <span
+                                class="chip chip-k">execute_code</span></td>
+                        <td>Sees: SystemDesignPlan infra section + only its assigned DevOps config files.</td>
+                        <td>Never. Escalates only if infra requirements are contradictory or missing.</td>
                     </tr>
                     <tr>
                         <td>📝</td>
@@ -1372,7 +1506,8 @@
                         <td>Runs in parallel with Developer. Writes README, inline docstrings, OpenAPI docs, setup
                             guide, and <code>AGENTS.md</code> logging every agent's contribution. Triggered after each
                             module is code-complete.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">search_codebase</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">search_codebase</span></td>
                         <td>Sees: only the module it is documenting. Requests context via search_codebase.</td>
                         <td>Never. Fully autonomous.</td>
                     </tr>
@@ -1382,7 +1517,9 @@
                         <td>Executes the test framework against all code. Produces a structured <code>BugReport</code>
                             with each bug's error, stack trace, affected files, and reproduction steps. Does not fix
                             bugs — only reports them.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">execute_code</span> <span class="chip chip-k">run_tests</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">execute_code</span>
+                            <span class="chip chip-k">run_tests</span>
+                        </td>
                         <td>Sees: test suite + the module under test. Test results only.</td>
                         <td>Test reveals a spec logic error that changes requirements</td>
                     </tr>
@@ -1392,7 +1529,9 @@
                         <td>Receives BugReport entry + git log for affected files + full file contents. Diagnoses root
                             cause using commit history context. Fixes the bug, verifies in sandbox, commits fix. Fix
                             then goes to Review Gate 3.</td>
-                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span class="chip chip-k">edit_file</span> <span class="chip chip-k">shell</span> <span class="chip chip-k">git_log</span> <span class="chip chip-k">execute_code</span></td>
+                        <td><span class="chip chip-k">read_file</span> <span class="chip chip-k">write_file</span> <span
+                                class="chip chip-k">edit_file</span> <span class="chip chip-k">shell</span> <span
+                                class="chip chip-k">git_log</span> <span class="chip chip-k">execute_code</span></td>
                         <td>Sees: BugReport entry + git_log for affected files + those files only.</td>
                         <td>Never. Escalates only to Tester for re-verification.</td>
                     </tr>
@@ -1458,7 +1597,8 @@
                     <p>The Requirements Refiner presents its recommended technology stack (framework, database, infra,
                         testing tools) with rationale for each choice. Human confirms or overrides individual items.
                         <code>RefinedSpec</code> is locked only after explicit confirmation — no assumptions are
-                        built in.</p>
+                        built in.
+                    </p>
                     <div class="cp-trigger">TRIGGER: Requirements Refiner finishes initial analysis</div>
                 </div>
                 <div class="cp-card advisory">
