@@ -1369,37 +1369,71 @@
             transform: scale(1.1);
             box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
         }
+    
+        /* ── BREADCRUMB NAV ── */
+        .back-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .back-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--dim);
+            letter-spacing: 0.5px;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--violet);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border: 1px solid rgba(129, 140, 248, 0.25);
+            border-radius: 5px;
+            background: rgba(129, 140, 248, 0.06);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: rgba(129, 140, 248, 0.12);
+            border-color: rgba(129, 140, 248, 0.5);
+        }
+
+        [data-theme="light"] .back-nav {
+            background: rgba(246,248,250,0.96) !important;
+            border-bottom-color: var(--border2) !important;
+        }
+        [data-theme="light"] .back-nav-left { color: var(--muted) !important; }
+        [data-theme="light"] .back-link {
+            color: var(--violet) !important;
+            border-color: rgba(99,102,241,0.3) !important;
+            background: rgba(99,102,241,0.06) !important;
+        }
+
     </style>
 </head>
 
 <body>
     <a href="index.html" class="back-btn">← Home</a>
-    <style>
-        .back-btn {
-            position: fixed;
-            top: 18px;
-            right: 24px;
-            z-index: 9999;
-            background: rgba(129, 140, 248, 0.12);
-            color: #a5b4fc;
-            border: 1px solid rgba(129, 140, 248, 0.35);
-            padding: 8px 18px;
-            border-radius: 6px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            letter-spacing: 1px;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
-            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
-        }
 
-        .back-btn:hover {
-            background: rgba(129, 140, 248, 0.3);
-            color: #fff;
-            border-color: rgba(129, 140, 248, 0.7);
-            transform: translateY(-2px);
-        }
-    </style>
     <nav class="back-nav">
         <div class="back-nav-left">
             <span>AI_ORCH / DOCS</span>
