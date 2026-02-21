@@ -1381,6 +1381,179 @@
             color: var(--dim) !important;
         }
 
+        /* ═══ COMPREHENSIVE LIGHT MODE FIX — Agentic workforce ═══ */
+
+        /* 1. Vertical connectors & arrows */
+        [data-theme="light"] .vc {
+            background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.1)) !important;
+        }
+        [data-theme="light"] .vc.arrow::after {
+            color: #4b5563 !important;
+        }
+        [data-theme="light"] .vc-label {
+            color: #6b7280 !important;
+            background: var(--bg) !important;
+        }
+        [data-theme="light"] .phase-label {
+            color: #6b7280 !important;
+        }
+
+        /* 2. Human node — dashed border fully visible */
+        [data-theme="light"] .human-node {
+            background: #f0f4ff !important;
+            border-color: rgba(99,102,241,0.45) !important;
+        }
+        [data-theme="light"] .human-node .label   { color: #6366f1 !important; }
+        [data-theme="light"] .human-node .title   { color: #0d1117 !important; }
+        [data-theme="light"] .human-node .detail  { color: #4b5563 !important; }
+        [data-theme="light"] .human-node strong   { color: #0d1117 !important; }
+        [data-theme="light"] .inline-highlight    { color: #0d1117 !important; font-weight: 600; }
+
+        /* 3. Orchestrator / reasoning boxes */
+        [data-theme="light"] .orch-box {
+            background: #fffbeb !important;
+            border-color: rgba(180,83,9,0.4) !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+        [data-theme="light"] .orch-box .label  { color: #92400e !important; }
+        [data-theme="light"] .orch-box .title  { color: #92400e !important; }
+        [data-theme="light"] .orch-box .detail { color: #374151 !important; }
+
+        /* 4. Dev boxes */
+        [data-theme="light"] .dev-box {
+            background: #f0fbff !important;
+            border-color: rgba(8,145,178,0.4) !important;
+        }
+        [data-theme="light"] .dev-box .label  { color: #0e7490 !important; }
+        [data-theme="light"] .dev-box .title  { color: #0d1117 !important; }
+        [data-theme="light"] .dev-box .detail { color: #374151 !important; }
+
+        /* 5. Review / gate boxes */
+        [data-theme="light"] .rev-box,
+        [data-theme="light"] .gate-box {
+            background: #fff5f5 !important;
+            border-color: rgba(220,38,38,0.3) !important;
+        }
+        [data-theme="light"] .rev-box .label,
+        [data-theme="light"] .gate-box .label   { color: #b91c1c !important; }
+        [data-theme="light"] .rev-box .title,
+        [data-theme="light"] .gate-box .title   { color: #0d1117 !important; }
+        [data-theme="light"] .rev-box .detail,
+        [data-theme="light"] .gate-box .detail  { color: #374151 !important; }
+
+        /* 6. Reviewer badges (rv) */
+        [data-theme="light"] .rv {
+            background: var(--surface2) !important;
+            border-color: var(--border2) !important;
+            color: var(--text) !important;
+        }
+        [data-theme="light"] .rv.arch { color: #92400e !important; border-color: rgba(146,64,14,0.3) !important; }
+        [data-theme="light"] .rv.sec  { color: #b91c1c !important; border-color: rgba(185,28,28,0.3) !important; }
+        [data-theme="light"] .rv.test { color: #15803d !important; border-color: rgba(21,128,61,0.3) !important; }
+        [data-theme="light"] .rv.perf { color: #1d4ed8 !important; border-color: rgba(29,78,216,0.3) !important; }
+
+        /* 7. Checkpoint gate cards */
+        [data-theme="light"] .cp-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .cp-card h4    { color: var(--text) !important; }
+        [data-theme="light"] .cp-card p     { color: var(--muted) !important; }
+        [data-theme="light"] .cp-card .cp-type { opacity: 1 !important; }
+        [data-theme="light"] .cp-card .cp-type.advisory { color: #92400e !important; }
+        [data-theme="light"] .cp-trigger {
+            background: #f3f4f6 !important;
+            color: #374151 !important;
+            border-left-color: #d1d5db !important;
+        }
+
+        /* 8. Section numbers & headers */
+        [data-theme="light"] .sec-title span { color: #6366f1 !important; }
+        [data-theme="light"] h2, [data-theme="light"] h3 { color: var(--text) !important; }
+
+        /* 9. Pipeline label (top marquee) */
+        [data-theme="light"] .pipeline-label {
+            color: #6b7280 !important;
+            border-color: rgba(0,0,0,0.1) !important;
+        }
+
+        /* 10. Risk register cards */
+        [data-theme="light"] .risk-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .risk-card h3   { color: var(--text) !important; }
+        [data-theme="light"] .risk-card p    { color: var(--muted) !important; }
+        [data-theme="light"] .risk-meta      { color: var(--dim) !important; }
+        [data-theme="light"] .risk-sev.high     { color: #dc2626 !important; background: rgba(220,38,38,0.08) !important; }
+        [data-theme="light"] .risk-sev.critical { color: #7c3aed !important; background: rgba(124,58,237,0.08) !important; }
+        [data-theme="light"] .risk-sev.medium   { color: #d97706 !important; background: rgba(217,119,6,0.08) !important; }
+        [data-theme="light"] .risk-mit { color: #1d4ed8 !important; }
+
+        /* 11. Philosophy items */
+        [data-theme="light"] .phil-grid { background: transparent !important; }
+        [data-theme="light"] .phil-item {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+        }
+        [data-theme="light"] .phil-num      { color: var(--dim) !important; }
+        [data-theme="light"] .phil-item h3  { color: var(--text) !important; }
+        [data-theme="light"] .phil-item p   { color: var(--muted) !important; }
+        [data-theme="light"] .phil-tagline  { color: var(--dim) !important; }
+
+        /* 12. Agent layer cards */
+        [data-theme="light"] .al-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .al-card .al-title { color: var(--text) !important; }
+        [data-theme="light"] .al-card .al-role  { color: var(--dim) !important; }
+        [data-theme="light"] .al-card .al-desc  { color: var(--muted) !important; }
+        [data-theme="light"] .al-card .al-tool  {
+            background: rgba(0,0,0,0.06) !important;
+            color: var(--muted) !important;
+        }
+
+        /* 13. Code panel text already dark — keep correct span colors */
+        [data-theme="light"] .code-panel { background: #1e2030 !important; }
+        [data-theme="light"] .code-panel pre { color: #cdd6f4 !important; }
+        [data-theme="light"] .code-panel .c  { color: #6272a4 !important; }
+        [data-theme="light"] .code-panel .k  { color: #ff79c6 !important; }
+        [data-theme="light"] .code-panel .n  { color: #f1fa8c !important; }
+        [data-theme="light"] .code-panel .s  { color: #f1fa8c !important; }
+        [data-theme="light"] .code-panel .v  { color: #8be9fd !important; }
+        [data-theme="light"] .code-panel .b  { color: #bd93f9 !important; }
+
+        /* 14. Table in agent roles section */
+        [data-theme="light"] .agent-table {
+            background: var(--surface) !important;
+        }
+        [data-theme="light"] .agent-table thead tr {
+            background: #f3f4f6 !important;
+        }
+        [data-theme="light"] .agent-table th {
+            color: #374151 !important;
+            border-color: #e5e7eb !important;
+        }
+        [data-theme="light"] .agent-table td {
+            color: #4b5563 !important;
+            border-color: #e5e7eb !important;
+        }
+        [data-theme="light"] .agent-table tr:hover td {
+            background: rgba(0,0,0,0.02) !important;
+        }
+        [data-theme="light"] .badge {
+            background: rgba(0,0,0,0.07) !important;
+            color: #374151 !important;
+        }
+
+        /* 15. General catch-all — any remaining rgba(white) text */
+        [data-theme="light"] [style*="rgba(255,255,255"] {
+            color: #0d1117 !important;
+        }
+
         /* ── THEME TOGGLE BUTTON ── */
         #theme-toggle {
             position: fixed;
