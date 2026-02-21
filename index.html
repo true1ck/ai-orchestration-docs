@@ -941,31 +941,239 @@
             font-style: normal;
         }
     
+
         /* ── LIGHT MODE OVERRIDES ── */
         [data-theme="light"] {
-            --bg: #f8f9fb;
+            --bg: #f6f8fa;
             --surface: #ffffff;
-            --surface2: #f0f2f6;
+            --surface2: #edf0f4;
             --text: #0d1117;
-            --muted: #57606a;
-            --dim: #8c959f;
-            --border: rgba(0,0,0,0.09);
-            --border2: rgba(0,0,0,0.14);
+            --muted: #4b5563;
+            --dim: #6b7280;
+            --border: rgba(0,0,0,0.10);
+            --border2: rgba(0,0,0,0.18);
+            /* Darken accents for legibility on white */
+            --violet: #6366f1;
+            --teal:   #0891b2;
+            --gold:   #b45309;
+            --rose:   #db2777;
+            --green:  #16a34a;
+            --red:    #dc2626;
+            --amber:  #d97706;
+            --blue:   #2563eb;
+            --purple: #7c3aed;
         }
 
+        /* Body */
         [data-theme="light"] body {
             background: var(--bg);
+            color: var(--text);
         }
-
         [data-theme="light"] body::before {
             background-image:
-                linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+        }
+        [data-theme="light"] body::after {
+            background: none;
         }
 
-        [data-theme="light"] body::after {
-            background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.015) 3px,rgba(0,0,0,0.015) 4px);
+        /* ── Code panels always stay dark (standard practice) ── */
+        [data-theme="light"] .code-panel,
+        [data-theme="light"] pre {
+            background: #1e2030 !important;
+            color: #cdd6f4 !important;
+            border-color: rgba(255,255,255,0.06) !important;
         }
+        [data-theme="light"] .cp-btn {
+            background: rgba(255,255,255,0.08) !important;
+            color: #94a3b8 !important;
+        }
+
+        /* ── Navigation / Back button ── */
+        [data-theme="light"] .back-btn {
+            background: rgba(99,102,241,0.08) !important;
+            color: var(--violet) !important;
+            border-color: rgba(99,102,241,0.3) !important;
+        }
+        [data-theme="light"] nav {
+            background: rgba(246,248,250,0.95) !important;
+            border-bottom-color: var(--border2) !important;
+        }
+        [data-theme="light"] .nav-logo,
+        [data-theme="light"] .nav-breadcrumb { color: var(--text) !important; }
+
+        /* ── Section / Page headers ── */
+        [data-theme="light"] .sec-title { color: var(--text) !important; }
+        [data-theme="light"] .sec-title span { color: var(--violet) !important; }
+        [data-theme="light"] .header h1 { color: var(--text) !important; }
+        [data-theme="light"] .tag { color: var(--dim) !important; border-color: var(--border2) !important; }
+
+        /* ── Section containers & cards ── */
+        [data-theme="light"] .sec {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
+        }
+        [data-theme="light"] .card,
+        [data-theme="light"] .acard,
+        [data-theme="light"] .risk-card,
+        [data-theme="light"] .cost-card,
+        [data-theme="light"] .arch-wrapper,
+        [data-theme="light"] .agents-detail .acard {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07) !important;
+        }
+        [data-theme="light"] .acard h3 { color: var(--text) !important; }
+        [data-theme="light"] .acard p   { color: var(--muted) !important; }
+        [data-theme="light"] .kv-val    { color: var(--muted) !important; }
+        [data-theme="light"] .kv-key    { color: var(--dim)   !important; }
+
+        /* ── Tabs ── */
+        [data-theme="light"] .tabs {
+            background: var(--surface2) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .tab {
+            color: var(--muted) !important;
+        }
+        [data-theme="light"] .tab:hover {
+            color: var(--text) !important;
+            background: rgba(0,0,0,0.04) !important;
+        }
+        [data-theme="light"] .tab.active {
+            background: var(--surface) !important;
+            color: var(--violet) !important;
+            border-color: var(--border2) !important;
+        }
+
+        /* ── Hero, stats blocks ── */
+        [data-theme="light"] .hero-kicker { color: var(--teal) !important; }
+        [data-theme="light"] .hero-desc   { color: var(--muted) !important; }
+        [data-theme="light"] .stat-val    { color: var(--text) !important; }
+        [data-theme="light"] .stat-label  { color: var(--dim) !important; }
+
+        /* ── Doc cards (index.html) ── */
+        [data-theme="light"] .doc-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07) !important;
+        }
+        [data-theme="light"] .doc-card:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12) !important;
+        }
+        [data-theme="light"] .card-title  { color: var(--text)  !important; }
+        [data-theme="light"] .card-desc   { color: var(--muted) !important; }
+        [data-theme="light"] .card-meta   { color: var(--dim)   !important; }
+        [data-theme="light"] .pill        { background: rgba(0,0,0,0.06) !important; color: var(--muted) !important; }
+
+        /* ── Agent & flow diagram nodes ── */
+        [data-theme="light"] .proc-node,
+        [data-theme="light"] .src-node,
+        [data-theme="light"] .flow-node,
+        [data-theme="light"] .agent-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+            color: var(--text) !important;
+        }
+        [data-theme="light"] .proc-node .title,
+        [data-theme="light"] .proc-node .sub { color: var(--text) !important; }
+        [data-theme="light"] .proc-node .tech {
+            background: rgba(99,102,241,0.12) !important;
+            color: var(--violet) !important;
+        }
+        [data-theme="light"] .output-node {
+            background: linear-gradient(135deg, rgba(8,145,178,0.1), rgba(99,102,241,0.1)) !important;
+            border-color: rgba(8,145,178,0.4) !important;
+        }
+        [data-theme="light"] .output-node .badge { color: var(--dim) !important; }
+        [data-theme="light"] .output-node .name  { color: var(--text) !important; }
+        [data-theme="light"] .output-node .desc  { color: var(--muted) !important; }
+        [data-theme="light"] .agent-node .name  { color: var(--text) !important; }
+        [data-theme="light"] .agent-node .desc  { color: var(--muted) !important; }
+        [data-theme="light"] .agent-node .tool  { background: rgba(0,0,0,0.06) !important; color: var(--muted) !important; }
+        [data-theme="light"] .layer-content { border-color: var(--border2) !important; }
+        [data-theme="light"] .layer-content::before { background: var(--violet) !important; border-color: var(--bg) !important; }
+        [data-theme="light"] .connector-line { border-color: var(--border2) !important; }
+        [data-theme="light"] .arch-wrapper { background: var(--surface) !important; border-color: var(--border2) !important; }
+
+        /* ── Tables ── */
+        [data-theme="light"] .stack-table th {
+            color: var(--dim) !important;
+            border-bottom-color: var(--border2) !important;
+        }
+        [data-theme="light"] .stack-table td {
+            color: var(--muted) !important;
+            border-bottom-color: var(--border) !important;
+        }
+        [data-theme="light"] .stack-table td:nth-child(2) { color: var(--text) !important; }
+        [data-theme="light"] .stack-table tr:hover td { background: rgba(0,0,0,0.025) !important; }
+        [data-theme="light"] .agent-table th { background: var(--surface2) !important; color: var(--dim) !important; border-color: var(--border2) !important; }
+        [data-theme="light"] .agent-table td { border-color: var(--border) !important; color: var(--muted) !important; }
+        [data-theme="light"] .agent-table tr:hover td { background: rgba(0,0,0,0.02) !important; }
+
+        /* ── Risk cards ── */
+        [data-theme="light"] .risk-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .risk-card h3 { color: var(--text) !important; }
+        [data-theme="light"] .risk-card p   { color: var(--muted) !important; }
+
+        /* ── Flow boxes (Agentic workforce) ── */
+        [data-theme="light"] .flow-box {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+            color: var(--text) !important;
+        }
+        [data-theme="light"] .flow-label { color: var(--dim) !important; }
+
+        /* ── Vision block ── */
+        [data-theme="light"] .vision {
+            background: linear-gradient(135deg, rgba(8,145,178,0.06), rgba(99,102,241,0.06)) !important;
+            border-color: rgba(8,145,178,0.25) !important;
+        }
+        [data-theme="light"] .vision p { color: var(--text) !important; }
+        [data-theme="light"] .vtag { color: var(--muted) !important; border-color: var(--border2) !important; }
+
+        /* ── Footer ── */
+        [data-theme="light"] .footer {
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .footer-left,
+        [data-theme="light"] .footer-right { color: var(--dim) !important; }
+
+        /* ── Doc.html specific (uses different var names) ── */
+        [data-theme="light"] .header { border-color: var(--border2) !important; }
+        [data-theme="light"] .agent-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+            color: var(--text) !important;
+        }
+        [data-theme="light"] .agent-card .role { color: var(--dim) !important; }
+        [data-theme="light"] .agent-card .name { color: var(--text) !important; }
+        [data-theme="light"] .agent-card .desc { color: var(--muted) !important; }
+        [data-theme="light"] .flow-node { background: var(--surface2) !important; border-color: var(--border2) !important; color: var(--text) !important; }
+        [data-theme="light"] .flow-arrow { color: var(--dim) !important; }
+        [data-theme="light"] .section-label { color: var(--dim) !important; }
+
+        /* ── "What is an Agent?" section ── */
+        [data-theme="light"] .agent-eq { color: var(--muted) !important; }
+        [data-theme="light"] .pillar-card {
+            background: var(--surface) !important;
+            border-color: var(--border2) !important;
+        }
+        [data-theme="light"] .pillar-card h3  { color: var(--text) !important; }
+        [data-theme="light"] .pillar-card p   { color: var(--muted) !important; }
+        [data-theme="light"] .pillar-card code { background: rgba(0,0,0,0.06) !important; color: var(--muted) !important; }
+
+        /* ── Pill badges in light mode ── */
+        [data-theme="light"] .badge-pill.pill-k { background: rgba(0,0,0,0.07) !important; color: var(--dim) !important; }
+
+        /* ── Scrollbar (WebKit) ── */
+        [data-theme="light"] ::-webkit-scrollbar-track { background: var(--surface2) !important; }
+        [data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25) !important; }
 
         /* ── THEME TOGGLE BUTTON ── */
         #theme-toggle {
