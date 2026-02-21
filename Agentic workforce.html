@@ -859,6 +859,16 @@
             justify-content: center;
             flex-wrap: wrap;
             margin: 8px 0;
+            align-items: stretch;
+        }
+
+        /* All direct children in parallel row get equal height */
+        .parallel-row > * {
+            flex: 1 1 160px;
+            min-height: 140px;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .bug-row {
