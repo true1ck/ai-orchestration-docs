@@ -652,6 +652,256 @@
                 align-items: flex-start;
             }
         }
+
+        /* ── AGENT DEFINITION SECTION ── */
+        .agent-def {
+            margin-bottom: 88px;
+            animation: rise 0.5s 0.12s ease both;
+        }
+
+        .agent-def-heading {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .agent-def-heading .label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--violet);
+            margin-bottom: 14px;
+        }
+
+        .agent-def-heading h2 {
+            font-size: clamp(26px, 4vw, 42px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .agent-def-heading .subtext {
+            font-size: 15px;
+            color: var(--muted);
+            margin-top: 12px;
+            max-width: 520px;
+            margin-inline: auto;
+            line-height: 1.6;
+        }
+
+        /* Equation bar */
+        .agent-eq {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 0 auto 48px;
+            flex-wrap: wrap;
+        }
+
+        .eq-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: var(--muted);
+        }
+
+        .eq-plus {
+            font-size: 22px;
+            color: var(--dim);
+            font-weight: 300;
+        }
+
+        .eq-equals {
+            font-size: 22px;
+            color: var(--violet);
+            font-weight: 700;
+        }
+
+        .eq-result {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 1px;
+            padding: 6px 18px;
+            border-radius: 6px;
+            background: rgba(129, 140, 248, 0.08);
+            border: 1px solid rgba(129, 140, 248, 0.25);
+        }
+
+        /* Pillars */
+        .agent-pillars {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 640px) {
+            .agent-pillars {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pillar {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px 28px;
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .pillar:hover {
+            transform: translateY(-6px);
+        }
+
+        .pillar-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .pillar-llm {
+            border-color: rgba(129, 140, 248, 0.35);
+        }
+
+        .pillar-llm:hover {
+            border-color: rgba(129, 140, 248, 0.65);
+            box-shadow: 0 20px 60px rgba(129, 140, 248, 0.12);
+        }
+
+        .pillar-llm .pillar-glow {
+            background: radial-gradient(ellipse at 50% 0%, rgba(129, 140, 248, 0.1), transparent 70%);
+        }
+
+        .pillar-llm .pillar-top-bar {
+            background: linear-gradient(90deg, #818cf8, #34d2c8);
+        }
+
+        .pillar-memory {
+            border-color: rgba(240, 207, 101, 0.35);
+        }
+
+        .pillar-memory:hover {
+            border-color: rgba(240, 207, 101, 0.65);
+            box-shadow: 0 20px 60px rgba(240, 207, 101, 0.10);
+        }
+
+        .pillar-memory .pillar-glow {
+            background: radial-gradient(ellipse at 50% 0%, rgba(240, 207, 101, 0.08), transparent 70%);
+        }
+
+        .pillar-memory .pillar-top-bar {
+            background: linear-gradient(90deg, #f0cf65, #f472b6);
+        }
+
+        .pillar-skills {
+            border-color: rgba(52, 210, 200, 0.35);
+        }
+
+        .pillar-skills:hover {
+            border-color: rgba(52, 210, 200, 0.65);
+            box-shadow: 0 20px 60px rgba(52, 210, 200, 0.10);
+        }
+
+        .pillar-skills .pillar-glow {
+            background: radial-gradient(ellipse at 50% 0%, rgba(52, 210, 200, 0.08), transparent 70%);
+        }
+
+        .pillar-skills .pillar-top-bar {
+            background: linear-gradient(90deg, #34d2c8, #4ade80);
+        }
+
+        .pillar-top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .pillar-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+            line-height: 1;
+        }
+
+        .pillar-name {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .pillar-llm .pillar-name {
+            color: var(--violet);
+        }
+
+        .pillar-memory .pillar-name {
+            color: var(--gold);
+        }
+
+        .pillar-skills .pillar-name {
+            color: var(--teal);
+        }
+
+        .pillar-title {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 12px;
+        }
+
+        .pillar-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .pillar-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .pillar-chip {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 3px 9px;
+            border-radius: 4px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+        }
+
+        .agent-thesis {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: var(--muted);
+            font-style: italic;
+            max-width: 600px;
+            margin-inline: auto;
+            line-height: 1.7;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .agent-thesis strong {
+            color: var(--text);
+            font-style: normal;
+        }
     </style>
 </head>
 
@@ -703,6 +953,103 @@
                 </div>
             </div>
         </header>
+
+        <!-- WHAT IS AN AGENT? -->
+        <section class="agent-def">
+
+            <div class="agent-def-heading">
+                <div class="label">◈ Foundation</div>
+                <h2>What is an <span class="hi">AI Agent</span>?</h2>
+                <p class="subtext">
+                    An agent is not just a chatbot. It is an autonomous entity that perceives,
+                    reasons, remembers, and acts — on its own, in a loop, until the goal is done.
+                </p>
+            </div>
+
+            <!-- Equation -->
+            <div class="agent-eq">
+                <span class="eq-label">LLM</span>
+                <span class="eq-plus">+</span>
+                <span class="eq-label">MEMORY</span>
+                <span class="eq-plus">+</span>
+                <span class="eq-label">SKILLS</span>
+                <span class="eq-equals">=</span>
+                <span class="eq-result">🤖 AGENT</span>
+            </div>
+
+            <!-- Three Pillars -->
+            <div class="agent-pillars">
+
+                <!-- LLM -->
+                <div class="pillar pillar-llm">
+                    <div class="pillar-top-bar"></div>
+                    <div class="pillar-glow"></div>
+                    <div class="pillar-icon">🧠</div>
+                    <div class="pillar-name">Pillar 01</div>
+                    <div class="pillar-title">LLM — The Brain</div>
+                    <p class="pillar-desc">
+                        The large language model is the reasoning engine. It reads context,
+                        decides what to do next, writes code, critiques its own output, and calls tools.
+                        It is the intelligence that drives every decision the agent makes.
+                    </p>
+                    <div class="pillar-chips">
+                        <span class="pillar-chip">Claude Sonnet</span>
+                        <span class="pillar-chip">GPT-4o</span>
+                        <span class="pillar-chip">Gemini</span>
+                        <span class="pillar-chip">Reasoning</span>
+                    </div>
+                </div>
+
+                <!-- Memory -->
+                <div class="pillar pillar-memory">
+                    <div class="pillar-top-bar"></div>
+                    <div class="pillar-glow"></div>
+                    <div class="pillar-icon">💾</div>
+                    <div class="pillar-name">Pillar 02</div>
+                    <div class="pillar-title">Memory — The State</div>
+                    <p class="pillar-desc">
+                        Memory lets an agent learn, persist, and recall. Short-term memory holds
+                        the current task context. Long-term memory stores past outcomes, decisions,
+                        and learnings — so the agent gets smarter every run.
+                    </p>
+                    <div class="pillar-chips">
+                        <span class="pillar-chip">Working Context</span>
+                        <span class="pillar-chip">Episodic Store</span>
+                        <span class="pillar-chip">Vector DB</span>
+                        <span class="pillar-chip">State JSON</span>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div class="pillar pillar-skills">
+                    <div class="pillar-top-bar"></div>
+                    <div class="pillar-glow"></div>
+                    <div class="pillar-icon">⚡</div>
+                    <div class="pillar-name">Pillar 03</div>
+                    <div class="pillar-title">Skills — The Hands</div>
+                    <p class="pillar-desc">
+                        Skills are the tools the agent can call to affect the world — reading files,
+                        writing code, running tests, querying APIs, committing to git. Without skills,
+                        an agent can only talk. With skills, it can build.
+                    </p>
+                    <div class="pillar-chips">
+                        <span class="pillar-chip">read_file</span>
+                        <span class="pillar-chip">write_file</span>
+                        <span class="pillar-chip">run_tests</span>
+                        <span class="pillar-chip">git_commit</span>
+                        <span class="pillar-chip">ask_human</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="agent-thesis">
+                Combine these three and you get an entity that can receive a goal, plan a path, execute steps,
+                handle failures, and ship a result — <strong>without a human in the loop.</strong>
+                That is the foundation of everything in this documentation.
+            </p>
+
+        </section>
 
         <!-- DOCS -->
         <section>
