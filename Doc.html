@@ -816,7 +816,7 @@
             background: rgba(91, 79, 255, 0.12);
             border-color: rgba(91, 79, 255, 0.5);
         }
-    
+
         /* ── LIGHT MODE OVERRIDES ── */
         [data-theme="light"] {
             --bg: #f8f9fb;
@@ -825,8 +825,8 @@
             --text: #0d1117;
             --muted: #57606a;
             --dim: #8c959f;
-            --border: rgba(0,0,0,0.09);
-            --border2: rgba(0,0,0,0.14);
+            --border: rgba(0, 0, 0, 0.09);
+            --border2: rgba(0, 0, 0, 0.14);
         }
 
         [data-theme="light"] body {
@@ -835,12 +835,12 @@
 
         [data-theme="light"] body::before {
             background-image:
-                linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+                linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
         }
 
         [data-theme="light"] body::after {
-            background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.015) 3px,rgba(0,0,0,0.015) 4px);
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.015) 3px, rgba(0, 0, 0, 0.015) 4px);
         }
 
         /* ── THEME TOGGLE BUTTON ── */
@@ -860,13 +860,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         #theme-toggle:hover {
             transform: scale(1.1);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -906,7 +906,6 @@
             <span style="color:#484f6a">/</span>
             <span>MCP Multi-Agent Orchestrator</span>
         </div>
-        <a href="index.html" class="back-link">← Back to Hub</a>
     </nav>
     <div class="container">
 
@@ -1367,7 +1366,7 @@ No markdown. Pure JSON only.
     <button id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle theme">🌙</button>
 
     <script>
-        (function() {
+        (function () {
             var btn = document.getElementById('theme-toggle');
             var stored = localStorage.getItem('theme');
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1381,7 +1380,7 @@ No markdown. Pure JSON only.
 
             apply(theme);
 
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 var current = document.documentElement.getAttribute('data-theme');
                 apply(current === 'dark' ? 'light' : 'dark');
             });
