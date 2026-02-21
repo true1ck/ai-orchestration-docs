@@ -1001,6 +1001,43 @@
             transition: width 0.3s;
         }
 
+        
+        /* ══ RESPONSIVE ═══════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .container { padding: 32px 20px; }
+            .hdr-top { flex-direction: column; gap: 12px; }
+            .hdr-right { text-align: left; }
+            .agent-layer { flex-direction: column; align-items: center; }
+            .tabs { flex-wrap: wrap; }
+            .tab { flex: none; width: 48%; }
+            .phil-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .cp-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .risk-grid { grid-template-columns: 1fr 1fr !important; }
+            .parallel-row { flex-direction: column; align-items: center; }
+        }
+
+        @media (max-width: 600px) {
+            .hdr-h1 { font-size: clamp(24px,7vw,40px) !important; }
+            .tabs { flex-direction: column; }
+            .tab { width: 100%; }
+            .code-panel { padding: 16px 12px; }
+            .code-panel pre { font-size: 10px; }
+            .phil-grid { grid-template-columns: 1fr !important; }
+            .cp-grid { grid-template-columns: 1fr !important; }
+            .risk-grid { grid-template-columns: 1fr !important; }
+            .orch-box, .dev-box, .rev-box, .gate-box, .human-node {
+                max-width: 100% !important;
+                padding: 14px 16px !important;
+            }
+            .agent-table { display: block; overflow-x: auto; white-space: nowrap; }
+            .parallel-row { flex-direction: column; align-items: center; }
+            .bug-row { flex-wrap: wrap; justify-content: center; }
+            .sec { padding: 20px 16px !important; }
+            .sec-title { font-size: 14px !important; }
+            .pipeline-label { font-size: 9px !important; letter-spacing: 1px !important; }
+            .rv { min-width: 80px !important; font-size: 9px !important; }
+        }
+
         @media(max-width: 768px) {
             .hdr-top {
                 flex-direction: column;
