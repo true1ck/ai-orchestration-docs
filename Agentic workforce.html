@@ -1636,6 +1636,24 @@
             transform: scale(1.1);
             box-shadow: 0 8px 28px rgba(0,0,0,0.3);
         }
+    
+        /* ── ENFORCE EQUAL HEIGHT ON ALL PARALLEL DEV BOXES ── */
+        .parallel-row .ag {
+            height: 150px !important;
+            min-height: 150px !important;
+            max-height: 150px !important;
+            flex: 1 1 130px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden;
+        }
+        /* Allow wrapping label text to shrink gracefully */
+        .parallel-row .ag .ag-role {
+            white-space: normal;
+            word-break: break-word;
+        }
     </style>
 </head>
 
