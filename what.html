@@ -2191,6 +2191,642 @@ No markdown. Pure JSON only.
         </div>
     </div>
 
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- TASK A — 07: MULTIPLE MCP SERVERS                         -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section-title">07 — Multiple MCP Servers (Domain-Isolated Architecture)</div>
+    <div class="task-banner task-a">
+        <span class="task-tag">TASK A</span>
+        <span>Deploy 5 dedicated MCP server processes — one per domain — each on its own port, independently scalable,
+            testable, and restartable without affecting other pipelines. The orchestrator connects to ALL via SSE
+            transport at startup.</span>
+    </div>
+
+    <div class="arch-diagram" style="margin-bottom:24px;">
+        <div class="mcp-topology">
+            <div class="topo-orchestrator">
+                <div class="topo-label">FastAPI Backend — Port 8000</div>
+                <div class="topo-name">🧠 Orchestrator · Connects to ALL 5 MCP servers via SSE</div>
+            </div>
+            <div class="topo-arrows">↓ routes tool_use calls per input domain ↓</div>
+            <div class="topo-grid">
+                <div class="topo-server s-media">
+                    <div class="topo-server-port">:6001</div>
+                    <div class="topo-server-name">🎙 Media MCP</div>
+                    <div class="topo-server-tool">transcribe_video(url)</div>
+                    <div class="topo-server-tech">yt-dlp · whisper · ffmpeg</div>
+                </div>
+                <div class="topo-server s-doc">
+                    <div class="topo-server-port">:6002</div>
+                    <div class="topo-server-name">📄 Document MCP</div>
+                    <div class="topo-server-tool">parse_pdf(path)</div>
+                    <div class="topo-server-tech">PyMuPDF · tesseract · anthropic</div>
+                </div>
+                <div class="topo-server s-web">
+                    <div class="topo-server-port">:6003</div>
+                    <div class="topo-server-name">🌐 Web MCP</div>
+                    <div class="topo-server-tool">parse_web(html)</div>
+                    <div class="topo-server-tech">BeautifulSoup4 · newspaper3k</div>
+                </div>
+                <div class="topo-server s-analysis">
+                    <div class="topo-server-port">:6004</div>
+                    <div class="topo-server-name">📊 Analysis MCP</div>
+                    <div class="topo-server-tool">analyze_content(text)</div>
+                    <div class="topo-server-tech">anthropic haiku</div>
+                </div>
+                <div class="topo-server s-agg">
+                    <div class="topo-server-port">:6005</div>
+                    <div class="topo-server-name">🔗 Aggregation MCP</div>
+                    <div class="topo-server-tool">aggregate_intel(results)</div>
+                    <div class="topo-server-tech">anthropic sonnet · asyncpg</div>
+                </div>
+            </div>
+            <div class="topo-arrows">↓ all servers write results via shared pool ↓</div>
+            <div class="topo-db">🗄️ PostgreSQL — intelligence_db (shared asyncpg pool, connection_timeout=30s)</div>
+        </div>
+    </div>
+
+    <div class="code-section" style="margin-bottom:48px;">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('mcp-reg',this)">Server Registry</button>
+            <button class="tab" onclick="showTab('mcp-media',this)">Media MCP :6001</button>
+            <button class="tab" onclick="showTab('mcp-doc',this)">Document MCP :6002</button>
+            <button class="tab" onclick="showTab('mcp-web',this)">Web MCP :6003</button>
+            <button class="tab" onclick="showTab('mcp-analysis',this)">Analysis MCP :6004</button>
+            <button class="tab" onclick="showTab('mcp-agg',this)">Aggregation MCP :6005</button>
+        </div>
+        <div class="code-block active" id="mcp-reg">
+            <button class="copy-btn" onclick="copyCode('mcp-reg')">COPY</button>
+            <pre><span class="c"># config/mcp_registry.py — orchestrator connects to all 5 MCP servers at startup</span>
+<span class="k">from</span> <span class="n">mcp</span> <span class="k">import</span> <span class="n">ClientSession</span>, <span class="n">SSEServerParameters</span>
+<span class="k">import</span> <span class="n">asyncio</span>
+
+MCP_SERVERS = {
+    <span class="s">"media"</span>:    <span class="v">6001</span>, <span class="c"># transcribe_video</span>
+    <span class="s">"document"</span>: <span class="v">6002</span>, <span class="c"># parse_pdf</span>
+    <span class="s">"web"</span>:      <span class="v">6003</span>, <span class="c"># parse_web</span>
+    <span class="s">"analysis"</span>: <span class="v">6004</span>, <span class="c"># analyze_content</span>
+    <span class="s">"agg"</span>:      <span class="v">6005</span>, <span class="c"># aggregate_intel</span>
+}
+
+<span class="k">async def</span> <span class="n">connect_all</span>() -> <span class="b">dict</span>:
+    sessions = {}
+    <span class="k">async def</span> <span class="n">_connect</span>(name, port):
+        params = SSEServerParameters(url=<span class="s">f"http://localhost:{port}/sse"</span>)
+        sessions[name] = <span class="k">await</span> ClientSession.connect(params)
+        <span class="b">print</span>(<span class="s">f"✓ {name} MCP connected @ :{port}"</span>)
+    <span class="k">await</span> asyncio.gather(*[_connect(n,p) <span class="k">for</span> n,p <span class="k">in</span> MCP_SERVERS.items()])
+    <span class="k">return</span> sessions
+
+<span class="c"># Start all servers (one-liner for dev):</span>
+<span class="c"># uvicorn main:app &amp; python -m servers.media_mcp &amp; python -m servers.document_mcp \</span>
+<span class="c">#   &amp; python -m servers.web_mcp &amp; python -m servers.analysis_mcp &amp; python -m servers.aggregation_mcp</span></pre>
+        </div>
+        <div class="code-block" id="mcp-media">
+            <button class="copy-btn" onclick="copyCode('mcp-media')">COPY</button>
+            <pre><span class="c"># servers/media_mcp.py — run separately:  python -m servers.media_mcp</span>
+<span class="k">from</span> <span class="n">mcp.server.fastmcp</span> <span class="k">import</span> <span class="n">FastMCP</span>
+<span class="k">import</span> <span class="n">yt_dlp</span>, <span class="n">whisper</span>, <span class="n">anthropic</span>, <span class="n">json</span>
+
+mcp = <span class="n">FastMCP</span>(<span class="s">"media_mcp"</span>)
+
+<span class="k">@mcp.tool</span>()
+<span class="k">async def</span> <span class="n">transcribe_video</span>(url: <span class="b">str</span>, source_id: <span class="b">str</span>) -> <span class="b">dict</span>:
+    ydl_opts = {<span class="s">"format"</span>: <span class="s">"bestaudio"</span>, <span class="s">"outtmpl"</span>: <span class="s">f"/tmp/{source_id}.%(ext)s"</span>}
+    <span class="k">with</span> yt_dlp.YoutubeDL(ydl_opts) <span class="k">as</span> ydl:
+        ydl.extract_info(url, download=<span class="k">True</span>)
+    model = whisper.load_model(<span class="s">"base"</span>)
+    raw = model.transcribe(<span class="s">f"/tmp/{source_id}.webm"</span>)[<span class="s">"text"</span>]
+    client = anthropic.Anthropic()
+    msg = client.messages.create(model=<span class="s">"claude-haiku-4-5"</span>, max_tokens=<span class="v">1024</span>,
+        system=TRANSCRIBER_PROMPT, messages=[{<span class="s">"role"</span>:<span class="s">"user"</span>,<span class="s">"content"</span>:raw}])
+    <span class="k">return</span> json.loads(msg.content[<span class="v">0</span>].text)
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    mcp.run(transport=<span class="s">"sse"</span>, port=<span class="v">6001</span>)  <span class="c"># → http://localhost:6001/sse</span></pre>
+        </div>
+        <div class="code-block" id="mcp-doc">
+            <button class="copy-btn" onclick="copyCode('mcp-doc')">COPY</button>
+            <pre><span class="c"># servers/document_mcp.py — run separately:  python -m servers.document_mcp</span>
+<span class="k">from</span> <span class="n">mcp.server.fastmcp</span> <span class="k">import</span> <span class="n">FastMCP</span>
+<span class="k">import</span> <span class="n">fitz</span>, <span class="n">anthropic</span>, <span class="n">json</span>
+
+mcp = <span class="n">FastMCP</span>(<span class="s">"document_mcp"</span>)
+
+<span class="k">@mcp.tool</span>()
+<span class="k">async def</span> <span class="n">parse_pdf</span>(file_path: <span class="b">str</span>, source_id: <span class="b">str</span>) -> <span class="b">dict</span>:
+    doc = fitz.open(file_path)
+    raw = <span class="s">"\n"</span>.join(p.get_text() <span class="k">for</span> p <span class="k">in</span> doc)
+    <span class="k">if</span> <span class="b">len</span>(raw.strip()) < <span class="v">100</span>:
+        raw = run_ocr(file_path)  <span class="c"># pytesseract fallback</span>
+    client = anthropic.Anthropic()
+    msg = client.messages.create(model=<span class="s">"claude-sonnet-4-6"</span>, max_tokens=<span class="v">1500</span>,
+        system=PDF_EXTRACTOR_PROMPT,
+        messages=[{<span class="s">"role"</span>:<span class="s">"user"</span>,<span class="s">"content"</span>:raw[:<span class="v">8000</span>]}])
+    res = json.loads(msg.content[<span class="v">0</span>].text)
+    res[<span class="s">"source_id"</span>] = source_id
+    <span class="k">return</span> res
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    mcp.run(transport=<span class="s">"sse"</span>, port=<span class="v">6002</span>)  <span class="c"># → http://localhost:6002/sse</span></pre>
+        </div>
+        <div class="code-block" id="mcp-web">
+            <button class="copy-btn" onclick="copyCode('mcp-web')">COPY</button>
+            <pre><span class="c"># servers/web_mcp.py — run separately:  python -m servers.web_mcp</span>
+<span class="k">from</span> <span class="n">mcp.server.fastmcp</span> <span class="k">import</span> <span class="n">FastMCP</span>
+<span class="k">from</span> <span class="n">bs4</span> <span class="k">import</span> <span class="n">BeautifulSoup</span>
+<span class="k">import</span> <span class="n">anthropic</span>, <span class="n">json</span>
+
+mcp = <span class="n">FastMCP</span>(<span class="s">"web_mcp"</span>)
+
+<span class="k">@mcp.tool</span>()
+<span class="k">async def</span> <span class="n">parse_web</span>(html_or_json: <span class="b">str</span>, source_id: <span class="b">str</span>) -> <span class="b">dict</span>:
+    soup = BeautifulSoup(html_or_json, <span class="s">"lxml"</span>)
+    <span class="k">for</span> t <span class="k">in</span> soup([<span class="s">"script"</span>,<span class="s">"style"</span>,<span class="s">"nav"</span>,<span class="s">"footer"</span>,<span class="s">"aside"</span>]): t.decompose()
+    clean = soup.get_text(separator=<span class="s">"\n"</span>, strip=<span class="k">True</span>)
+    client = anthropic.Anthropic()
+    msg = client.messages.create(model=<span class="s">"claude-haiku-4-5"</span>, max_tokens=<span class="v">1000</span>,
+        system=WEB_PARSER_PROMPT,
+        messages=[{<span class="s">"role"</span>:<span class="s">"user"</span>,<span class="s">"content"</span>:clean[:<span class="v">5000</span>]}])
+    <span class="k">return</span> json.loads(msg.content[<span class="v">0</span>].text)
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    mcp.run(transport=<span class="s">"sse"</span>, port=<span class="v">6003</span>)  <span class="c"># → http://localhost:6003/sse</span></pre>
+        </div>
+        <div class="code-block" id="mcp-analysis">
+            <button class="copy-btn" onclick="copyCode('mcp-analysis')">COPY</button>
+            <pre><span class="c"># servers/analysis_mcp.py — run separately:  python -m servers.analysis_mcp</span>
+<span class="k">from</span> <span class="n">mcp.server.fastmcp</span> <span class="k">import</span> <span class="n">FastMCP</span>
+<span class="k">import</span> <span class="n">anthropic</span>, <span class="n">json</span>
+
+mcp = <span class="n">FastMCP</span>(<span class="s">"analysis_mcp"</span>)
+
+<span class="k">@mcp.tool</span>()
+<span class="k">async def</span> <span class="n">analyze_content</span>(text: <span class="b">str</span>, source_id: <span class="b">str</span>) -> <span class="b">dict</span>:
+    client = anthropic.Anthropic()
+    msg = client.messages.create(model=<span class="s">"claude-haiku-4-5"</span>, max_tokens=<span class="v">500</span>,
+        system=ANALYST_PROMPT,
+        messages=[{<span class="s">"role"</span>:<span class="s">"user"</span>,<span class="s">"content"</span>:text[:<span class="v">4000</span>]}])
+    res = json.loads(msg.content[<span class="v">0</span>].text)
+    res[<span class="s">"source_id"</span>] = source_id
+    <span class="k">return</span> res
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    mcp.run(transport=<span class="s">"sse"</span>, port=<span class="v">6004</span>)  <span class="c"># → http://localhost:6004/sse</span></pre>
+        </div>
+        <div class="code-block" id="mcp-agg">
+            <button class="copy-btn" onclick="copyCode('mcp-agg')">COPY</button>
+            <pre><span class="c"># servers/aggregation_mcp.py — run separately:  python -m servers.aggregation_mcp</span>
+<span class="k">from</span> <span class="n">mcp.server.fastmcp</span> <span class="k">import</span> <span class="n">FastMCP</span>
+<span class="k">from</span> <span class="n">config.db</span> <span class="k">import</span> <span class="n">get_pool</span>
+<span class="k">import</span> <span class="n">anthropic</span>, <span class="n">json</span>
+
+mcp = <span class="n">FastMCP</span>(<span class="s">"aggregation_mcp"</span>)
+
+<span class="k">@mcp.tool</span>()
+<span class="k">async def</span> <span class="n">aggregate_intel</span>(all_results: <span class="b">dict</span>, run_id: <span class="b">str</span>) -> <span class="b">dict</span>:
+    client = anthropic.Anthropic()
+    msg = client.messages.create(model=<span class="s">"claude-sonnet-4-6"</span>, max_tokens=<span class="v">4000</span>,
+        system=AGGREGATOR_PROMPT,
+        messages=[{<span class="s">"role"</span>:<span class="s">"user"</span>,<span class="s">"content"</span>:json.dumps(all_results)}])
+    report = json.loads(msg.content[<span class="v">0</span>].text)
+    pool = <span class="k">await</span> get_pool()
+    <span class="k">async with</span> pool.acquire() <span class="k">as</span> conn:
+        <span class="k">await</span> conn.execute(<span class="s">"""
+            INSERT INTO pipeline_runs (run_id, brief, dashboard_cards, created_at)
+            VALUES ($1,$2,$3,NOW())
+        """</span>, run_id, report[<span class="s">"brief"</span>], json.dumps(report[<span class="s">"dashboard_cards"</span>]))
+    <span class="k">return</span> report
+
+<span class="k">if</span> __name__ == <span class="s">"__main__"</span>:
+    mcp.run(transport=<span class="s">"sse"</span>, port=<span class="v">6005</span>)  <span class="c"># → http://localhost:6005/sse</span></pre>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- TASK B — 08: DATABASE SCHEMA & CONNECTIONS                -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section-title">08 — Database Schema &amp; Connection Layer</div>
+    <div class="task-banner task-b">
+        <span class="task-tag">TASK B</span>
+        <span>Create PostgreSQL <code
+                style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;">intelligence_db</code>
+            with 6 tables. Shared <code
+                style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;">asyncpg</code>
+            pool imported by all MCP servers. Run migrations via SQL file on first boot.</span>
+    </div>
+
+    <div class="db-schema-grid">
+        <div class="db-table">
+            <div class="db-table-header">📋 pipeline_runs</div>
+            <div class="db-col"><span class="db-pk">PK</span> run_id UUID</div>
+            <div class="db-col"><span class="db-col-type">text</span> brief</div>
+            <div class="db-col"><span class="db-col-type">jsonb</span> dashboard_cards[]</div>
+            <div class="db-col"><span class="db-col-type">jsonb</span> cross_links[]</div>
+            <div class="db-col"><span class="db-col-type">jsonb</span> timeline[]</div>
+            <div class="db-col"><span class="db-col-type">int</span> total_sources</div>
+            <div class="db-col"><span class="db-col-type">ts</span> created_at</div>
+        </div>
+        <div class="db-table">
+            <div class="db-table-header">📰 sources</div>
+            <div class="db-col"><span class="db-pk">PK</span> source_id VARCHAR(64)</div>
+            <div class="db-col"><span class="db-fk">FK</span> run_id → pipeline_runs</div>
+            <div class="db-col"><span class="db-col-type">enum</span> type (youtube|pdf|web|zip)</div>
+            <div class="db-col"><span class="db-col-type">text</span> title</div>
+            <div class="db-col"><span class="db-col-type">text</span> body_text</div>
+            <div class="db-col"><span class="db-col-type">text</span> source_url</div>
+            <div class="db-col"><span class="db-col-type">ts</span> ingested_at</div>
+        </div>
+        <div class="db-table">
+            <div class="db-table-header">🏷 entities</div>
+            <div class="db-col"><span class="db-pk">PK</span> entity_id SERIAL</div>
+            <div class="db-col"><span class="db-fk">FK</span> source_id → sources</div>
+            <div class="db-col"><span class="db-col-type">enum</span> type (person|org|location|date)</div>
+            <div class="db-col"><span class="db-col-type">text</span> name</div>
+            <div class="db-col"><span class="db-col-type">int</span> mention_count</div>
+        </div>
+        <div class="db-table">
+            <div class="db-table-header">📊 analysis_results</div>
+            <div class="db-col"><span class="db-pk">PK</span> analysis_id SERIAL</div>
+            <div class="db-col"><span class="db-fk">FK</span> source_id → sources</div>
+            <div class="db-col"><span class="db-col-type">float</span> sentiment (−1 to +1)</div>
+            <div class="db-col"><span class="db-col-type">jsonb</span> tags[]</div>
+            <div class="db-col"><span class="db-col-type">text</span> framing</div>
+            <div class="db-col"><span class="db-col-type">text</span> language, region</div>
+        </div>
+        <div class="db-table">
+            <div class="db-table-header">🎙 transcripts</div>
+            <div class="db-col"><span class="db-pk">PK</span> transcript_id SERIAL</div>
+            <div class="db-col"><span class="db-fk">FK</span> source_id → sources</div>
+            <div class="db-col"><span class="db-col-type">text</span> transcript_clean</div>
+            <div class="db-col"><span class="db-col-type">jsonb</span> key_quotes[]</div>
+            <div class="db-col"><span class="db-col-type">int</span> duration_seconds</div>
+            <div class="db-col"><span class="db-col-type">text</span> language</div>
+        </div>
+        <div class="db-table">
+            <div class="db-table-header">📤 dashboard_cards</div>
+            <div class="db-col"><span class="db-pk">PK</span> card_id VARCHAR(32)</div>
+            <div class="db-col"><span class="db-fk">FK</span> run_id → pipeline_runs</div>
+            <div class="db-col"><span class="db-col-type">text</span> headline, summary</div>
+            <div class="db-col"><span class="db-col-type">float</span> sentiment</div>
+            <div class="db-col"><span class="db-col-type">jsonb</span> tags[], sources[]</div>
+            <div class="db-col"><span class="db-col-type">ts</span> timestamp</div>
+        </div>
+    </div>
+
+    <div class="code-section" style="margin-bottom:48px;">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('db-pool',this)">DB Pool (asyncpg)</button>
+            <button class="tab" onclick="showTab('db-sql',this)">CREATE TABLES SQL</button>
+            <button class="tab" onclick="showTab('db-env',this)">.env Config</button>
+        </div>
+        <div class="code-block active" id="db-pool">
+            <button class="copy-btn" onclick="copyCode('db-pool')">COPY</button>
+            <pre><span class="c"># config/db.py — shared asyncpg pool used by all MCP servers + FastAPI</span>
+<span class="k">import</span> <span class="n">asyncpg</span>, <span class="n">os</span>
+
+_pool = <span class="k">None</span>
+
+<span class="k">async def</span> <span class="n">get_pool</span>() -> asyncpg.Pool:
+    <span class="k">global</span> _pool
+    <span class="k">if</span> _pool <span class="k">is None</span>:
+        _pool = <span class="k">await</span> asyncpg.create_pool(
+            dsn=os.getenv(<span class="s">"DATABASE_URL"</span>),
+            min_size=<span class="v">2</span>,
+            max_size=<span class="v">10</span>,
+            command_timeout=<span class="v">30</span>
+        )
+    <span class="k">return</span> _pool
+
+<span class="k">async def</span> <span class="n">close_pool</span>():
+    <span class="k">global</span> _pool
+    <span class="k">if</span> _pool: <span class="k">await</span> _pool.close(); _pool = <span class="k">None</span>
+
+<span class="k">async def</span> <span class="n">save_source</span>(run_id, source_id, src_type, title, body, url=<span class="k">None</span>):
+    pool = <span class="k">await</span> get_pool()
+    <span class="k">async with</span> pool.acquire() <span class="k">as</span> conn:
+        <span class="k">await</span> conn.execute(<span class="s">"""
+            INSERT INTO sources (source_id, run_id, type, title, body_text, source_url, ingested_at)
+            VALUES ($1,$2,$3,$4,$5,$6,NOW())
+            ON CONFLICT (source_id) DO NOTHING
+        """</span>, source_id, run_id, src_type, title, body, url)
+
+<span class="k">async def</span> <span class="n">run_migrations</span>():
+    pool = <span class="k">await</span> get_pool()
+    <span class="k">async with</span> pool.acquire() <span class="k">as</span> conn:
+        <span class="k">with</span> <span class="b">open</span>(<span class="s">"migrations/001_create_tables.sql"</span>) <span class="k">as</span> f:
+            <span class="k">await</span> conn.execute(f.read())</pre>
+        </div>
+        <div class="code-block" id="db-sql">
+            <button class="copy-btn" onclick="copyCode('db-sql')">COPY</button>
+            <pre><span class="c">-- migrations/001_create_tables.sql</span>
+<span class="k">CREATE EXTENSION IF NOT EXISTS</span> <span class="s">"uuid-ossp"</span>;
+
+<span class="k">CREATE TABLE IF NOT EXISTS</span> pipeline_runs (
+    run_id          UUID <span class="k">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+    brief           <span class="b">TEXT</span>,
+    dashboard_cards <span class="b">JSONB</span>,
+    cross_links     <span class="b">JSONB</span>,
+    timeline        <span class="b">JSONB</span>,
+    total_sources   <span class="b">INT DEFAULT</span> <span class="v">0</span>,
+    created_at      <span class="b">TIMESTAMPTZ DEFAULT NOW</span>()
+);
+<span class="k">CREATE TABLE IF NOT EXISTS</span> sources (
+    source_id   <span class="b">VARCHAR</span>(64) <span class="k">PRIMARY KEY</span>,
+    run_id      UUID <span class="k">REFERENCES</span> pipeline_runs(run_id) <span class="k">ON DELETE CASCADE</span>,
+    type        <span class="b">VARCHAR</span>(16),
+    title       <span class="b">TEXT</span>,
+    body_text   <span class="b">TEXT</span>,
+    source_url  <span class="b">TEXT</span>,
+    ingested_at <span class="b">TIMESTAMPTZ DEFAULT NOW</span>()
+);
+<span class="k">CREATE TABLE IF NOT EXISTS</span> entities (
+    entity_id     <span class="b">SERIAL PRIMARY KEY</span>,
+    source_id     <span class="b">VARCHAR</span>(64) <span class="k">REFERENCES</span> sources(source_id),
+    type          <span class="b">VARCHAR</span>(16),
+    name          <span class="b">TEXT</span>,
+    mention_count <span class="b">INT DEFAULT</span> <span class="v">1</span>
+);
+<span class="k">CREATE TABLE IF NOT EXISTS</span> analysis_results (
+    analysis_id <span class="b">SERIAL PRIMARY KEY</span>,
+    source_id   <span class="b">VARCHAR</span>(64) <span class="k">REFERENCES</span> sources(source_id),
+    sentiment   <span class="b">FLOAT</span>,
+    tags        <span class="b">JSONB</span>,
+    framing     <span class="b">VARCHAR</span>(32),
+    language    <span class="b">VARCHAR</span>(8),
+    region      <span class="b">TEXT</span>
+);
+<span class="k">CREATE TABLE IF NOT EXISTS</span> transcripts (
+    transcript_id    <span class="b">SERIAL PRIMARY KEY</span>,
+    source_id        <span class="b">VARCHAR</span>(64) <span class="k">REFERENCES</span> sources(source_id),
+    transcript_clean <span class="b">TEXT</span>,
+    key_quotes       <span class="b">JSONB</span>,
+    duration_seconds <span class="b">INT</span>,
+    language         <span class="b">VARCHAR</span>(8)
+);
+<span class="k">CREATE TABLE IF NOT EXISTS</span> dashboard_cards (
+    card_id   <span class="b">VARCHAR</span>(32) <span class="k">PRIMARY KEY</span>,
+    run_id    UUID <span class="k">REFERENCES</span> pipeline_runs(run_id),
+    headline  <span class="b">TEXT</span>,
+    summary   <span class="b">TEXT</span>,
+    sentiment <span class="b">FLOAT</span>,
+    tags      <span class="b">JSONB</span>,
+    sources   <span class="b">JSONB</span>,
+    timestamp <span class="b">TIMESTAMPTZ DEFAULT NOW</span>()
+);
+<span class="k">CREATE INDEX IF NOT EXISTS ON</span> sources(run_id);
+<span class="k">CREATE INDEX IF NOT EXISTS ON</span> entities(source_id);
+<span class="k">CREATE INDEX IF NOT EXISTS ON</span> analysis_results(source_id);</pre>
+        </div>
+        <div class="code-block" id="db-env">
+            <button class="copy-btn" onclick="copyCode('db-env')">COPY</button>
+            <pre><span class="c"># .env — copy to project root, never commit to git</span>
+
+<span class="c"># ── PostgreSQL ───────────────────────────────────</span>
+DATABASE_URL=<span class="s">postgresql://postgres:password@localhost:5432/intelligence_db</span>
+
+<span class="c"># ── Anthropic ────────────────────────────────────</span>
+ANTHROPIC_API_KEY=<span class="s">sk-ant-api03-...</span>
+
+<span class="c"># ── FastAPI ──────────────────────────────────────</span>
+BACKEND_PORT=<span class="v">8000</span>
+CORS_ORIGINS=<span class="s">http://localhost:5173,http://localhost:3000</span>
+
+<span class="c"># ── MCP Server Ports ─────────────────────────────</span>
+MEDIA_MCP_PORT=<span class="v">6001</span>
+DOCUMENT_MCP_PORT=<span class="v">6002</span>
+WEB_MCP_PORT=<span class="v">6003</span>
+ANALYSIS_MCP_PORT=<span class="v">6004</span>
+AGG_MCP_PORT=<span class="v">6005</span>
+
+<span class="c"># ── File Storage ─────────────────────────────────</span>
+UPLOAD_DIR=<span class="s">/tmp/intel_uploads</span>
+MAX_UPLOAD_MB=<span class="v">200</span></pre>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- TASK C — 09: BACKEND ↔ EXISTING REACT FRONTEND           -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="section-title">09 — Backend ↔ Existing React Frontend Wiring</div>
+    <div class="task-banner task-c">
+        <span class="task-tag">TASK C</span>
+        <span>Wire FastAPI to the existing React app (extracted from ZIP). Serve React static build from <code
+                style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;">dashboard/dist/</code>.
+            React connects via <code
+                style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;font-size:11px;font-family:monospace;">useIntelFeed</code>
+            WebSocket hook to stream live intelligence cards in real time.</span>
+    </div>
+
+    <table class="cost-table" style="margin-bottom:32px;">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>Purpose</th>
+                <th>React Component</th>
+                <th>Response Shape</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge-pill pill-a">POST</span></td>
+                <td class="mono">/api/run</td>
+                <td>Submit pipeline run (multipart: ZIP + PDFs + URL list)</td>
+                <td>UploadForm</td>
+                <td class="mono">{ run_id }</td>
+            </tr>
+            <tr>
+                <td><span class="badge-pill pill-t">GET</span></td>
+                <td class="mono">/api/runs</td>
+                <td>List all previous runs</td>
+                <td>RunHistory sidebar</td>
+                <td class="mono">[{ run_id, created_at, total_sources }]</td>
+            </tr>
+            <tr>
+                <td><span class="badge-pill pill-t">GET</span></td>
+                <td class="mono">/api/runs/{run_id}</td>
+                <td>Fetch full report (cards, brief, timeline)</td>
+                <td>Dashboard page</td>
+                <td class="mono">{ brief, cards[], timeline[] }</td>
+            </tr>
+            <tr>
+                <td><span class="badge-pill pill-p">WS</span></td>
+                <td class="mono">/ws/{run_id}</td>
+                <td>Stream live agent progress events</td>
+                <td>LiveFeed component</td>
+                <td class="mono">{ event, agent, data, timestamp }</td>
+            </tr>
+            <tr>
+                <td><span class="badge-pill pill-t">GET</span></td>
+                <td class="mono">/api/sources/{run_id}</td>
+                <td>List all sources ingested</td>
+                <td>SourcesTable</td>
+                <td class="mono">[{ source_id, type, title, url }]</td>
+            </tr>
+            <tr>
+                <td><span class="badge-pill pill-r">DEL</span></td>
+                <td class="mono">/api/runs/{run_id}</td>
+                <td>Delete run + all DB records</td>
+                <td>RunHistory delete btn</td>
+                <td class="mono">{ deleted: true }</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="code-section" style="margin-bottom:48px;">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('fe-main',this)">FastAPI main.py</button>
+            <button class="tab" onclick="showTab('fe-ws',this)">WebSocket Route</button>
+            <button class="tab" onclick="showTab('fe-hook',this)">React useIntelFeed</button>
+            <button class="tab" onclick="showTab('fe-upload',this)">React UploadForm</button>
+            <button class="tab" onclick="showTab('fe-vite',this)">Vite Proxy Config</button>
+        </div>
+        <div class="code-block active" id="fe-main">
+            <button class="copy-btn" onclick="copyCode('fe-main')">COPY</button>
+            <pre><span class="c"># main.py — FastAPI entry point: CORS + lifespan (DB + MCP) + static React</span>
+<span class="k">from</span> <span class="n">fastapi</span> <span class="k">import</span> <span class="n">FastAPI</span>
+<span class="k">from</span> <span class="n">fastapi.middleware.cors</span> <span class="k">import</span> <span class="n">CORSMiddleware</span>
+<span class="k">from</span> <span class="n">fastapi.staticfiles</span> <span class="k">import</span> <span class="n">StaticFiles</span>
+<span class="k">from</span> <span class="n">contextlib</span> <span class="k">import</span> <span class="n">asynccontextmanager</span>
+<span class="k">from</span> <span class="n">config.db</span> <span class="k">import</span> <span class="n">get_pool</span>, <span class="n">close_pool</span>, <span class="n">run_migrations</span>
+<span class="k">from</span> <span class="n">config.mcp_registry</span> <span class="k">import</span> <span class="n">connect_all</span>
+<span class="k">import</span> <span class="n">os</span>
+
+<span class="k">@asynccontextmanager</span>
+<span class="k">async def</span> <span class="n">lifespan</span>(app: <span class="n">FastAPI</span>):
+    <span class="k">await</span> run_migrations()          <span class="c"># auto-create DB tables on first boot</span>
+    app.state.mcp = <span class="k">await</span> connect_all()  <span class="c"># connect all 5 MCP servers</span>
+    <span class="k">yield</span>
+    <span class="k">await</span> close_pool()
+
+app = <span class="n">FastAPI</span>(lifespan=lifespan)
+
+app.add_middleware(CORSMiddleware,
+    allow_origins=os.getenv(<span class="s">"CORS_ORIGINS"</span>,<span class="s">"*"</span>).split(<span class="s">","</span>),
+    allow_credentials=<span class="k">True</span>, allow_methods=[<span class="s">"*"</span>], allow_headers=[<span class="s">"*"</span>])
+
+<span class="k">from</span> <span class="n">api.routes</span> <span class="k">import</span> <span class="n">pipeline</span>
+app.include_router(pipeline.router, prefix=<span class="s">"/api"</span>)
+
+<span class="c"># Serve existing React app from dashboard/dist/ at root /</span>
+app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"dashboard/dist"</span>, html=<span class="k">True</span>), name=<span class="s">"react"</span>)</pre>
+        </div>
+        <div class="code-block" id="fe-ws">
+            <button class="copy-btn" onclick="copyCode('fe-ws')">COPY</button>
+            <pre><span class="c"># api/routes/pipeline.py — WebSocket endpoint for live agent event streaming</span>
+<span class="k">from</span> <span class="n">fastapi</span> <span class="k">import</span> <span class="n">APIRouter</span>, <span class="n">WebSocket</span>, <span class="n">WebSocketDisconnect</span>, <span class="n">UploadFile</span>
+<span class="k">import</span> <span class="n">asyncio</span>, <span class="n">uuid</span>, <span class="n">json</span>
+
+router = <span class="n">APIRouter</span>()
+_queues: <span class="b">dict</span>[<span class="b">str</span>, asyncio.Queue] = {}
+
+<span class="k">@router.post</span>(<span class="s">"/run"</span>)
+<span class="k">async def</span> <span class="n">submit_run</span>(files: <span class="b">list</span>[UploadFile], urls: <span class="b">str</span> = <span class="s">""</span>):
+    run_id = <span class="b">str</span>(uuid.uuid4())
+    q = asyncio.Queue()
+    _queues[run_id] = q
+    asyncio.create_task(run_pipeline(run_id, files, urls, q))
+    <span class="k">return</span> {<span class="s">"run_id"</span>: run_id}
+
+<span class="k">@router.websocket</span>(<span class="s">"/ws/{run_id}"</span>)
+<span class="k">async def</span> <span class="n">ws_stream</span>(ws: WebSocket, run_id: <span class="b">str</span>):
+    <span class="k">await</span> ws.accept()
+    q = _queues.get(run_id)
+    <span class="k">if not</span> q:
+        <span class="k">await</span> ws.send_json({<span class="s">"error"</span>:<span class="s">"run not found"</span>}); <span class="k">return</span>
+    <span class="k">try</span>:
+        <span class="k">while True</span>:
+            event = <span class="k">await</span> q.get()
+            <span class="k">await</span> ws.send_json(event)
+            <span class="k">if</span> event.get(<span class="s">"event"</span>) == <span class="s">"DONE"</span>: <span class="k">break</span>
+    <span class="k">except</span> WebSocketDisconnect: <span class="b">pass</span>
+    <span class="k">finally</span>: _queues.pop(run_id, <span class="k">None</span>)</pre>
+        </div>
+        <div class="code-block" id="fe-hook">
+            <button class="copy-btn" onclick="copyCode('fe-hook')">COPY</button>
+            <pre><span class="c">// src/hooks/useIntelFeed.ts — React hook: opens WS, streams live events</span>
+<span class="k">import</span> { useState, useEffect } <span class="k">from</span> <span class="s">'react'</span>;
+
+<span class="k">interface</span> <span class="n">IntelEvent</span> {
+    event: <span class="b">string</span>;
+    agent: <span class="b">string</span>;
+    data: <span class="n">Record</span>&lt;<span class="b">string</span>, <span class="n">unknown</span>&gt;;
+    timestamp: <span class="b">string</span>;
+}
+
+<span class="k">export function</span> <span class="n">useIntelFeed</span>(runId: <span class="b">string</span> | <span class="k">null</span>) {
+    <span class="k">const</span> [events, setEvents] = useState&lt;<span class="n">IntelEvent</span>[]&gt;([]);
+    <span class="k">const</span> [status, setStatus] = useState&lt;<span class="s">'idle'</span>|<span class="s">'connecting'</span>|<span class="s">'live'</span>|<span class="s">'done'</span>&gt;(<span class="s">'idle'</span>);
+
+    useEffect(() =&gt; {
+        <span class="k">if</span> (!runId) <span class="k">return</span>;
+        setStatus(<span class="s">'connecting'</span>);
+        <span class="k">const</span> ws = <span class="k">new</span> WebSocket(<span class="s">`ws://localhost:8000/ws/${runId}`</span>);
+        ws.onopen = () =&gt; setStatus(<span class="s">'live'</span>);
+        ws.onmessage = ({ data }) =&gt; {
+            <span class="k">const</span> ev: <span class="n">IntelEvent</span> = JSON.parse(data);
+            setEvents(prev =&gt; [...prev, ev]);
+            <span class="k">if</span> (ev.event === <span class="s">'DONE'</span>) setStatus(<span class="s">'done'</span>);
+        };
+        ws.onclose = () =&gt; setStatus(<span class="s">'done'</span>);
+        <span class="k">return</span> () =&gt; ws.close();
+    }, [runId]);
+
+    <span class="k">return</span> { events, status };
+}</pre>
+        </div>
+        <div class="code-block" id="fe-upload">
+            <button class="copy-btn" onclick="copyCode('fe-upload')">COPY</button>
+            <pre><span class="c">// src/components/UploadForm.tsx — file upload → gets run_id → opens WS</span>
+<span class="k">import</span> { useState } <span class="k">from</span> <span class="s">'react'</span>;
+<span class="k">import</span> { useIntelFeed } <span class="k">from</span> <span class="s">'../hooks/useIntelFeed'</span>;
+
+<span class="k">export function</span> <span class="n">UploadForm</span>() {
+    <span class="k">const</span> [runId, setRunId] = useState&lt;<span class="b">string</span> | <span class="k">null</span>&gt;(<span class="k">null</span>);
+    <span class="k">const</span> { events, status } = useIntelFeed(runId);
+
+    <span class="k">async function</span> <span class="n">handleSubmit</span>(e: React.FormEvent&lt;HTMLFormElement&gt;) {
+        e.preventDefault();
+        <span class="k">const</span> form = <span class="k">new</span> FormData(e.currentTarget);
+        <span class="k">const</span> res = <span class="k">await</span> fetch(<span class="s">'/api/run'</span>, { method: <span class="s">'POST'</span>, body: form });
+        <span class="k">const</span> { run_id } = <span class="k">await</span> res.json();
+        setRunId(run_id);  <span class="c">// triggers WS hook automatically</span>
+    }
+
+    <span class="k">return</span> (
+        &lt;form onSubmit={handleSubmit} encType=<span class="s">"multipart/form-data"</span>&gt;
+            &lt;input type=<span class="s">"file"</span> name=<span class="s">"files"</span> multiple accept=<span class="s">".pdf,.zip"</span> /&gt;
+            &lt;input type=<span class="s">"text"</span> name=<span class="s">"urls"</span> placeholder=<span class="s">"YouTube URLs (comma separated)"</span> /&gt;
+            &lt;button type=<span class="s">"submit"</span>&gt;▶ Run Intelligence Pipeline&lt;/button&gt;
+            &lt;p&gt;Status: {status} · Events: {events.length}&lt;/p&gt;
+        &lt;/form&gt;
+    );
+}</pre>
+        </div>
+        <div class="code-block" id="fe-vite">
+            <button class="copy-btn" onclick="copyCode('fe-vite')">COPY</button>
+            <pre><span class="c">// vite.config.ts — proxy /api + /ws to FastAPI :8000 during local dev</span>
+<span class="k">import</span> { defineConfig } <span class="k">from</span> <span class="s">'vite'</span>;
+<span class="k">import</span> react <span class="k">from</span> <span class="s">'@vitejs/plugin-react'</span>;
+
+<span class="k">export default</span> defineConfig({
+    plugins: [react()],
+    server: {
+        port: <span class="v">5173</span>,
+        proxy: {
+            <span class="s">'/api'</span>: { target: <span class="s">'http://localhost:8000'</span>, changeOrigin: <span class="k">true</span> },
+            <span class="s">'/ws'</span>:  { target: <span class="s">'ws://localhost:8000'</span>, ws: <span class="k">true</span>, changeOrigin: <span class="k">true</span> }
+        }
+    }
+});
+
+<span class="c">// Production: FastAPI serves React from dashboard/dist/ via StaticFiles mount</span>
+<span class="c">// Build React: cd dashboard && npm run build → outputs to dist/</span>
+<span class="c">// Run all: uvicorn main:app --port 8000 (+ 5 MCP servers per registry)</span></pre>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <div class="footer">
         <div class="footer-left">LIVINGAI TEAM · MEDIA INTELLIGENCE PLATFORM · FEB 22 AGENT PLAN</div>
