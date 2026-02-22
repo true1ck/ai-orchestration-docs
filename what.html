@@ -1512,6 +1512,125 @@
             color: var(--accent3);
             flex-shrink: 0;
         }
+
+        /* ── TECH STACK GRID ── */
+        .ts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin-bottom: 48px;
+        }
+
+        .ts-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .ts-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .ts-card-header {
+            padding: 14px 16px 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ts-card-icon {
+            font-size: 22px;
+        }
+
+        .ts-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        .ts-card-port {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted);
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .ts-libs {
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .ts-lib-cat {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-top: 4px;
+            margin-bottom: 2px;
+        }
+
+        .ts-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .ts-pill {
+            font-family: 'Space Mono', monospace;
+            font-size: 9.5px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            border: 1px solid;
+            letter-spacing: 0.3px;
+        }
+
+        /* colour variants */
+        .ts-pill.py {
+            background: rgba(91, 79, 255, 0.10);
+            border-color: rgba(91, 79, 255, 0.35);
+            color: #a89fff;
+        }
+
+        .ts-pill.ai {
+            background: rgba(79, 255, 212, 0.08);
+            border-color: rgba(79, 255, 212, 0.30);
+            color: var(--accent3);
+        }
+
+        .ts-pill.db {
+            background: rgba(255, 195, 79, 0.08);
+            border-color: rgba(255, 195, 79, 0.30);
+            color: var(--accent4);
+        }
+
+        .ts-pill.react {
+            background: rgba(96, 165, 250, 0.10);
+            border-color: rgba(96, 165, 250, 0.35);
+            color: #60a5fa;
+        }
+
+        .ts-pill.sys {
+            background: rgba(120, 255, 100, 0.07);
+            border-color: rgba(120, 255, 100, 0.28);
+            color: var(--accent5);
+        }
+
+        .ts-pill.media {
+            background: rgba(248, 113, 113, 0.09);
+            border-color: rgba(248, 113, 113, 0.30);
+            color: #f87171;
+        }
     </style>
 </head>
 
@@ -1555,6 +1674,269 @@
                 <span class="vtag">LIVE DASHBOARD</span>
                 <span class="vtag">CLAUDE SONNET</span>
             </div>
+        </div>
+
+        <!-- 00b TECH STACK -->
+        <div class="section-title" style="margin-top:0;">00b — Full Tech Stack by Component</div>
+        <div class="ts-grid">
+
+            <!-- FastAPI Backend -->
+            <div class="ts-card" style="border-color:rgba(91,79,255,0.3);">
+                <div class="ts-card-header" style="background:rgba(91,79,255,0.08);">
+                    <div class="ts-card-icon">🧠</div>
+                    <div>
+                        <div class="ts-card-title" style="color:#a89fff;">FastAPI Orchestrator</div>
+                        <div style="font-size:10px;color:var(--muted);">Backend + API + WebSocket gateway</div>
+                    </div>
+                    <div class="ts-card-port">:8000</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">Framework</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill py">fastapi</span>
+                        <span class="ts-pill py">uvicorn</span>
+                        <span class="ts-pill py">pydantic</span>
+                        <span class="ts-pill py">python-multipart</span>
+                    </div>
+                    <div class="ts-lib-cat">MCP Client</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill ai">anthropic-mcp</span>
+                        <span class="ts-pill py">asyncio</span>
+                    </div>
+                    <div class="ts-lib-cat">Utilities</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill py">python-magic</span>
+                        <span class="ts-pill py">python-dotenv</span>
+                        <span class="ts-pill py">uuid</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media MCP -->
+            <div class="ts-card" style="border-color:rgba(248,113,113,0.3);">
+                <div class="ts-card-header" style="background:rgba(248,113,113,0.07);">
+                    <div class="ts-card-icon">🎙</div>
+                    <div>
+                        <div class="ts-card-title" style="color:#f87171;">Media MCP Server</div>
+                        <div style="font-size:10px;color:var(--muted);">YouTube download + transcription</div>
+                    </div>
+                    <div class="ts-card-port">:6001</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">Download</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill media">yt-dlp</span>
+                        <span class="ts-pill sys">ffmpeg</span>
+                    </div>
+                    <div class="ts-lib-cat">Transcription (local, free)</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill media">openai-whisper</span>
+                        <span class="ts-pill py">torch</span>
+                        <span class="ts-pill py">numpy</span>
+                    </div>
+                    <div class="ts-lib-cat">LLM Cleanup</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill ai">anthropic</span>
+                        <span class="ts-pill py">mcp[fastmcp]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document MCP -->
+            <div class="ts-card" style="border-color:rgba(129,140,248,0.32);">
+                <div class="ts-card-header" style="background:rgba(129,140,248,0.07);">
+                    <div class="ts-card-icon">📄</div>
+                    <div>
+                        <div class="ts-card-title" style="color:#818cf8;">Document MCP Server</div>
+                        <div style="font-size:10px;color:var(--muted);">PDF parsing + entity extraction</div>
+                    </div>
+                    <div class="ts-card-port">:6002</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">PDF Parsing</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill py">PyMuPDF (fitz)</span>
+                        <span class="ts-pill py">pdfplumber</span>
+                    </div>
+                    <div class="ts-lib-cat">OCR Fallback</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill sys">tesseract-ocr</span>
+                        <span class="ts-pill py">pytesseract</span>
+                        <span class="ts-pill py">Pillow</span>
+                    </div>
+                    <div class="ts-lib-cat">LLM + Server</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill ai">anthropic</span>
+                        <span class="ts-pill py">mcp[fastmcp]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Web MCP -->
+            <div class="ts-card" style="border-color:rgba(79,255,212,0.28);">
+                <div class="ts-card-header" style="background:rgba(79,255,212,0.05);">
+                    <div class="ts-card-icon">🌐</div>
+                    <div>
+                        <div class="ts-card-title" style="color:var(--accent3);">Web MCP Server</div>
+                        <div style="font-size:10px;color:var(--muted);">HTML scrape + article normalisation</div>
+                    </div>
+                    <div class="ts-card-port">:6003</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">Scraping / Parsing</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill ai">BeautifulSoup4</span>
+                        <span class="ts-pill py">lxml</span>
+                        <span class="ts-pill py">newspaper3k</span>
+                        <span class="ts-pill py">httpx</span>
+                    </div>
+                    <div class="ts-lib-cat">LLM + Server</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill ai">anthropic</span>
+                        <span class="ts-pill py">mcp[fastmcp]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis MCP -->
+            <div class="ts-card" style="border-color:rgba(255,195,79,0.28);">
+                <div class="ts-card-header" style="background:rgba(255,195,79,0.06);">
+                    <div class="ts-card-icon">📊</div>
+                    <div>
+                        <div class="ts-card-title" style="color:var(--accent4);">Analysis MCP Server</div>
+                        <div style="font-size:10px;color:var(--muted);">Sentiment, taxonomy, bias scoring</div>
+                    </div>
+                    <div class="ts-card-port">:6004</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">LLM</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill ai">anthropic (sonnet)</span>
+                        <span class="ts-pill py">mcp[fastmcp]</span>
+                    </div>
+                    <div class="ts-lib-cat">Optional Boost</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill py">transformers</span>
+                        <span class="ts-pill py">langdetect</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aggregation MCP -->
+            <div class="ts-card" style="border-color:rgba(120,255,100,0.26);">
+                <div class="ts-card-header" style="background:rgba(120,255,100,0.05);">
+                    <div class="ts-card-icon">🔗</div>
+                    <div>
+                        <div class="ts-card-title" style="color:var(--accent5);">Aggregation MCP Server</div>
+                        <div style="font-size:10px;color:var(--muted);">Cross-source synthesis + DB write</div>
+                    </div>
+                    <div class="ts-card-port">:6005</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">LLM</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill ai">anthropic (sonnet)</span>
+                        <span class="ts-pill py">mcp[fastmcp]</span>
+                    </div>
+                    <div class="ts-lib-cat">Database</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill db">asyncpg</span>
+                        <span class="ts-pill db">PostgreSQL 15</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PostgreSQL -->
+            <div class="ts-card" style="border-color:rgba(255,195,79,0.28);">
+                <div class="ts-card-header" style="background:rgba(255,195,79,0.06);">
+                    <div class="ts-card-icon">🗄️</div>
+                    <div>
+                        <div class="ts-card-title" style="color:var(--accent4);">Database Layer</div>
+                        <div style="font-size:10px;color:var(--muted);">Persistence — all MCP servers write here</div>
+                    </div>
+                    <div class="ts-card-port">:5432</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">Database Engine</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill db">PostgreSQL 15+</span>
+                        <span class="ts-pill db">uuid-ossp ext</span>
+                    </div>
+                    <div class="ts-lib-cat">Python Driver</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill db">asyncpg</span>
+                        <span class="ts-pill py">python-dotenv</span>
+                    </div>
+                    <div class="ts-lib-cat">Migrations</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill sys">raw SQL files</span>
+                        <span class="ts-pill sys">run on startup</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- React Frontend -->
+            <div class="ts-card" style="border-color:rgba(96,165,250,0.3);">
+                <div class="ts-card-header" style="background:rgba(96,165,250,0.07);">
+                    <div class="ts-card-icon">⚛️</div>
+                    <div>
+                        <div class="ts-card-title" style="color:#60a5fa;">React Frontend (existing ZIP)</div>
+                        <div style="font-size:10px;color:var(--muted);">Live intelligence dashboard</div>
+                    </div>
+                    <div class="ts-card-port">:5173 dev</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">Framework</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill react">React 18</span>
+                        <span class="ts-pill react">TypeScript</span>
+                        <span class="ts-pill react">Vite</span>
+                    </div>
+                    <div class="ts-lib-cat">Live Data</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill react">WebSocket (native)</span>
+                        <span class="ts-pill react">useIntelFeed hook</span>
+                    </div>
+                    <div class="ts-lib-cat">API Calls</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill react">fetch API</span>
+                        <span class="ts-pill react">FormData (upload)</span>
+                        <span class="ts-pill react">React Router</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System / Infra -->
+            <div class="ts-card" style="border-color:rgba(120,255,100,0.26);">
+                <div class="ts-card-header" style="background:rgba(120,255,100,0.05);">
+                    <div class="ts-card-icon">🛠</div>
+                    <div>
+                        <div class="ts-card-title" style="color:var(--accent5);">System / Infrastructure</div>
+                        <div style="font-size:10px;color:var(--muted);">Runtime, env, CLI tools</div>
+                    </div>
+                    <div class="ts-card-port">host</div>
+                </div>
+                <div class="ts-libs">
+                    <div class="ts-lib-cat">Python Runtime</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill sys">Python 3.11+</span>
+                        <span class="ts-pill sys">venv / pip</span>
+                    </div>
+                    <div class="ts-lib-cat">System Binaries</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill sys">ffmpeg</span>
+                        <span class="ts-pill sys">tesseract</span>
+                        <span class="ts-pill sys">libmagic</span>
+                    </div>
+                    <div class="ts-lib-cat">Config</div>
+                    <div class="ts-pills">
+                        <span class="ts-pill sys">.env file</span>
+                        <span class="ts-pill sys">python-dotenv</span>
+                        <span class="ts-pill sys">Node 18+ (frontend)</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- 01 ARCHITECTURE -->
