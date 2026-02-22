@@ -1251,209 +1251,111 @@
             <button class="present-btn" onclick="togglePresent()" title="Presentation Mode">⛶ Present</button>
         </nav>
 
-        <!-- HERO -->
-        <header class="hero">
+        <!-- CONTENT HEADER -->
+        <header class="hero" style="margin-bottom: 40px;">
             <div class="hero-badge">
                 <span></span>
-                Documentation Hub
+                Concepts
             </div>
-            <h1>AI Orchestration<br><span class="hi">Architecture Docs</span></h1>
-            <p class="hero-sub">
-                Deep-dive technical documentation for agentic AI systems —
-                from multi-agent orchestration to media intelligence pipelines.
+            <h1>Agentic AI & <span class="hi">Architectures</span></h1>
+            <p class="hero-sub" style="max-width: 650px;">
+                Deep-dive into Agentic AI, the shift from single to multi-agent architectures, and how Model Context Protocol (MCP) standardizes AI tool usage.
             </p>
-
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-num c-violet">4</div>
-                    <div class="stat-label">Docs</div>
-                </div>
-                <div class="stat-div"></div>
-                <div class="stat">
-                    <div class="stat-num c-teal">10+</div>
-                    <div class="stat-label">Agent Types</div>
-                </div>
-                <div class="stat-div"></div>
-                <div class="stat">
-                    <div class="stat-num c-gold">∞</div>
-                    <div class="stat-label">Scale</div>
-                </div>
-            </div>
         </header>
 
-        <!-- WHAT IS AN AGENT? -->
-        <section class="agent-def">
-
-            <div class="agent-def-heading">
-                <div class="label">◈ Foundation</div>
-                <h2>What is an <span class="hi">AI Agent</span>?</h2>
-                <p class="subtext">
-                    An agent is not just a chatbot. It is an autonomous entity that perceives,
-                    reasons, remembers, and acts — on its own, in a loop, until the goal is done.
-                </p>
-            </div>
-
-            <!-- Equation -->
-            <div class="agent-eq">
-                <span class="eq-label">LLM</span>
-                <span class="eq-plus">+</span>
-                <span class="eq-label">MEMORY</span>
-                <span class="eq-plus">+</span>
-                <span class="eq-label">SKILLS</span>
-                <span class="eq-equals">=</span>
-                <span class="eq-result">🤖 AGENT</span>
-            </div>
-
-            <!-- Three Pillars -->
-            <div class="agent-pillars">
-
-                <!-- LLM -->
-                <div class="pillar pillar-llm">
-                    <div class="pillar-top-bar"></div>
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon">🧠</div>
-                    <div class="pillar-name">Pillar 01</div>
-                    <div class="pillar-title">LLM — The Brain</div>
-                    <p class="pillar-desc">
-                        The large language model is the reasoning engine. It reads context,
-                        decides what to do next, writes code, critiques its own output, and calls tools.
-                        It is the intelligence that drives every decision the agent makes.
-                    </p>
-                    <div class="pillar-chips">
-                        <span class="pillar-chip">Claude Sonnet</span>
-                        <span class="pillar-chip">GPT-4o</span>
-                        <span class="pillar-chip">Gemini</span>
-                        <span class="pillar-chip">Reasoning</span>
-                    </div>
-                </div>
-
-                <!-- Memory -->
-                <div class="pillar pillar-memory">
-                    <div class="pillar-top-bar"></div>
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon">💾</div>
-                    <div class="pillar-name">Pillar 02</div>
-                    <div class="pillar-title">Memory — The State</div>
-                    <p class="pillar-desc">
-                        Memory lets an agent learn, persist, and recall. Short-term memory holds
-                        the current task context. Long-term memory stores past outcomes, decisions,
-                        and learnings — so the agent gets smarter every run.
-                    </p>
-                    <div class="pillar-chips">
-                        <span class="pillar-chip">Working Context</span>
-                        <span class="pillar-chip">Episodic Store</span>
-                        <span class="pillar-chip">Vector DB</span>
-                        <span class="pillar-chip">State JSON</span>
-                    </div>
-                </div>
-
-                <!-- Skills -->
-                <div class="pillar pillar-skills">
-                    <div class="pillar-top-bar"></div>
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon">⚡</div>
-                    <div class="pillar-name">Pillar 03</div>
-                    <div class="pillar-title">Skills — The Hands</div>
-                    <p class="pillar-desc">
-                        Skills are the tools the agent can call to affect the world — reading files,
-                        writing code, running tests, querying APIs, committing to git. Without skills,
-                        an agent can only talk. With skills, it can build.
-                    </p>
-                    <div class="pillar-chips">
-                        <span class="pillar-chip">read_file</span>
-                        <span class="pillar-chip">write_file</span>
-                        <span class="pillar-chip">run_tests</span>
-                        <span class="pillar-chip">git_commit</span>
-                        <span class="pillar-chip">ask_human</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <p class="agent-thesis">
-                Combine these three and you get an entity that can receive a goal, plan a path, execute steps,
-                handle failures, and ship a result — <strong>without a human in the loop.</strong>
-                That is the foundation of everything in this documentation.
+        <!-- WHAT IS AGENTIC AI -->
+        <section class="sec" style="padding: 40px; border-radius: 16px; margin-bottom: 40px; background: var(--surface); border: 1px solid var(--border);">
+            <h2 class="sec-title" style="margin-bottom: 24px; font-size: 28px; font-weight: 700;">What is <span style="color: var(--violet);">Agentic AI?</span></h2>
+            <p style="color: var(--muted); line-height: 1.8; margin-bottom: 16px; font-size: 15px;">
+                <strong>Agentic AI</strong> refers to artificial intelligence systems that exhibit agency — the ability to perceive their environment, make decisions, and take autonomous actions to achieve specific goals over time, without continuous human intervention.
             </p>
-
+            <p style="color: var(--muted); line-height: 1.8; font-size: 15px;">
+                Unlike traditional prompt-response models which just answer queries, Agentic AI can break down complex tasks, plan multiple steps, use tools (like web browsers, APIs, and file systems), and adapt its approach if it encounters errors or new information. In essence, it moves AI from being a conversational partner to being an active, reliable worker.
+            </p>
         </section>
 
-        <!-- DOCS -->
-        <section>
-            <div class="docs-heading">
-                <span>◈</span> All Documents
+        <!-- ARCHITECTURES: SINGLE VS MULTI -->
+        <section class="sec" style="padding: 40px; border-radius: 16px; margin-bottom: 40px; background: var(--surface); border: 1px solid var(--border);">
+            <h2 class="sec-title" style="margin-bottom: 24px; font-size: 28px; font-weight: 700;">Single vs Multi-Agent <span style="color: var(--teal);">Architecture</span></h2>
+            <p style="color: var(--muted); line-height: 1.8; margin-bottom: 32px; font-size: 15px;">
+                As AI applications scale, developers must choose between relying on a single comprehensive agent or a system of multiple specialized agents working together.
+            </p>
+            
+            <div style="overflow-x: auto;">
+                <table class="stack-table agent-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 16px; border-bottom: 2px solid var(--border2); color: var(--dim); background: var(--surface2); width: 20%;">Feature</th>
+                            <th style="padding: 16px; border-bottom: 2px solid var(--border2); color: var(--text); background: var(--surface2); width: 40%;">Single-Agent Architecture</th>
+                            <th style="padding: 16px; border-bottom: 2px solid var(--border2); color: var(--text); background: var(--surface2); width: 40%;">Multi-Agent Architecture</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;">Structure</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">One monolithic agent handles planning, reasoning, and tool execution.</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">Multiple specialized agents (e.g., Planner, Coder, Reviewer) collaborate.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;">Complexity</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">Setup is simpler but struggles with large, multifaceted tasks.</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">Higher initial complexity, but scales elegantly for complex workflows.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;">Context Window</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">Prone to context overflow as one agent must hold all task history.</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">Efficient context usage. Each agent only sees what it needs.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;">Error Recovery</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">If the agent hallucinates or loops, the entire task typically fails.</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--muted);">Robust. Reviewer agents can catch errors and request revisions.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); font-weight: 600;">Benefits</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); background: rgba(0,0,0,0.1);">Low latency, easy to debug for simple queries, lower API costs.</td>
+                            <td style="padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); background: rgba(0,0,0,0.1);">High quality output, clear division of labor, modular, highly reliable.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </section>
 
-            <div class="docs-grid">
-
-                <!-- Card 1: Agentic Workforce — updated -->
-                <a href="Agentic workforce.html" class="doc-card card-violet">
-                    <div class="card-top-bar"></div>
-                    <div class="card-icon">🤖</div>
-                    <div class="card-tag">Architecture · Build System · Updated</div>
-                    <div class="card-title">Autonomous Agent Factory</div>
-                    <p class="card-desc">
-                        Production-grade autonomous build system — 10 specialist agents, 4-phase gated pipeline,
-                        3-reviewer parallel gates, FileLockManager, Debugger, MCP tool transport, and a full
-                        agentic AI risk register.
+        <!-- WHAT IS MCP -->
+        <section class="sec" style="padding: 40px; border-radius: 16px; margin-bottom: 60px; background: var(--surface); border: 1px solid var(--border);">
+            <h2 class="sec-title" style="margin-bottom: 24px; font-size: 28px; font-weight: 700;">Model Context Protocol <span style="color: var(--gold);">(MCP)</span></h2>
+            <p style="color: var(--muted); line-height: 1.8; margin-bottom: 32px; font-size: 15px;">
+                <strong>MCP (Model Context Protocol)</strong> is an open standard that enables secure, two-way communication between AI models and local or remote data sources and tools. Instead of tightly coupling custom tool integrations into individual applications, MCP provides a unified format.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div class="card" style="padding: 24px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border2); transition: transform 0.2s; cursor: default;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <h3 style="margin-bottom: 12px; color: var(--violet); font-size: 18px; display: flex; align-items: center; gap: 8px;"><span>📝</span> Format</h3>
+                    <p style="color: var(--muted); font-size: 14px; line-height: 1.6;">
+                        MCP uses a standardized JSON-RPC over stdio or HTTP/SSE format. It defines <i>Resources</i> (data the AI can read), <i>Tools</i> (actions the AI can take), and <i>Prompts</i> (templates).
                     </p>
-                    <div class="card-pills">
-                        <span class="pill">Lead / PM</span>
-                        <span class="pill">3-Reviewer Gate</span>
-                        <span class="pill">Debugger</span>
-                        <span class="pill">MCP Tools</span>
-                        <span class="pill">Risk Register</span>
-                    </div>
-                    <div class="card-cta">
-                        <span class="cta-text">OPEN DOCUMENT →</span>
-                        <span class="cta-arrow">→</span>
-                    </div>
-                </a>
-
-                <!-- Card 2: Agentic Concepts & MCP -->
-                <a href="concept_details.html" class="doc-card card-teal">
-                    <div class="card-top-bar"></div>
-                    <div class="card-icon">🧠</div>
-                    <div class="card-tag">Concepts · Architecture · MCP</div>
-                    <div class="card-title">Agentic AI & Architectures</div>
-                    <p class="card-desc">
-                        Comprehensive overview of Agentic AI, comparison between Single and Multi-Agent architectures, and details on MCP Server usage and benefits.
+                </div>
+                
+                <div class="card" style="padding: 24px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border2); transition: transform 0.2s; cursor: default;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <h3 style="margin-bottom: 12px; color: var(--teal); font-size: 18px; display: flex; align-items: center; gap: 8px;"><span>🔌</span> Usage</h3>
+                    <p style="color: var(--muted); font-size: 14px; line-height: 1.6;">
+                        Developers run an MCP Server locally or in the cloud. Applications like Claude Desktop, Cursor, or custom orchestrators connect as MCP Clients to seamlessly expose tools.
                     </p>
-                    <div class="card-pills">
-                        <span class="pill">Agentic AI</span>
-                        <span class="pill">Multi-Agent</span>
-                        <span class="pill">MCP Server</span>
-                    </div>
-                    <div class="card-cta">
-                        <span class="cta-text">OPEN DOCUMENT →</span>
-                        <span class="cta-arrow">→</span>
-                    </div>
-                </a>
-
-                <!-- Card 3: Media Intelligence -->
-                <a href="what.html" class="doc-card card-gold">
-                    <div class="card-top-bar"></div>
-                    <div class="card-icon">📡</div>
-                    <div class="card-tag">Platform · Media · Intelligence</div>
-                    <div class="card-title">Media Intelligence Platform</div>
-                    <p class="card-desc">
-                        Architecture for a multi-modal media intelligence system — ingesting YouTube, news, and image
-                        sources through transcription, extraction, vision, and analysis agents.
+                </div>
+                
+                <div class="card" style="padding: 24px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border2); transition: transform 0.2s; cursor: default;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <h3 style="margin-bottom: 12px; color: var(--gold); font-size: 18px; display: flex; align-items: center; gap: 8px;"><span>🚀</span> Benefits</h3>
+                    <p style="color: var(--muted); font-size: 14px; line-height: 1.6;">
+                        Write a tool once, use it across any MCP-compatible AI application. It provides standard security boundaries, simplifies prompt engineering, and drastically reduces integration time.
                     </p>
-                    <div class="card-pills">
-                        <span class="pill">Transcriber</span>
-                        <span class="pill">Vision Agent</span>
-                        <span class="pill">Analyst Agent</span>
-                        <span class="pill">Aggregator</span>
-                    </div>
-                    <div class="card-cta">
-                        <span class="cta-text">OPEN DOCUMENT →</span>
-                        <span class="cta-arrow">→</span>
-                    </div>
+                </div>
+            </div>
+            
+            <!-- BACK BUTTON -->
+            <div style="margin-top: 48px; text-align: center;">
+                <a href="index.html" class="back-btn" style="display: inline-block; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; color: var(--text); background: var(--surface2); border: 1px solid var(--border2); transition: all 0.2s; letter-spacing: 0.5px; font-size: 14px;" onmouseover="this.style.background='var(--surface)'; this.style.borderColor='var(--violet)';" onmouseout="this.style.background='var(--surface2)'; this.style.borderColor='var(--border2)';">
+                    ← Back to Hub
                 </a>
-
-
-
             </div>
         </section>
 
