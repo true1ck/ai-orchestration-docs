@@ -4,37 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Media Intelligence Platform — Architecture</title>
+    <title>Media Intelligence Platform — Agent Build Plan</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --bg: #0d1117;
-            --surface: #161b22;
-            --surface2: #1c2128;
-            --text: #e6edf3;
-            --muted: #768390;
-            --dim: #3d4d6e;
-            --border: rgba(139, 148, 158, 0.12);
-            --border2: rgba(139, 148, 158, 0.2);
-            /* Accents — matching Agentic workforce.html */
-            --orch: #f0cf65;
-            --front: #818cf8;
-            --back: #34d2c8;
-            --arch: #f0cf65;
-            --sec: #f87171;
-            --test: #4ade80;
-            --doc: #94a3b8;
-            --red: #f87171;
-            --amber: #fbbf24;
-            --green: #4ade80;
-            --blue: #818cf8;
-            --teal: #34d2c8;
-            --purple: #c084fc;
-            --violet: #818cf8;
-            --gold: #f0cf65;
-            --rose: #f472b6;
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a26;
+            --border: #2a2a40;
+            --accent: #5b4fff;
+            --accent2: #ff4f8b;
+            --accent3: #4fffd4;
+            --accent4: #ffc34f;
+            --accent5: #78ff64;
+            --text: #e8e8f0;
+            --muted: #6b6b8a;
+            --glow: rgba(91, 79, 255, 0.25);
+            --glow2: rgba(79, 255, 212, 0.15);
         }
 
         * {
@@ -46,64 +34,118 @@
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Syne', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Animated background */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background-image:
-                linear-gradient(rgba(129, 140, 248, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(129, 140, 248, 0.04) 1px, transparent 1px);
-            background-size: 48px 48px;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
             pointer-events: none;
+            z-index: 999;
+            opacity: 0.4;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(91, 79, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(91, 79, 255, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
             z-index: 0;
         }
 
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.04) 3px, rgba(0, 0, 0, 0.04) 4px);
-            pointer-events: none;
-            z-index: 1000;
+        @keyframes gridMove {
+            0% {
+                background-position: 0 0
+            }
+
+            100% {
+                background-position: 60px 60px
+            }
         }
 
         .container {
             position: relative;
             z-index: 1;
-            max-width: 1300px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 48px 32px;
+            padding: 40px 24px;
+        }
+
+        /* ── BACK NAV ── */
+        .back-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .back-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: .5px;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            text-decoration: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border: 1px solid rgba(91, 79, 255, 0.25);
+            border-radius: 5px;
+            background: rgba(91, 79, 255, 0.06);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: rgba(91, 79, 255, 0.15);
+            border-color: rgba(91, 79, 255, 0.5);
         }
 
         /* ── HEADER ── */
         .header {
             text-align: center;
             margin-bottom: 64px;
-            animation: rise 0.5s ease both;
+            animation: fadeUp 0.6s ease both;
         }
 
         .header .tag {
             display: inline-block;
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'Space Mono', monospace;
             font-size: 11px;
-            color: var(--teal);
-            border: 1px solid rgba(8, 145, 178, 0.4);
+            color: var(--accent);
+            border: 1px solid var(--accent);
             padding: 4px 12px;
             border-radius: 2px;
             letter-spacing: 3px;
             text-transform: uppercase;
             margin-bottom: 20px;
-            background: rgba(8, 145, 178, 0.08);
+            background: rgba(91, 79, 255, 0.08);
         }
 
         .header h1 {
-            font-family: 'Inter', sans-serif;
             font-size: clamp(32px, 5vw, 56px);
             font-weight: 800;
             line-height: 1.05;
@@ -112,67 +154,58 @@
         }
 
         .header h1 span {
-            color: var(--teal);
+            color: var(--accent3);
         }
 
         .header p {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            color: var(--dim);
-            line-height: 1.6;
+            color: var(--muted);
+            font-size: 14px;
+            font-family: 'Space Mono', monospace;
+            line-height: 1.7;
         }
 
-        /* ── SECTION HEADERS ── */
-        .sec-head {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        /* ── SECTION TITLES ── */
+        .section-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent3);
+            letter-spacing: 3px;
+            text-transform: uppercase;
             margin-bottom: 28px;
             margin-top: 56px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .sec-num {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: var(--violet);
-            border: 1px solid rgba(129, 140, 248, 0.3);
-            background: rgba(129, 140, 248, 0.06);
-            padding: 2px 10px;
-            border-radius: 4px;
-            flex-shrink: 0;
-            letter-spacing: 1px;
-        }
-
-        .sec-head h2 {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-
-        .sec-head::after {
+        .section-title::after {
             content: '';
             flex: 1;
             height: 1px;
-            background: var(--border);
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
         }
 
         /* ── VISION STATEMENT ── */
         .vision {
             background: var(--surface);
-            border: 1px solid rgba(52, 210, 200, 0.3);
+            border: 1px solid rgba(79, 255, 212, 0.3);
             border-radius: 12px;
             padding: 36px 40px;
-            margin-bottom: 56px;
+            margin-bottom: 48px;
             position: relative;
             overflow: hidden;
-            animation: rise 0.5s 0.1s ease both;
-            box-shadow: 0 0 60px rgba(52, 210, 200, 0.05);
+            animation: fadeUp 0.6s 0.1s ease both;
+            box-shadow: 0 0 60px rgba(79, 255, 212, 0.05);
         }
 
         .vision::before {
             content: '"';
             font-size: 200px;
-            color: rgba(52, 210, 200, 0.04);
+            color: rgba(79, 255, 212, 0.04);
             position: absolute;
             top: -40px;
             left: 20px;
@@ -181,19 +214,18 @@
         }
 
         .vision p {
-            font-size: clamp(16px, 2.2vw, 22px);
-            line-height: 1.6;
+            font-size: clamp(15px, 2vw, 20px);
+            line-height: 1.7;
             font-style: italic;
             position: relative;
             z-index: 1;
-            max-width: 900px;
             color: var(--text);
         }
 
         .vision p span {
-            color: var(--teal);
+            color: var(--accent3);
             font-style: normal;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .vision-tags {
@@ -204,506 +236,699 @@
         }
 
         .vtag {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'Space Mono', monospace;
             font-size: 10px;
             letter-spacing: 1px;
             padding: 4px 10px;
-            border: 1px solid var(--border2);
+            border: 1px solid var(--border);
             border-radius: 4px;
             color: var(--muted);
         }
 
-        /* ── ARCHITECTURE DIAGRAM ── */
-        .arch-wrapper {
+        /* ── ARCH DIAGRAM ── */
+        .arch-diagram {
             background: var(--surface);
-            border: 1px solid var(--border2);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 40px;
-            animation: rise 0.5s 0.2s ease both;
-            box-shadow: 0 2px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px 32px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.1s ease both;
+            position: relative;
+            overflow: hidden;
         }
 
-        .arch-title {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: var(--dim);
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 36px;
+        .arch-diagram::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse, rgba(91, 79, 255, 0.12) 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .pipeline {
+        .flow {
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 0;
         }
 
-        .layer {
-            display: grid;
-            grid-template-columns: 110px 1fr;
-            gap: 20px;
-            align-items: start;
-            margin-bottom: 4px;
-        }
-
-        .layer-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--dim);
-            text-align: right;
-            padding-top: 16px;
-            line-height: 1.6;
-        }
-
-        .layer-content {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            padding: 12px;
-            border-left: 2px solid var(--border2);
-            position: relative;
-        }
-
-        .layer-content::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--violet);
-            border: 2px solid var(--bg);
-            box-shadow: 0 0 0 1px var(--violet);
-        }
-
-        .connector {
-            display: grid;
-            grid-template-columns: 110px 1fr;
-            gap: 20px;
-            height: 28px;
-            margin-bottom: 4px;
-        }
-
-        .connector-line {
-            border-left: 2px dashed var(--border2);
+        .flow-row {
             display: flex;
             align-items: center;
-            padding-left: 12px;
-            margin-left: 12px;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
         }
 
-        .connector-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 9px;
-            color: var(--dim);
-            letter-spacing: 1px;
-        }
-
-        .src-node {
-            border: 1px solid;
-            border-radius: 8px;
-            padding: 10px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            min-width: 120px;
-            transition: transform 0.15s;
+        .node {
+            border-radius: 10px;
+            padding: 16px 24px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
             cursor: default;
         }
 
-        .src-node:hover {
-            transform: translateY(-2px);
+        .node:hover {
+            transform: translateY(-3px);
         }
 
-        .src-node.youtube {
-            border-color: rgba(248, 113, 113, 0.5);
-            background: rgba(248, 113, 113, 0.06);
+        .node-label {
+            font-size: 11px;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: .7;
         }
 
-        .src-node.news {
-            border-color: rgba(129, 140, 248, 0.5);
-            background: rgba(129, 140, 248, 0.06);
+        .node-title {
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
         }
 
-        .src-node.image {
-            border-color: rgba(52, 210, 200, 0.5);
-            background: rgba(52, 210, 200, 0.06);
+        .node-sub {
+            font-size: 10px;
+            font-family: 'Space Mono', monospace;
+            margin-top: 4px;
+            opacity: .5;
         }
 
-        .src-icon {
+        .node-desc {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 10px;
+            line-height: 1.4;
+            max-width: 170px;
+            margin-left: auto;
+            margin-right: auto;
+            white-space: normal;
+        }
+
+        .node-tool {
+            font-family: 'Space Mono', monospace;
+            font-size: 8.5px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: inline-block;
+            color: var(--accent3);
+            letter-spacing: 0.5px;
+        }
+
+        .node-user {
+            background: rgba(255, 79, 139, 0.12);
+            border: 1.5px solid rgba(255, 79, 139, 0.5);
+        }
+
+        .node-user .node-title {
+            color: var(--accent2);
+        }
+
+        .node-orchestrator {
+            background: rgba(91, 79, 255, 0.15);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 40px rgba(91, 79, 255, 0.2);
+            min-width: 260px;
+            padding: 20px 32px;
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        .node-orchestrator .node-title {
+            color: #a89fff;
             font-size: 18px;
         }
 
-        .src-title {
+        .node-agent {
+            background: rgba(255, 195, 79, 0.08);
+            border: 1.5px solid rgba(255, 195, 79, 0.3);
+            min-width: 160px;
+        }
+
+        .node-agent .node-title {
+            color: var(--accent4);
             font-size: 13px;
-            font-weight: 500;
-            color: var(--text);
         }
 
-        .src-sub {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 9px;
-            color: var(--dim);
+        .node-agent:hover {
+            box-shadow: 0 6px 24px rgba(255, 195, 79, 0.15);
         }
 
-        .proc-node {
-            border: 1px solid var(--border2);
-            border-radius: 8px;
-            padding: 10px 16px;
-            background: var(--surface2);
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
+        .node-output {
+            background: rgba(120, 255, 100, 0.07);
+            border: 1.5px solid rgba(120, 255, 100, 0.3);
+        }
+
+        .node-output .node-title {
+            color: var(--accent5);
+            font-size: 13px;
+        }
+
+        .node-input-src {
+            background: rgba(79, 255, 212, 0.07);
+            border: 1.5px solid rgba(79, 255, 212, 0.3);
             min-width: 140px;
-            transition: border-color 0.2s, transform 0.15s;
-            cursor: default;
         }
 
-        .proc-node:hover {
-            transform: translateY(-2px);
-            border-color: var(--violet);
-        }
-
-        .proc-node .title {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text);
-        }
-
-        .proc-node .sub {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 9px;
-            color: var(--dim);
-        }
-
-        .proc-node .tech {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 9px;
-            background: rgba(129, 140, 248, 0.15);
-            color: var(--violet);
-            padding: 1px 6px;
-            border-radius: 3px;
-            display: inline-block;
-            margin-top: 4px;
-            width: fit-content;
-        }
-
-        .agent-node {
-            border-radius: 8px;
-            padding: 12px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            min-width: 150px;
-            flex: 1;
-            border: 1px solid;
-            transition: transform 0.15s, box-shadow 0.2s;
-            cursor: default;
-        }
-
-        .agent-node:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .agent-node.transcriber {
-            border-color: rgba(248, 113, 113, 0.4);
-            background: rgba(248, 113, 113, 0.06);
-        }
-
-        .agent-node.extractor {
-            border-color: rgba(129, 140, 248, 0.4);
-            background: rgba(129, 140, 248, 0.06);
-        }
-
-        .agent-node.vision {
-            border-color: rgba(52, 210, 200, 0.4);
-            background: rgba(52, 210, 200, 0.06);
-        }
-
-        .agent-node.analyst {
-            border-color: rgba(251, 191, 36, 0.4);
-            background: rgba(251, 191, 36, 0.06);
-        }
-
-        .agent-node.categorizer {
-            border-color: rgba(192, 132, 252, 0.4);
-            background: rgba(192, 132, 252, 0.06);
-        }
-
-        .agent-node.aggregator {
-            border-color: rgba(74, 222, 128, 0.4);
-            background: rgba(74, 222, 128, 0.06);
-        }
-
-        .agent-node.orch {
-            border-color: rgba(240, 207, 101, 0.5);
-            border-width: 2px;
-            background: rgba(240, 207, 101, 0.06);
-        }
-
-        .agent-node .badge {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            opacity: 0.6;
-        }
-
-        .agent-node .name {
+        .node-input-src .node-title {
+            color: var(--accent3);
             font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
         }
 
-        .agent-node .desc {
-            font-size: 11px;
-            color: var(--muted);
-            line-height: 1.4;
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(91, 79, 255, 0.4), 0 0 40px rgba(91, 79, 255, 0.2);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(91, 79, 255, 0), 0 0 40px rgba(91, 79, 255, 0.2);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(91, 79, 255, 0), 0 0 40px rgba(91, 79, 255, 0.2);
+            }
         }
 
-        .agent-node .tool {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 9px;
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--muted);
-            padding: 2px 6px;
-            border-radius: 3px;
-            margin-top: 4px;
-            width: fit-content;
-        }
-
-        .output-node {
-            background: linear-gradient(135deg, rgba(52, 210, 200, 0.12), rgba(129, 140, 248, 0.12));
-            border: 1px solid rgba(52, 210, 200, 0.35);
-            border-radius: 8px;
-            padding: 16px 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 240px;
-            flex: 1;
-            max-width: 360px;
-            transition: transform 0.15s;
-            cursor: default;
-        }
-
-        .output-node:hover {
-            transform: translateY(-2px);
-        }
-
-        .output-node .badge {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 1px;
-            color: var(--dim);
-        }
-
-        .output-node .name {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .output-node .desc {
-            font-size: 11px;
-            color: var(--muted);
-            line-height: 1.4;
-        }
-
-        /* ── AGENT DETAIL CARDS ── */
-        .agents-detail {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            animation: rise 0.5s 0.3s ease both;
-        }
-
-        .acard {
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            border-radius: 12px;
-            padding: 24px;
-            transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+        .connector-v {
+            width: 2px;
+            min-height: 28px;
+            background: linear-gradient(180deg, rgba(91, 79, 255, 0.6), rgba(79, 255, 212, 0.4));
+            margin: 0 auto;
             position: relative;
         }
 
-        .acard:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+        .connector-v.down::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top: 6px solid rgba(79, 255, 212, 0.6);
         }
 
-        .acard-stripe {
+        .bi-line {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bi-line::before,
+        .bi-line::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: rgba(91, 79, 255, 0.4);
+        }
+
+        .mcp-box {
+            background: rgba(79, 255, 212, 0.04);
+            border: 1px dashed rgba(79, 255, 212, 0.22);
+            border-radius: 12px;
+            padding: 20px 24px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .mcp-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--accent3);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 16px;
+            opacity: .7;
+        }
+
+        .agents-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        /* ── EXEC STEPS ── */
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 2px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.2s ease both;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .step {
+            background: var(--surface);
+            padding: 20px;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .step:hover {
+            background: var(--surface2);
+        }
+
+        .step-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .step-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .step-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ── AGENT CARDS ── */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.2s ease both;
+        }
+
+        .agent-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            transition: border-color 0.2s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .agent-card::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 3px;
-            border-radius: 12px 12px 0 0;
         }
 
-        .acard.a1 .acard-stripe {
-            background: var(--red);
+        .agent-card.orchestrator::before {
+            background: linear-gradient(90deg, var(--accent), #9b4fff);
         }
 
-        .acard.a2 .acard-stripe {
-            background: var(--blue);
+        .agent-card.planner::before {
+            background: linear-gradient(90deg, var(--accent3), #4f9fff);
         }
 
-        .acard.a3 .acard-stripe {
-            background: var(--teal);
+        .agent-card.prioritizer::before {
+            background: linear-gradient(90deg, var(--accent4), #ff7f4f);
         }
 
-        .acard.a4 .acard-stripe {
-            background: var(--amber);
+        .agent-card.reviewer::before {
+            background: linear-gradient(90deg, var(--accent2), #ff4f4f);
         }
 
-        .acard.a5 .acard-stripe {
-            background: var(--purple);
+        .agent-card.summarizer::before {
+            background: linear-gradient(90deg, var(--accent5), var(--accent3));
         }
 
-        .acard.a6 .acard-stripe {
-            background: var(--green);
+        .agent-card.transcriber::before {
+            background: linear-gradient(90deg, #f87171, #fb923c);
         }
 
-        .acard.a0 .acard-stripe {
-            background: var(--gold);
+        .agent-card.extractor::before {
+            background: linear-gradient(90deg, #818cf8, #a78bfa);
         }
 
-        .acard-tag {
-            font-family: 'IBM Plex Mono', monospace;
+        .agent-card.analyst::before {
+            background: linear-gradient(90deg, var(--accent4), var(--accent5));
+        }
+
+        .agent-card.aggregator::before {
+            background: linear-gradient(90deg, var(--accent3), var(--accent));
+        }
+
+        .agent-badge {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
+            padding: 3px 10px;
+            border-radius: 3px;
             text-transform: uppercase;
-            color: var(--dim);
-            margin-bottom: 12px;
-        }
-
-        .acard h3 {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--text);
-        }
-
-        .acard p {
-            font-size: 13px;
-            color: var(--muted);
-            line-height: 1.65;
             margin-bottom: 14px;
         }
 
-        .acard .kv {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        .orchestrator .agent-badge {
+            background: rgba(91, 79, 255, 0.15);
+            color: #a89fff;
+            border: 1px solid rgba(91, 79, 255, 0.3);
         }
 
-        .acard .kv-row {
+        .planner .agent-badge {
+            background: rgba(79, 255, 212, 0.1);
+            color: var(--accent3);
+            border: 1px solid rgba(79, 255, 212, 0.25);
+        }
+
+        .prioritizer .agent-badge {
+            background: rgba(255, 195, 79, 0.1);
+            color: var(--accent4);
+            border: 1px solid rgba(255, 195, 79, 0.25);
+        }
+
+        .reviewer .agent-badge {
+            background: rgba(255, 79, 139, 0.1);
+            color: var(--accent2);
+            border: 1px solid rgba(255, 79, 139, 0.25);
+        }
+
+        .summarizer .agent-badge {
+            background: rgba(120, 255, 100, 0.1);
+            color: var(--accent5);
+            border: 1px solid rgba(120, 255, 100, 0.25);
+        }
+
+        .transcriber .agent-badge {
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.25);
+        }
+
+        .extractor .agent-badge {
+            background: rgba(129, 140, 248, 0.1);
+            color: #818cf8;
+            border: 1px solid rgba(129, 140, 248, 0.25);
+        }
+
+        .analyst .agent-badge {
+            background: rgba(255, 195, 79, 0.1);
+            color: var(--accent4);
+            border: 1px solid rgba(255, 195, 79, 0.25);
+        }
+
+        .aggregator .agent-badge {
+            background: rgba(79, 255, 212, 0.1);
+            color: var(--accent3);
+            border: 1px solid rgba(79, 255, 212, 0.25);
+        }
+
+        .agent-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .agent-card .description {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .agent-card .tools-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tool-chip {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .kv-row {
             display: flex;
             gap: 8px;
             align-items: flex-start;
+            margin-bottom: 5px;
         }
 
         .kv-key {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'Space Mono', monospace;
             font-size: 9px;
             letter-spacing: 1px;
             text-transform: uppercase;
-            color: var(--dim);
-            width: 70px;
+            color: var(--muted);
+            width: 72px;
             flex-shrink: 0;
             padding-top: 1px;
         }
 
         .kv-val {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'Space Mono', monospace;
             font-size: 11px;
-            color: var(--muted);
+            color: var(--text);
+            opacity: .8;
         }
 
-        /* ── STACK TABLE ── */
-        .stack-table {
+        .resp-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .resp-list li {
+            font-size: 12px;
+            color: var(--muted);
+            padding: 4px 0;
+            padding-left: 14px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .resp-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent3);
+            font-size: 10px;
+            top: 5px;
+        }
+
+        /* ── CODE TABS ── */
+        .code-section {
+            margin-bottom: 48px;
+            animation: fadeUp 0.6s 0.3s ease both;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 2px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 10px 16px;
+            cursor: pointer;
+            color: var(--muted);
+            border-radius: 6px 6px 0 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            transition: all 0.15s;
+            background: transparent;
+            outline: none;
+            letter-spacing: .5px;
+        }
+
+        .tab.active {
+            color: var(--text);
+            background: var(--surface2);
+            border-color: var(--border);
+            border-bottom-color: var(--surface2);
+            margin-bottom: -1px;
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .code-block {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 28px;
+            display: none;
+            position: relative;
+        }
+
+        .code-block.active {
+            display: block;
+        }
+
+        .code-block pre {
+            font-family: 'Space Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.75;
+            color: #c9d1d9;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .k {
+            color: #ff79c6;
+        }
+
+        .s {
+            color: #f1fa8c;
+        }
+
+        .c {
+            color: #6272a4;
+        }
+
+        .n {
+            color: #8be9fd;
+        }
+
+        .v {
+            color: #bd93f9;
+        }
+
+        .b {
+            color: #50fa7b;
+        }
+
+        .p {
+            color: #ff6e6e;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            padding: 5px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.15s;
+        }
+
+        .copy-btn:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        /* ── COST TABLE ── */
+        .cost-table {
             width: 100%;
             border-collapse: collapse;
-            animation: rise 0.5s 0.35s ease both;
+            animation: fadeUp 0.6s 0.35s ease both;
             font-size: 13px;
+            margin-bottom: 48px;
         }
 
-        .stack-table th {
-            font-family: 'IBM Plex Mono', monospace;
+        .cost-table th {
+            font-family: 'Space Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--dim);
-            border-bottom: 1px solid var(--border2);
-            padding: 10px 16px;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 14px;
             text-align: left;
         }
 
-        .stack-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
+        .cost-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(42, 42, 64, 0.5);
             vertical-align: top;
             line-height: 1.5;
             color: var(--muted);
+            font-size: 12px;
         }
 
-        .stack-table tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
+        .cost-table tr:hover td {
+            background: rgba(91, 79, 255, 0.04);
         }
 
-        .stack-table td:first-child {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            width: 140px;
-            color: var(--dim);
-            letter-spacing: 0.5px;
-        }
-
-        .stack-table td:nth-child(2) {
-            font-weight: 500;
-            width: 180px;
+        .cost-table td:first-child {
             color: var(--text);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .cost-table td.mono {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
         }
 
         .badge-pill {
             display: inline-block;
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'Space Mono', monospace;
             font-size: 10px;
             padding: 2px 8px;
             border-radius: 30px;
-            margin: 2px 2px 2px 0;
+            margin: 1px;
         }
 
         .pill-r {
-            background: rgba(248, 113, 113, 0.12);
-            color: var(--red);
-        }
-
-        .pill-b {
-            background: rgba(129, 140, 248, 0.12);
-            color: var(--blue);
+            background: rgba(255, 79, 139, 0.12);
+            color: var(--accent2);
         }
 
         .pill-g {
-            background: rgba(74, 222, 128, 0.12);
-            color: var(--green);
+            background: rgba(120, 255, 100, 0.12);
+            color: var(--accent5);
         }
 
         .pill-a {
-            background: rgba(251, 191, 36, 0.12);
-            color: var(--amber);
+            background: rgba(255, 195, 79, 0.12);
+            color: var(--accent4);
         }
 
         .pill-t {
-            background: rgba(52, 210, 200, 0.12);
-            color: var(--teal);
+            background: rgba(79, 255, 212, 0.12);
+            color: var(--accent3);
+        }
+
+        .pill-p {
+            background: rgba(91, 79, 255, 0.12);
+            color: #a89fff;
         }
 
         .pill-k {
@@ -711,18 +936,18 @@
             color: var(--muted);
         }
 
-        /* ── COST ESTIMATE ── */
+        /* ── COST SUMMARY CARDS ── */
         .cost-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
-            animation: rise 0.5s 0.4s ease both;
+            margin-bottom: 48px;
         }
 
         .cost-card {
             background: var(--surface);
-            border: 1px solid var(--border2);
-            border-radius: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
             padding: 20px;
             transition: transform 0.15s;
         }
@@ -731,40 +956,102 @@
             transform: translateY(-3px);
         }
 
-        .cost-card .cost-label {
-            font-family: 'IBM Plex Mono', monospace;
+        .cost-label {
+            font-family: 'Space Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--dim);
+            color: var(--muted);
             margin-bottom: 8px;
         }
 
-        .cost-card .cost-val {
+        .cost-val {
             font-size: 26px;
             font-weight: 800;
             letter-spacing: -1px;
             color: var(--text);
         }
 
-        .cost-card .cost-unit {
-            font-family: 'IBM Plex Mono', monospace;
+        .cost-unit {
+            font-family: 'Space Mono', monospace;
             font-size: 11px;
-            color: var(--dim);
+            color: var(--muted);
             margin-top: 4px;
         }
 
-        .cost-card .cost-note {
+        .cost-note {
             font-size: 12px;
             color: var(--muted);
             margin-top: 10px;
             line-height: 1.5;
         }
 
+        /* ── ROADMAP ── */
+        .roadmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2px;
+            margin-bottom: 48px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .phase {
+            background: var(--surface);
+            padding: 24px;
+            transition: background 0.2s;
+        }
+
+        .phase:hover {
+            background: var(--surface2);
+        }
+
+        .phase-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .phase h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .phase ul {
+            list-style: none;
+        }
+
+        .phase ul li {
+            font-size: 12px;
+            color: var(--muted);
+            padding: 5px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(42, 42, 64, 0.4);
+        }
+
+        .phase ul li:last-child {
+            border-bottom: none;
+        }
+
+        .phase ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent3);
+            font-size: 10px;
+            top: 7px;
+        }
+
         /* ── FOOTER ── */
         .footer {
-            margin-top: 80px;
-            padding-top: 32px;
+            margin-top: 64px;
+            padding-top: 28px;
             border-top: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -773,578 +1060,26 @@
             gap: 16px;
         }
 
-        .footer-left {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: var(--dim);
-            letter-spacing: 0.5px;
-        }
-
+        .footer-left,
         .footer-right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'Space Mono', monospace;
             font-size: 11px;
-            color: var(--dim);
+            color: var(--muted);
+            letter-spacing: .5px;
         }
 
         .live-dot {
+            display: inline-block;
             width: 6px;
             height: 6px;
-            background: var(--green);
+            background: var(--accent3);
             border-radius: 50%;
             animation: blink 2s ease-in-out infinite;
+            vertical-align: middle;
+            margin-right: 6px;
         }
 
-        @keyframes rise {
-            from {
-                opacity: 0;
-                transform: translateY(16px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.2;
-            }
-        }
-
-
-        /* ══ RESPONSIVE ═══════════════════════════════════════════ */
-        @media (max-width: 900px) {
-            .container {
-                padding: 32px 20px;
-            }
-
-            .header {
-                grid-template-columns: 1fr !important;
-            }
-
-            .header-meta {
-                text-align: left !important;
-            }
-
-            .agents-detail {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-
-            .cost-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-
-            .layer {
-                grid-template-columns: 80px 1fr !important;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: clamp(24px, 8vw, 44px) !important;
-                letter-spacing: -1px !important;
-            }
-
-            .vision {
-                padding: 24px 20px !important;
-            }
-
-            .vision p {
-                font-size: 16px !important;
-            }
-
-            .arch-wrapper {
-                padding: 20px 16px !important;
-            }
-
-            .layer {
-                grid-template-columns: 60px 1fr !important;
-                gap: 10px !important;
-            }
-
-            .layer-label {
-                font-size: 8px !important;
-                padding-top: 14px !important;
-            }
-
-            .layer-content {
-                flex-wrap: wrap;
-                gap: 8px !important;
-            }
-
-            .src-node,
-            .proc-node {
-                min-width: 100px !important;
-            }
-
-            .agent-node {
-                min-width: 100% !important;
-            }
-
-            .agents-detail {
-                grid-template-columns: 1fr !important;
-            }
-
-            .cost-grid {
-                grid-template-columns: 1fr 1fr !important;
-            }
-
-            .stack-table {
-                display: block;
-                overflow-x: auto;
-            }
-
-            .sec-head {
-                margin-top: 36px !important;
-            }
-
-            .footer {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .layer {
-                grid-template-columns: 80px 1fr;
-            }
-        }
-
-
-        /* ── LIGHT MODE OVERRIDES ── */
-        [data-theme="light"] {
-            --bg: #f6f8fa;
-            --surface: #ffffff;
-            --surface2: #edf0f4;
-            --text: #0d1117;
-            --muted: #4b5563;
-            --dim: #6b7280;
-            --border: rgba(0, 0, 0, 0.10);
-            --border2: rgba(0, 0, 0, 0.18);
-            /* Darken accents for legibility on white */
-            --violet: #6366f1;
-            --teal: #0891b2;
-            --gold: #b45309;
-            --rose: #db2777;
-            --green: #16a34a;
-            --red: #dc2626;
-            --amber: #d97706;
-            --blue: #2563eb;
-            --purple: #7c3aed;
-        }
-
-        /* Body */
-        [data-theme="light"] body {
-            background: var(--bg);
-            color: var(--text);
-        }
-
-        [data-theme="light"] body::before {
-            background-image:
-                linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-        }
-
-        [data-theme="light"] body::after {
-            background: none;
-        }
-
-        /* ── Code panels always stay dark (standard practice) ── */
-        [data-theme="light"] .code-panel,
-        [data-theme="light"] pre {
-            background: #1e2030 !important;
-            color: #cdd6f4 !important;
-            border-color: rgba(255, 255, 255, 0.06) !important;
-        }
-
-        [data-theme="light"] .cp-btn {
-            background: rgba(255, 255, 255, 0.08) !important;
-            color: #94a3b8 !important;
-        }
-
-        /* ── Navigation / Back button ── */
-        [data-theme="light"] .back-btn {
-            background: rgba(99, 102, 241, 0.08) !important;
-            color: var(--violet) !important;
-            border-color: rgba(99, 102, 241, 0.3) !important;
-        }
-
-        [data-theme="light"] nav {
-            background: rgba(246, 248, 250, 0.95) !important;
-            border-bottom-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .nav-logo,
-        [data-theme="light"] .nav-breadcrumb {
-            color: var(--text) !important;
-        }
-
-        /* ── Section / Page headers ── */
-        [data-theme="light"] .sec-title {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .sec-title span {
-            color: var(--violet) !important;
-        }
-
-        [data-theme="light"] .header h1 {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .tag {
-            color: var(--dim) !important;
-            border-color: var(--border2) !important;
-        }
-
-        /* ── Section containers & cards ── */
-        [data-theme="light"] .sec {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
-        }
-
-        [data-theme="light"] .card,
-        [data-theme="light"] .acard,
-        [data-theme="light"] .risk-card,
-        [data-theme="light"] .cost-card,
-        [data-theme="light"] .arch-wrapper,
-        [data-theme="light"] .agents-detail .acard {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07) !important;
-        }
-
-        [data-theme="light"] .acard h3 {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .acard p {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .kv-val {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .kv-key {
-            color: var(--dim) !important;
-        }
-
-        /* ── Tabs ── */
-        [data-theme="light"] .tabs {
-            background: var(--surface2) !important;
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .tab {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .tab:hover {
-            color: var(--text) !important;
-            background: rgba(0, 0, 0, 0.04) !important;
-        }
-
-        [data-theme="light"] .tab.active {
-            background: var(--surface) !important;
-            color: var(--violet) !important;
-            border-color: var(--border2) !important;
-        }
-
-        /* ── Hero, stats blocks ── */
-        [data-theme="light"] .hero-kicker {
-            color: var(--teal) !important;
-        }
-
-        [data-theme="light"] .hero-desc {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .stat-val {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .stat-label {
-            color: var(--dim) !important;
-        }
-
-        /* ── Doc cards (index.html) ── */
-        [data-theme="light"] .doc-card {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07) !important;
-        }
-
-        [data-theme="light"] .doc-card:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
-        }
-
-        [data-theme="light"] .card-title {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .card-desc {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .card-meta {
-            color: var(--dim) !important;
-        }
-
-        [data-theme="light"] .pill {
-            background: rgba(0, 0, 0, 0.06) !important;
-            color: var(--muted) !important;
-        }
-
-        /* ── Agent & flow diagram nodes ── */
-        [data-theme="light"] .proc-node,
-        [data-theme="light"] .src-node,
-        [data-theme="light"] .flow-node,
-        [data-theme="light"] .agent-card {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .proc-node .title,
-        [data-theme="light"] .proc-node .sub {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .proc-node .tech {
-            background: rgba(99, 102, 241, 0.12) !important;
-            color: var(--violet) !important;
-        }
-
-        [data-theme="light"] .output-node {
-            background: linear-gradient(135deg, rgba(8, 145, 178, 0.1), rgba(99, 102, 241, 0.1)) !important;
-            border-color: rgba(8, 145, 178, 0.4) !important;
-        }
-
-        [data-theme="light"] .output-node .badge {
-            color: var(--dim) !important;
-        }
-
-        [data-theme="light"] .output-node .name {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .output-node .desc {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .agent-node .name {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .agent-node .desc {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .agent-node .tool {
-            background: rgba(0, 0, 0, 0.06) !important;
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .layer-content {
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .layer-content::before {
-            background: var(--violet) !important;
-            border-color: var(--bg) !important;
-        }
-
-        [data-theme="light"] .connector-line {
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .arch-wrapper {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-        }
-
-        /* ── Tables ── */
-        [data-theme="light"] .stack-table th {
-            color: var(--dim) !important;
-            border-bottom-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .stack-table td {
-            color: var(--muted) !important;
-            border-bottom-color: var(--border) !important;
-        }
-
-        [data-theme="light"] .stack-table td:nth-child(2) {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .stack-table tr:hover td {
-            background: rgba(0, 0, 0, 0.025) !important;
-        }
-
-        [data-theme="light"] .agent-table th {
-            background: var(--surface2) !important;
-            color: var(--dim) !important;
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .agent-table td {
-            border-color: var(--border) !important;
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .agent-table tr:hover td {
-            background: rgba(0, 0, 0, 0.02) !important;
-        }
-
-        /* ── Risk cards ── */
-        [data-theme="light"] .risk-card {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .risk-card h3 {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .risk-card p {
-            color: var(--muted) !important;
-        }
-
-        /* ── Flow boxes (Agentic workforce) ── */
-        [data-theme="light"] .flow-box {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .flow-label {
-            color: var(--dim) !important;
-        }
-
-        /* ── Vision block ── */
-        [data-theme="light"] .vision {
-            background: linear-gradient(135deg, rgba(8, 145, 178, 0.06), rgba(99, 102, 241, 0.06)) !important;
-            border-color: rgba(8, 145, 178, 0.25) !important;
-        }
-
-        [data-theme="light"] .vision p {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .vtag {
-            color: var(--muted) !important;
-            border-color: var(--border2) !important;
-        }
-
-        /* ── Footer ── */
-        [data-theme="light"] .footer {
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .footer-left,
-        [data-theme="light"] .footer-right {
-            color: var(--dim) !important;
-        }
-
-        /* ── Doc.html specific (uses different var names) ── */
-        [data-theme="light"] .header {
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .agent-card {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .agent-card .role {
-            color: var(--dim) !important;
-        }
-
-        [data-theme="light"] .agent-card .name {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .agent-card .desc {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .flow-node {
-            background: var(--surface2) !important;
-            border-color: var(--border2) !important;
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .flow-arrow {
-            color: var(--dim) !important;
-        }
-
-        [data-theme="light"] .section-label {
-            color: var(--dim) !important;
-        }
-
-        /* ── "What is an Agent?" section ── */
-        [data-theme="light"] .agent-eq {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .pillar-card {
-            background: var(--surface) !important;
-            border-color: var(--border2) !important;
-        }
-
-        [data-theme="light"] .pillar-card h3 {
-            color: var(--text) !important;
-        }
-
-        [data-theme="light"] .pillar-card p {
-            color: var(--muted) !important;
-        }
-
-        [data-theme="light"] .pillar-card code {
-            background: rgba(0, 0, 0, 0.06) !important;
-            color: var(--muted) !important;
-        }
-
-        /* ── Pill badges in light mode ── */
-        [data-theme="light"] .badge-pill.pill-k {
-            background: rgba(0, 0, 0, 0.07) !important;
-            color: var(--dim) !important;
-        }
-
-        /* ── Scrollbar (WebKit) ── */
-        [data-theme="light"] ::-webkit-scrollbar-track {
-            background: var(--surface2) !important;
-        }
-
-        [data-theme="light"] ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.25) !important;
-        }
-
-        /* ── THEME TOGGLE BUTTON ── */
+        /* ── THEME TOGGLE ── */
         #theme-toggle {
             position: fixed;
             bottom: 28px;
@@ -1353,7 +1088,7 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            border: 1px solid var(--border2);
+            border: 1px solid var(--border);
             background: var(--surface);
             color: var(--text);
             font-size: 18px;
@@ -1369,499 +1104,1132 @@
             transform: scale(1.1);
             box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
         }
-    
-        /* ── BREADCRUMB NAV ── */
-        .back-nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(10, 10, 15, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
         }
 
-        .back-nav-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: var(--dim);
-            letter-spacing: 0.5px;
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.2
+            }
         }
 
-        .back-link {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--violet);
-            text-decoration: none;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 1px;
-            padding: 5px 12px;
-            border: 1px solid rgba(129, 140, 248, 0.25);
-            border-radius: 5px;
-            background: rgba(129, 140, 248, 0.06);
-            transition: all 0.2s;
+        /* ── LIGHT MODE ── */
+        [data-theme="light"] {
+            --bg: #f6f8fa;
+            --surface: #fff;
+            --surface2: #edf0f4;
+            --text: #0d1117;
+            --muted: #4b5563;
+            --border: rgba(0, 0, 0, 0.12);
+            --accent: #5b4fff;
+            --accent2: #e11d68;
+            --accent3: #0891b2;
+            --accent4: #b45309;
+            --accent5: #16a34a;
         }
 
-        .back-link:hover {
-            background: rgba(129, 140, 248, 0.12);
-            border-color: rgba(129, 140, 248, 0.5);
+        [data-theme="light"] body {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        [data-theme="light"] body::before {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
         }
 
         [data-theme="light"] .back-nav {
-            background: rgba(246,248,250,0.96) !important;
-            border-bottom-color: var(--border2) !important;
-        }
-        [data-theme="light"] .back-nav-left { color: var(--muted) !important; }
-        [data-theme="light"] .back-link {
-            color: var(--violet) !important;
-            border-color: rgba(99,102,241,0.3) !important;
-            background: rgba(99,102,241,0.06) !important;
+            background: rgba(246, 248, 250, 0.95) !important;
+            border-color: rgba(0, 0, 0, 0.12) !important;
         }
 
+        [data-theme="light"] .agent-card,
+        .cost-card,
+        .phase,
+        .step,
+        .arch-diagram {
+            background: var(--surface) !important;
+            border-color: rgba(0, 0, 0, 0.14) !important;
+        }
+
+        [data-theme="light"] pre {
+            background: #1e2030 !important;
+            color: #cdd6f4 !important;
+        }
+
+        [data-theme="light"] .code-block {
+            background: #1e2030 !important;
+            border-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        [data-theme="light"] .cost-table td,
+        .cost-table th {
+            border-color: rgba(0, 0, 0, 0.1) !important;
+            color: var(--muted) !important;
+        }
+
+        [data-theme="light"] .cost-table td:first-child {
+            color: var(--text) !important;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width:768px) {
+            .agents-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cost-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .roadmap {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cost-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        /* ── TASK BANNERS ── */
+        .task-banner {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+            border-left: 4px solid;
+        }
+
+        .task-banner.task-a {
+            background: rgba(91, 79, 255, 0.07);
+            border-color: var(--accent);
+        }
+
+        .task-banner.task-b {
+            background: rgba(79, 255, 212, 0.06);
+            border-color: var(--accent3);
+        }
+
+        .task-banner.task-c {
+            background: rgba(255, 195, 79, 0.06);
+            border-color: var(--accent4);
+        }
+
+        .task-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .task-a .task-tag {
+            background: rgba(91, 79, 255, 0.2);
+            color: #a89fff;
+        }
+
+        .task-b .task-tag {
+            background: rgba(79, 255, 212, 0.2);
+            color: var(--accent3);
+        }
+
+        .task-c .task-tag {
+            background: rgba(255, 195, 79, 0.2);
+            color: var(--accent4);
+        }
+
+        /* ── MCP TOPOLOGY ── */
+        .mcp-topology {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topo-orchestrator {
+            background: rgba(91, 79, 255, 0.12);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            padding: 16px 32px;
+            text-align: center;
+            animation: pulse-ring 3s ease-in-out infinite;
+            min-width: 360px;
+        }
+
+        .topo-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .topo-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #a89fff;
+        }
+
+        .topo-arrows {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        .topo-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 16px;
+            border: 1px dashed rgba(79, 255, 212, 0.2);
+            border-radius: 10px;
+            background: rgba(79, 255, 212, 0.03);
+            width: 100%;
+        }
+
+        .topo-server {
+            border-radius: 8px;
+            padding: 14px 16px;
+            text-align: center;
+            min-width: 150px;
+            position: relative;
+            border: 1px solid;
+        }
+
+        .topo-server-port {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            opacity: .6;
+        }
+
+        .topo-server-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            margin-top: 4px;
+        }
+
+        .topo-server-tool {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            padding: 3px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .topo-server-tech {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .s-media {
+            background: rgba(248, 113, 113, 0.07);
+            border-color: rgba(248, 113, 113, 0.3);
+        }
+
+        .s-media .topo-server-name {
+            color: #f87171;
+        }
+
+        .s-media .topo-server-tool {
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+        }
+
+        .s-doc {
+            background: rgba(129, 140, 248, 0.07);
+            border-color: rgba(129, 140, 248, 0.3);
+        }
+
+        .s-doc .topo-server-name {
+            color: #818cf8;
+        }
+
+        .s-doc .topo-server-tool {
+            background: rgba(129, 140, 248, 0.1);
+            color: #818cf8;
+        }
+
+        .s-web {
+            background: rgba(79, 255, 212, 0.06);
+            border-color: rgba(79, 255, 212, 0.25);
+        }
+
+        .s-web .topo-server-name {
+            color: var(--accent3);
+        }
+
+        .s-web .topo-server-tool {
+            background: rgba(79, 255, 212, 0.1);
+            color: var(--accent3);
+        }
+
+        .s-analysis {
+            background: rgba(255, 195, 79, 0.06);
+            border-color: rgba(255, 195, 79, 0.25);
+        }
+
+        .s-analysis .topo-server-name {
+            color: var(--accent4);
+        }
+
+        .s-analysis .topo-server-tool {
+            background: rgba(255, 195, 79, 0.1);
+            color: var(--accent4);
+        }
+
+        .s-agg {
+            background: rgba(120, 255, 100, 0.06);
+            border-color: rgba(120, 255, 100, 0.25);
+        }
+
+        .s-agg .topo-server-name {
+            color: var(--accent5);
+        }
+
+        .s-agg .topo-server-tool {
+            background: rgba(120, 255, 100, 0.1);
+            color: var(--accent5);
+        }
+
+        .topo-db {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 12px 24px;
+            border: 1px solid rgba(79, 255, 212, 0.3);
+            border-radius: 8px;
+            background: rgba(79, 255, 212, 0.05);
+            color: var(--accent3);
+        }
+
+        /* ── DB SCHEMA GRID ── */
+        .db-schema-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .db-table {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            font-size: 12px;
+        }
+
+        .db-table-header {
+            background: rgba(91, 79, 255, 0.12);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 14px;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #a89fff;
+            letter-spacing: 1px;
+        }
+
+        .db-col {
+            padding: 6px 14px;
+            border-bottom: 1px solid rgba(42, 42, 64, 0.4);
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-col:last-child {
+            border-bottom: none;
+        }
+
+        .db-pk {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            background: rgba(255, 195, 79, 0.15);
+            color: var(--accent4);
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .db-fk {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            background: rgba(255, 79, 139, 0.12);
+            color: var(--accent2);
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .db-col-type {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            background: rgba(79, 255, 212, 0.08);
+            color: var(--accent3);
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
 <body>
-    <a href="index.html" class="back-btn">← Home</a>
-
+    <div class="grid-bg"></div>
     <nav class="back-nav">
         <div class="back-nav-left">
             <span>AI_ORCH / DOCS</span>
-            <span style="color:var(--border2)">/</span>
-            <span>Media Intelligence Platform</span>
+            <span style="color:#484f6a">/</span>
+            <span>Media Intelligence Platform — Agent Build Plan</span>
         </div>
         <a href="index.html" class="back-link">← Back to Hub</a>
     </nav>
+
     <div class="container">
 
-        <!-- Header -->
+        <!-- HEADER -->
         <div class="header">
-            <div class="tag">Sankhya Team — Feb 22 Demo</div>
-            <h1>Media <span>Intelligence</span><br>Platform</h1>
-            <p>// mass intel processing · bulk zip orchestration · mcp · whisper</p>
+            <div class="tag">LivingAI Team — Build Plan v1.0</div>
+            <h1>Media Intelligence<br><span>Agent Plan</span></h1>
+            <p>// architecture-first · agent-by-agent · token-costed · prompt-defined<br>
+                // inputs: zip (react dashboard) · news PDFs · youtube videos · web scrape data</p>
         </div>
 
-        <!-- Vision -->
+        <!-- VISION -->
         <div class="vision">
             <p>
-                Upload a <span>massive intelligence payload (ZIP format)</span> containing mixed media — videos, audio
-                leaks, PDFs, raw images, and text. The Orchestrator autonomously unpacks the archive, classifies every
-                file by MIME type, and dispatches a swarm of specialist agents to transcribe, extract, and analyze the
-                data <strong>in parallel</strong>, surfacing a unified intelligence report on the live dashboard.
+                Following the <span>MCP Multi-Agent Orchestrator architecture</span> defined in Doc.html,
+                this plan describes how a swarm of specialist agents — each exposed as an MCP tool — will
+                autonomously ingest a mixed-media payload containing a <span>React frontend ZIP</span>,
+                <span>newspaper PDFs</span>, <span>YouTube news videos</span>, and <span>live web-scraped data</span>,
+                and surface a unified, real-time intelligence dashboard with zero manual triage.
             </p>
             <div class="vision-tags">
-                <span class="vtag">BULK ZIP INGESTION</span>
                 <span class="vtag">MCP ORCHESTRATION</span>
-                <span class="vtag">PARALLEL EXECUTION</span>
-                <span class="vtag">WHISPER / VISION PIPELINE</span>
-                <span class="vtag">CROSS-FILE AGGREGATION</span>
-                <span class="vtag">ZERO MANUAL TRIAGE</span>
+                <span class="vtag">REACT FRONTEND (ZIP)</span>
+                <span class="vtag">NEWS PDF EXTRACTION</span>
+                <span class="vtag">YOUTUBE TRANSCRIPTION</span>
+                <span class="vtag">WEB SCRAPE INGESTION</span>
+                <span class="vtag">PARALLEL AGENT SWARM</span>
+                <span class="vtag">LIVE DASHBOARD</span>
+                <span class="vtag">CLAUDE SONNET</span>
             </div>
         </div>
 
-        <!-- Architecture Diagram -->
-        <div class="sec-head" style="margin-top:0;">
-            <span class="sec-num">01</span>
-            <h2>Bulk Intelligence Pipeline</h2>
-        </div>
-        <div class="arch-wrapper">
-            <div class="arch-title">// DATA FLOW — ZIP INGESTION → PARALLEL DASHBOARD</div>
+        <!-- 01 ARCHITECTURE -->
+        <div class="section-title" style="margin-top:0;">01 — System Architecture Flow</div>
+        <div class="arch-diagram">
+            <div class="flow">
 
-            <div class="pipeline">
+                <!-- Inputs -->
+                <div class="flow-row">
+                    <div class="node node-input-src">
+                        <div class="node-label">Source A</div>
+                        <div class="node-title">📦 ZIP File</div>
+                        <div class="node-sub">React frontend dashboard</div>
+                    </div>
+                    <div class="node node-input-src">
+                        <div class="node-label">Source B</div>
+                        <div class="node-title">📰 News PDFs</div>
+                        <div class="node-sub">newspaper articles / reports</div>
+                    </div>
+                    <div class="node node-input-src">
+                        <div class="node-label">Source C</div>
+                        <div class="node-title">🎬 YouTube</div>
+                        <div class="node-sub">news video URLs</div>
+                    </div>
+                    <div class="node node-input-src">
+                        <div class="node-label">Source D</div>
+                        <div class="node-title">🌐 Web Scrape</div>
+                        <div class="node-sub">live article data</div>
+                    </div>
+                </div>
 
-                <!-- Layer 1: Sources -->
-                <div class="layer">
-                    <div class="layer-label">Input<br>Payload</div>
-                    <div class="layer-content">
-                        <div class="src-node" style="min-width: 250px;">
-                            <div class="src-icon">📦</div>
-                            <div class="src-title">Raw Intelligence Archive</div>
-                            <div class="src-sub">intel_cache_b.zip (mixed media)</div>
+                <div class="connector-v down" style="height:32px;"></div>
+                <div class="bi-line">multi-source payload → upload API</div>
+                <div class="connector-v down" style="height:12px;"></div>
+
+                <!-- Orchestrator -->
+                <div class="flow-row">
+                    <div class="node node-orchestrator">
+                        <div class="node-label">1 Central Brain</div>
+                        <div class="node-title">🧠 Orchestrator Agent</div>
+                        <div class="node-sub">claude-sonnet-4-6</div>
+                        <div class="node-desc" style="max-width:280px; color: #a89fff;">Unpacks payload, detects MIME
+                            types, builds execution DAG, and orchestrates the 5 downstream tool calls.</div>
+                    </div>
+                </div>
+
+                <div class="connector-v down" style="height:32px;"></div>
+                <div class="bi-line">tool_use calls via MCP protocol</div>
+                <div class="connector-v down" style="height:12px;"></div>
+
+                <!-- MCP Agent Swarm -->
+                <div class="mcp-box">
+                    <div class="mcp-label">⚡ MCP Server — Parallel Agent Swarm (asyncio.gather)</div>
+                    <div class="agents-row">
+                        <div class="node node-agent">
+                            <div class="node-label">Agent 1 (Parallel)</div>
+                            <div class="node-title">🎙 Transcriber</div>
+                            <div class="node-sub">youtube → transcript</div>
+                            <div class="node-desc">Runs yt-dlp & Whisper STT. Cleans text & extracts key quotes.</div>
+                            <div class="node-tool">mcp: transcribe_video</div>
+                        </div>
+                        <div class="node node-agent">
+                            <div class="node-label">Agent 2 (Parallel)</div>
+                            <div class="node-title">📄 Doc Extractor</div>
+                            <div class="node-sub">PDF → text + entities</div>
+                            <div class="node-desc">Parses PyMuPDF text. LLM extracts entities, dates & summary.</div>
+                            <div class="node-tool">mcp: parse_pdf</div>
+                        </div>
+                        <div class="node node-agent">
+                            <div class="node-label">Agent 3 (Parallel)</div>
+                            <div class="node-title">🌐 Scrape Parser</div>
+                            <div class="node-sub">web → json</div>
+                            <div class="node-desc">Cleans boilerplate HTML. Normalizes to unified schema.</div>
+                            <div class="node-tool">mcp: parse_web</div>
+                        </div>
+                        <div class="node node-agent">
+                            <div class="node-label">Agent 4 (Seq to Text)</div>
+                            <div class="node-title">📊 Analyst</div>
+                            <div class="node-sub">sentiment + taxonomy</div>
+                            <div class="node-desc">Scores sentiment, detects bias, and assigns taxonomy tags.</div>
+                            <div class="node-tool">mcp: analyze_content</div>
+                        </div>
+                        <div class="node node-agent">
+                            <div class="node-label">Agent 5 (Final Sync)</div>
+                            <div class="node-title">🔗 Aggregator</div>
+                            <div class="node-sub">cross-source brief</div>
+                            <div class="node-desc">Finds entity intersections. Generates final intel briefing.</div>
+                            <div class="node-tool">mcp: aggregate_intel</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Connector -->
-                <div class="connector">
-                    <div></div>
-                    <div class="connector-line"><span class="connector-label">file upload → orchestrator</span></div>
-                </div>
+                <div class="connector-v down" style="height:32px;"></div>
+                <div class="bi-line">structured JSON stream → FastAPI → WebSocket → React UI</div>
+                <div class="connector-v down" style="height:12px;"></div>
 
-                <!-- Layer 2: Ingestion -->
-                <div class="layer">
-                    <div class="layer-label">Orchestrator<br>Triage</div>
-                    <div class="layer-content">
-                        <div class="proc-node" style="border-color: var(--violet);">
-                            <div class="title">Payload Unpacker & Classifier</div>
-                            <div class="sub">Extracts to secure sandbox, runs MIME detection</div>
-                            <div class="tech" style="background: rgba(99,102,241,0.12); color: var(--violet);">mimetypes
-                                / magic</div>
-                        </div>
-                        <div class="proc-node">
-                            <div class="title">DAG Builder</div>
-                            <div class="sub">Builds execution graph for 50+ files</div>
-                            <div class="tech">NetworkX / asyncio</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Connector -->
-                <div class="connector">
-                    <div></div>
-                    <div class="connector-line"><span class="connector-label">spawn agents per MIME type → execute in
-                            parallel</span></div>
-                </div>
-
-                <!-- Layer 3: MCP Agent Pipeline -->
-                <div class="layer">
-                    <div class="layer-label">Parallel<br>Swarm</div>
-                    <div class="layer-content" style="flex-wrap:wrap; gap:10px;">
-                        <div class="agent-node transcriber">
-                            <div class="badge">TOOL 1 · video/mp4, audio/wav</div>
-                            <div class="name">🎙 Transcriber + Cleaner</div>
-                            <div class="desc">Runs Whisper, cleans output, adds speaker labels</div>
-                            <div class="tool">mcp: transcribe_audio</div>
-                        </div>
-                        <div class="agent-node vision">
-                            <div class="badge">TOOL 2 · image/jpeg, image/png</div>
-                            <div class="name">👁 Vision Analyzer</div>
-                            <div class="desc">Describes images, detects text, emotional context</div>
-                            <div class="tool">mcp: analyze_image</div>
-                        </div>
-                        <div class="agent-node extractor">
-                            <div class="badge">TOOL 3 · application/pdf, text/html</div>
-                            <div class="name">📄 Document Extractor</div>
-                            <div class="desc">OCR / text parsing for reports, pulls names & orgs</div>
-                            <div class="tool">mcp: parse_document</div>
-                        </div>
-                        <div class="agent-node analyst">
-                            <div class="badge">TOOL 4 · all text outputs</div>
-                            <div class="name">📊 Content Analyst</div>
-                            <div class="desc">Scores sentiment (–1 to +1), detects tone & bias</div>
-                            <div class="tool">mcp: analyze_context</div>
-                        </div>
-                        <div class="agent-node categorizer">
-                            <div class="badge">TOOL 5 · all text outputs</div>
-                            <div class="name">🏷 Categorizer</div>
-                            <div class="desc">Tags content: politics, tech, finance, conflict, etc.</div>
-                            <div class="tool">mcp: categorize</div>
-                        </div>
-                        <div class="agent-node aggregator">
-                            <div class="badge">TOOL 6 · runs at completion</div>
-                            <div class="name">🔗 Cross-File Aggregator</div>
-                            <div class="desc">Finds links (e.g. video face matches PDF name)</div>
-                            <div class="tool">mcp: aggregate_Intel</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Connector -->
-                <div class="connector">
-                    <div></div>
-                    <div class="connector-line"><span class="connector-label">massive parallel JSON stream →
-                            frontend</span></div>
-                </div>
-
-                <!-- Layer 4: Output -->
-                <div class="layer">
-                    <div class="layer-label">Dashboard<br>Output</div>
-                    <div class="layer-content">
-                        <div class="output-node">
-                            <div class="badge">RAPID TRIAGE</div>
-                            <div class="name">📡 Mass Media Feed</div>
-                            <div class="desc">Cards for every file unpacked, summarizing contents</div>
-                        </div>
-                        <div class="output-node">
-                            <div class="badge">KNOWLEDGE GRAPH</div>
-                            <div class="name">📈 Entity Network Map</div>
-                            <div class="desc">Visual connections discovered across heterogeneous files</div>
-                        </div>
-                        <div class="output-node">
-                            <div class="badge">EXPORT</div>
-                            <div class="name">📋 Unified Intelligence Report</div>
-                            <div class="desc">AI-generated summary of the entire leaked payload</div>
-                        </div>
+                <!-- Output -->
+                <div class="flow-row">
+                    <div class="node node-output">
+                        <div class="node-label">Output</div>
+                        <div class="node-title">✅ Live Intelligence Dashboard</div>
+                        <div class="node-sub">React frontend (ZIP) · auto-populated · real-time cards</div>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <!-- Agent Detail Cards -->
-        <div class="sec-head">
-            <span class="sec-num">02</span>
-            <h2>Agent Role Definitions</h2>
+        <!-- 02 EXECUTION STEPS -->
+        <div class="section-title">02 — Execution Flow (Step by Step)</div>
+        <div class="flow-steps">
+            <div class="step">
+                <div class="step-num">STEP 01</div>
+                <div class="step-title">Input Upload</div>
+                <div class="step-text">User uploads ZIP (React app), PDFs, YouTube URLs, and web scrape data via FastAPI
+                    multipart endpoint</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 02</div>
+                <div class="step-title">Orchestrator Triage</div>
+                <div class="step-text">Orchestrator detects MIME types, classifies each input, builds a DAG, and decides
+                    which MCP tool calls to fire</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 03</div>
+                <div class="step-title">Parallel Dispatch</div>
+                <div class="step-text">asyncio.gather fires Tools 1–4 simultaneously: Transcriber on YouTube, Doc
+                    Extractor on PDFs, Scrape Parser on web data</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 04</div>
+                <div class="step-title">Analyst Post-Pass</div>
+                <div class="step-text">Content Analyst runs over all text outputs — scoring sentiment (−1 to +1),
+                    tagging category (politics, finance, tech…)</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 05</div>
+                <div class="step-title">Cross-Source Aggregation</div>
+                <div class="step-text">Aggregator runs after barrier sync — finds intersections across all sources (e.g.
+                    PDF org = YouTube speaker)</div>
+            </div>
+            <div class="step">
+                <div class="step-num">STEP 06</div>
+                <div class="step-title">Dashboard Render</div>
+                <div class="step-text">WebSockets stream intelligence cards to the React frontend (from ZIP) in
+                    real-time as each agent finishes</div>
+            </div>
         </div>
-        <div class="agents-detail">
 
-            <div class="acard a0">
-                <div class="acard-stripe"></div>
-                <div class="acard-tag">Orchestrator</div>
-                <h3>🧠 Router / Bulk Orchestrator</h3>
-                <p>The central dispatcher. Receives a raw ZIP payload, decompresses it to a secure sandbox, detects MIME
-                    types for dozens of files instantly, and spawns the exact right specialist agents in massive
-                    parallel streams. Collates and merges all outputs.</p>
-                <div class="kv">
+        <!-- 03 AGENT ROLE DEFINITIONS -->
+        <div class="section-title">03 — Agent Roles, Responsibilities &amp; MCP Tools</div>
+        <div class="agents-grid">
+
+            <div class="agent-card orchestrator">
+                <div class="agent-badge">Orchestrator</div>
+                <h3>🧠 Central Router</h3>
+                <p class="description">The brain of the system. Receives the mixed-media payload, detects file types,
+                    builds the execution DAG, fires all MCP tool calls in the right order, and collates final output
+                    into the dashboard payload. Handles retries and error propagation.</p>
+                <div class="tools-label">Responsibilities</div>
+                <ul class="resp-list">
+                    <li>Unpack ZIP → classify all items (MIME detection)</li>
+                    <li>Decide agent dispatch order (parallel vs sequential)</li>
+                    <li>Collect outputs from all MCP tools</li>
+                    <li>Trigger aggregator after barrier sync</li>
+                    <li>Push final JSON via WebSocket to React dashboard</li>
+                </ul>
+                <div style="margin-top:12px;">
                     <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet-4-6</span>
                     </div>
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">{ zip_buffer, timestamp
-                            }</span></div>
-                    <div class="kv-row"><span class="kv-key">Scaling</span><span class="kv-val">50+ concurrent
-                            agents</span></div>
                     <div class="kv-row"><span class="kv-key">Pattern</span><span class="kv-val">Scatter-Gather /
                             MapReduce</span></div>
+                    <div class="kv-row"><span class="kv-key">MCP Calls</span><span class="kv-val">transcribe_video ·
+                            parse_pdf · parse_web · analyze_content · aggregate_intel</span></div>
                 </div>
             </div>
 
-            <div class="acard a1">
-                <div class="acard-stripe"></div>
-                <div class="acard-tag">MCP Tool 1</div>
-                <h3>🎙 Transcriber + Cleaner</h3>
-                <p>Triggered on every standard A/V file (mp4, mp3, wav). Runs Whisper (or calls API), then acts as a
-                    journalist editor—cleaning noisy transcripts, identifying speakers, and highlighting extreme
-                    sentiment shifts.</p>
-                <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: mp4/wav</span>
-                    </div>
+            <div class="agent-card transcriber">
+                <div class="agent-badge">MCP Tool 1</div>
+                <h3>🎙 Video Transcriber</h3>
+                <p class="description">Accepts YouTube news video URLs or downloaded video files. Downloads via yt-dlp,
+                    extracts audio, runs OpenAI Whisper for transcription, then cleans speaker labels and highlights key
+                    quotes.</p>
+                <div class="tools-label">Responsibilities</div>
+                <ul class="resp-list">
+                    <li>Download YouTube video audio (yt-dlp)</li>
+                    <li>Run Whisper STT → raw transcript</li>
+                    <li>Clean noisy output, add speaker labels</li>
+                    <li>Extract top 3–5 key quotes</li>
+                    <li>Return JSON with transcript + metadata</li>
+                </ul>
+                <div style="margin-top:12px;">
+                    <div class="kv-row"><span class="kv-key">MCP Tool</span><span
+                            class="kv-val">transcribe_video(url)</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">youtube_url: str |
+                            file_path: str</span></div>
                     <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ transcript,
-                            key_quotes[], duration }</span></div>
+                            key_quotes[], duration, source_url }</span></div>
+                    <div class="kv-row"><span class="kv-key">Libs</span><span class="kv-val">yt-dlp, openai-whisper,
+                            ffmpeg</span></div>
                 </div>
             </div>
 
-            <div class="acard a2">
-                <div class="acard-stripe"></div>
-                <div class="acard-tag">MCP Tool 2</div>
-                <h3>👁 Vision Analyzer</h3>
-                <p>Triggered on every image found inside the ZIP. Uses Claude's vision capabilities to describe the
-                    scene, extract visible text, and spot logos or landmarks without human review.</p>
-                <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">image_base64: str</span>
+            <div class="agent-card extractor">
+                <div class="agent-badge">MCP Tool 2</div>
+                <h3>📄 PDF Document Extractor</h3>
+                <p class="description">Triggered on every news PDF uploaded. Uses PyMuPDF to extract raw text, then
+                    Claude extracts named entities, publication dates, headline, and generates a 3-sentence executive
+                    summary per document.</p>
+                <div class="tools-label">Responsibilities</div>
+                <ul class="resp-list">
+                    <li>Parse PDF text layer (PyMuPDF, fallback Tesseract OCR)</li>
+                    <li>Extract named entities: people, orgs, locations, dates</li>
+                    <li>Generate headline + executive summary</li>
+                    <li>Output structured JSON per PDF file</li>
+                </ul>
+                <div style="margin-top:12px;">
+                    <div class="kv-row"><span class="kv-key">MCP Tool</span><span
+                            class="kv-val">parse_pdf(file_path)</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: str
+                            (PDF)</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ headline, summary,
+                            entities[], dates[], raw_text }</span></div>
+                    <div class="kv-row"><span class="kv-key">Libs</span><span class="kv-val">PyMuPDF, pytesseract,
+                            anthropic</span></div>
+                </div>
+            </div>
+
+            <div class="agent-card planner">
+                <div class="agent-badge">MCP Tool 3</div>
+                <h3>🌐 Web Scrape Parser</h3>
+                <p class="description">Receives raw HTML or pre-scraped JSON from the web scrape data input. Cleans
+                    boilerplate, extracts article body, pulls author/date/source metadata, and normalises it into the
+                    same schema as other sources.</p>
+                <div class="tools-label">Responsibilities</div>
+                <ul class="resp-list">
+                    <li>Clean HTML → extract article body text</li>
+                    <li>Extract author, publication date, source domain</li>
+                    <li>Normalise to unified article schema</li>
+                    <li>Handle multiple articles per scrape batch</li>
+                </ul>
+                <div style="margin-top:12px;">
+                    <div class="kv-row"><span class="kv-key">MCP Tool</span><span class="kv-val">parse_web(raw_html |
+                            json_data)</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">html_or_json: str</span>
                     </div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ description, text_ext,
-                            logos[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ title, body, author,
+                            date, source, url }</span></div>
+                    <div class="kv-row"><span class="kv-key">Libs</span><span class="kv-val">BeautifulSoup4,
+                            newspaper3k, anthropic</span></div>
                 </div>
             </div>
 
-            <div class="acard a3">
-                <div class="acard-stripe"></div>
-                <div class="acard-tag">MCP Tool 3</div>
-                <h3>📄 Document Extractor</h3>
-                <p>Triggered on PDFs, DOCX, or unstructured web slices inside the dump. Uses OCR (if needed) and parses
-                    out people, organizations, dates, and a concise executive summary per document.</p>
-                <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">file_path: pdf/txt</span>
-                    </div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ summary, entities[],
-                            dates[] }</span></div>
+            <div class="agent-card analyst">
+                <div class="agent-badge">MCP Tool 4</div>
+                <h3>📊 Content Analyst &amp; Categorizer</h3>
+                <p class="description">Runs as a post-processor over all text outputs from Tools 1–3. Scores sentiment
+                    (−1 to +1), detects political/ideological bias, assigns taxonomy tags (politics, finance, tech,
+                    conflict, environment, etc.), and flags language/region.</p>
+                <div class="tools-label">Responsibilities</div>
+                <ul class="resp-list">
+                    <li>Score sentiment −1 (negative) to +1 (positive)</li>
+                    <li>Assign up to 3 taxonomy tags per article</li>
+                    <li>Detect bias indicators (framing, loaded language)</li>
+                    <li>Identify language and estimated region of coverage</li>
+                </ul>
+                <div style="margin-top:12px;">
+                    <div class="kv-row"><span class="kv-key">MCP Tool</span><span class="kv-val">analyze_content(text,
+                            source_id)</span></div>
+                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text: str, source_id:
+                            str</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ sentiment: float,
+                            tags[], bias_score, language }</span></div>
+                    <div class="kv-row"><span class="kv-key">Model</span><span class="kv-val">claude-sonnet-4-6 (haiku
+                            viable)</span></div>
                 </div>
             </div>
 
-            <div class="acard a4">
-                <div class="acard-stripe"></div>
-                <div class="acard-tag">MCP Tool 4 & 5</div>
-                <h3>📊 Analyst & 🏷 Categorizer</h3>
-                <p>Runs sequentially as a post-processor on <em>all</em> text outputs (from videos, images, and
-                    documents). Scores bias, assigns taxonomy tags (politics, finance, etc.), and checks language.</p>
-                <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Input</span><span class="kv-val">text_output: str</span>
-                    </div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ sentiment, bias, tags[]
-                            }</span></div>
-                </div>
-            </div>
-
-            <div class="acard a5">
-                <div class="acard-stripe"></div>
-                <div class="acard-tag">MCP Tool 6</div>
-                <h3>🔗 Cross-File Aggregator</h3>
-                <p>The crucial final step. Runs only when all parallel tasks finish. Scans the complete knowledge space
-                    to find intersection points—e.g. proving that the organization named in `doc_4.pdf` matches the logo
-                    found in `image_12.jpg`.</p>
-                <div class="kv">
-                    <div class="kv-row"><span class="kv-key">Trigger</span><span class="kv-val">Barrier sync (all
+            <div class="agent-card aggregator">
+                <div class="agent-badge">MCP Tool 5</div>
+                <h3>🔗 Cross-Source Aggregator</h3>
+                <p class="description">The final step — runs only after asyncio barrier sync confirms all parallel tools
+                    complete. Receives the full knowledge space and finds cross-source links (e.g. org name in PDF
+                    matches YouTube speaker, same event covered by both web and video), then generates the unified
+                    intelligence report.</p>
+                <div class="tools-label">Responsibilities</div>
+                <ul class="resp-list">
+                    <li>Wait for all agent results (asyncio.gather barrier)</li>
+                    <li>Find entity intersections across all sources</li>
+                    <li>Build unified timeline of events</li>
+                    <li>Generate 1-page executive intelligence brief</li>
+                    <li>Return dashboard-ready JSON payload for React UI</li>
+                </ul>
+                <div style="margin-top:12px;">
+                    <div class="kv-row"><span class="kv-key">MCP Tool</span><span
+                            class="kv-val">aggregate_intel(all_results: dict)</span></div>
+                    <div class="kv-row"><span class="kv-key">Trigger</span><span class="kv-val">barrier sync (all tools
                             complete)</span></div>
-                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ unified_report,
-                            cross_links[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Output</span><span class="kv-val">{ unified_brief,
+                            cross_links[], timeline[], dashboard_cards[] }</span></div>
+                    <div class="kv-row"><span class="kv-key">Context</span><span class="kv-val">200k token window (large
+                            context pass)</span></div>
                 </div>
             </div>
 
         </div>
-
-        <!-- Tech Stack -->
-        <div class="sec-head">
-            <span class="sec-num">03</span>
-            <h2>Bulk Processing Tech Stack</h2>
-        </div>
-        <table class="stack-table">
-            <thead>
-                <tr>
-                    <th>Layer</th>
-                    <th>Tool / Library</th>
-                    <th>Purpose</th>
-                    <th>Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Ingestion</td>
-                    <td>Python <code>zipfile</code> + <code>magic</code></td>
-                    <td>Securely unzips payload and robustly detects file MIME types</td>
-                    <td><span class="badge-pill pill-k">handles corrupted exts</span></td>
-                </tr>
-                <tr>
-                    <td>Concurrency</td>
-                    <td>Python <code>asyncio</code></td>
-                    <td>Fires 50+ agent API calls in parallel to crunch the DB faster</td>
-                    <td><span class="badge-pill pill-b">MapReduce pattern</span></td>
-                </tr>
-                <tr>
-                    <td>Transcription</td>
-                    <td>OpenAI Whisper</td>
-                    <td>Speech → text for discovered audio/video</td>
-                    <td><span class="badge-pill pill-r">GPU scaling needed in prod</span></td>
-                </tr>
-                <tr>
-                    <td>Document Extraction</td>
-                    <td>PyMuPDF / OCR</td>
-                    <td>Pares text layers from PDFs hidden in the payload</td>
-                    <td>Fallback to Tesseract if no text layer</td>
-                </tr>
-                <tr>
-                    <td>AI Agents</td>
-                    <td>Claude Sonnet 4.7</td>
-                    <td>Vision, extraction, and synthesis logic</td>
-                    <td><span class="badge-pill pill-a">claude-sonnet-4-6</span> handles massive context</td>
-                </tr>
-                <tr>
-                    <td>Orchestration</td>
-                    <td>MCP Python SDK</td>
-                    <td>Exposes specialized extraction scripts as standard tools</td>
-                    <td><span class="badge-pill pill-k">stdio transport</span></td>
-                </tr>
-                <tr>
-                    <td>Backend API</td>
-                    <td>FastAPI + WebSockets</td>
-                    <td>Accepts ZIP via multipart, streams progress back to UI</td>
-                    <td><span class="badge-pill pill-g">Live Dashboard Feel</span></td>
-                </tr>
-                <tr>
-                    <td>Frontend</td>
-                    <td>React + Tailwind</td>
-                    <td>Visualizes the massive influx of intel live</td>
-                    <td>Render feed cards instantly</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Cost Estimate -->
-        <div class="sec-head">
-            <span class="sec-num">04</span>
-            <h2>Cost Estimate (Bulk Archive Run)</h2>
-        </div>
-        <div class="cost-grid">
-            <div class="cost-card">
-                <div class="layer-name">Data Extraction (Local)</div>
-                <div class="amount">~$0</div>
-                <div class="note">Unzipping, PyMuPDF parsing, and local Whisper run free on CPU/GPU.</div>
-            </div>
-            <div class="cost-card">
-                <div class="layer-name">Agent Sub-Calls</div>
-                <div class="amount">~$0.01 / file</div>
-                <div class="note">Averaging 2,000 tokens for context cleanup and entity extraction per asset.</div>
-            </div>
-            <div class="cost-card">
-                <div class="layer-name">Cross-File Aggregator</div>
-                <div class="amount">~$0.10 - $0.20</div>
-                <div class="note">Passes the summarized json of all 50 files into context window.</div>
-            </div>
-            <div class="cost-card">
-                <div class="layer-name">Typical Cache Dump (50MB)</div>
-                <div class="amount">~$1.50 total</div>
-                <div class="note">Processes 5 videos, 20 images, 15 PDFs simultaneously. Extreme value.</div>
-            </div>
-        </div>
-
-        <!-- Build Roadmap -->
-        <div class="sec-head">
-            <span class="sec-num">05</span>
-            <h2>2-Day Build Plan (Sat–Sun)</h2>
-        </div>
-        <div class="roadmap">
-            <div class="phase">
-                <div class="phase-label">Saturday — Core Ingestion & Extraction</div>
-                <h3>Foundation Pipeline</h3>
-                <ul>
-                    <li>Set up FastAPI backend to handle robust multipart ZIP uploads</li>
-                    <li>Implement Python unpacking logic and `mimetypes` secure classification</li>
-                    <li>Set up MCP server skeleton featuring all 5 specialized tools</li>
-                    <li>Wire up local Whisper (for mp4/wav) and PyMuPDF (for pdf)</li>
-                    <li>Implement asynchronous scatter logic (spawning agents based on filetype)</li>
-                </ul>
-            </div>
-            <div class="phase">
-                <div class="phase-label">Sunday Morning</div>
-                <h3>Swarm Logic & Synthesis</h3>
-                <ul>
-                    <li>Refine Prompts for Vision Analyzer, Content Analyst, and Categorizer</li>
-                    <li>Implement the **Cross-File Aggregator** (Barrier sync after `asyncio.gather`)</li>
-                    <li>Test end-to-end on sample `leaked_cache.zip` (1 video, 3 docs, 2 images)</li>
-                    <li>Fix context window overflows and JSON parse errors</li>
-                </ul>
-            </div>
-            <div class="phase">
-                <div class="phase-label">Sunday Afternoon</div>
-                <h3>Live Dashboard UI</h3>
-                <ul>
-                    <li>Build React frontend: bulk file dropzone, live progress bars</li>
-                    <li>Connect FastAPI WebSockets to stream intelligence cards in real-time as agents finish</li>
-                    <li>Record 3-minute live mass-processing demo</li>
-                    <li>Prepare 5-slide architecture presentation</li>
-                    <li>Dry run full presentation by 6pm</li>
-                </ul>
-            </div>
-        </div>\n <!-- Footer -->
-        <div
-            style="border-top: 1px solid var(--border); margin-top: 56px; padding-top: 20px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">LIVINGAI TEAM · FEB
-                22 PRESENTATION</span>
-            <span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);">TEAM B: AMEY · SAIRAJ ·
-                CHANDRESH</span>
-        </div>
-
     </div>
 
+    <!-- 04 PROMPT TEMPLATES -->
+    <div class="section-title">04 — Agent System Prompts</div>
+    <div class="code-section">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('p-orch',this)">Orchestrator</button>
+            <button class="tab" onclick="showTab('p-trans',this)">Transcriber</button>
+            <button class="tab" onclick="showTab('p-pdf',this)">PDF Extractor</button>
+            <button class="tab" onclick="showTab('p-web',this)">Web Parser</button>
+            <button class="tab" onclick="showTab('p-analyst',this)">Analyst</button>
+            <button class="tab" onclick="showTab('p-agg',this)">Aggregator</button>
+        </div>
+
+        <div class="code-block active" id="p-orch">
+            <button class="copy-btn" onclick="copyCode('p-orch')">COPY</button>
+            <pre><span class="v">ORCHESTRATOR_PROMPT</span> = <span class="s">"""
+You are the Orchestrator for a Media Intelligence Platform.
+You receive a list of input files and their types. Your job:
+1. Classify each input: youtube_url | pdf | web_scrape | zip_frontend
+2. Build an execution plan — which MCP tools to call and in what order
+3. Call Tools 1-4 in PARALLEL via asyncio.gather for independent sources
+4. Call Tool 5 (aggregator) ONLY AFTER all parallel tools complete
+
+Return execution plan as JSON ONLY:
+{
+  "parallel_batch": [
+    {"tool": "transcribe_video", "input": "...", "source_id": "yt_001"},
+    {"tool": "parse_pdf",        "input": "...", "source_id": "pdf_001"},
+    {"tool": "parse_web",        "input": "...", "source_id": "web_001"}
+  ],
+  "sequential_after": [
+    {"tool": "analyze_content",  "depends_on": ["yt_001","pdf_001","web_001"]},
+    {"tool": "aggregate_intel",  "depends_on": "all"}
+  ]
+}
+No markdown. Pure JSON only.
+"""</span></pre>
+        </div>
+
+        <div class="code-block" id="p-trans">
+            <button class="copy-btn" onclick="copyCode('p-trans')">COPY</button>
+            <pre><span class="v">TRANSCRIBER_PROMPT</span> = <span class="s">"""
+You are a journalist-grade transcript editor.
+You receive a raw Whisper transcript of a news video. Your job:
+1. Clean stutters, filler words, and transcription errors
+2. Add speaker labels where inference is possible
+3. Highlight the 3-5 most significant quotes
+4. Generate a 2-sentence summary
+
+Return ONLY:
+{
+  "source_id": "...",
+  "summary": "2-sentence video summary.",
+  "transcript_clean": "Full cleaned transcript...",
+  "key_quotes": [
+    {"speaker": "Speaker A", "quote": "...", "significance": "..."}
+  ],
+  "duration_seconds": 0,
+  "language": "en"
+}
+No markdown. Pure JSON only.
+"""</span></pre>
+        </div>
+
+        <div class="code-block" id="p-pdf">
+            <button class="copy-btn" onclick="copyCode('p-pdf')">COPY</button>
+            <pre><span class="v">PDF_EXTRACTOR_PROMPT</span> = <span class="s">"""
+You are a document intelligence agent.
+You receive raw text extracted from a news PDF. Your job:
+1. Identify headline / title
+2. Extract named entities: people, orgs, locations, dates
+3. Write a 3-sentence executive summary
+4. Identify primary topic
+
+Return ONLY:
+{
+  "source_id": "...",
+  "headline": "Article headline",
+  "summary": "3-sentence executive summary.",
+  "entities": {
+    "people": [], "organizations": [],
+    "locations": [], "dates": []
+  },
+  "topic": "politics|finance|conflict|technology|other",
+  "publication_date": "YYYY-MM-DD or null"
+}
+No markdown. Pure JSON only.
+"""</span></pre>
+        </div>
+
+        <div class="code-block" id="p-web">
+            <button class="copy-btn" onclick="copyCode('p-web')">COPY</button>
+            <pre><span class="v">WEB_PARSER_PROMPT</span> = <span class="s">"""
+You are a web content normalisation agent.
+You receive raw HTML or pre-scraped article JSON. Your job:
+1. Extract the clean article body text (remove ads/nav/footer)
+2. Identify author name(s) and publication date
+3. Extract source domain and URL
+4. Write a 2-sentence summary
+
+Return ONLY:
+{
+  "source_id": "...",
+  "title": "Article title",
+  "summary": "2-sentence summary.",
+  "body": "Clean article body...",
+  "author": "Name or null",
+  "date": "YYYY-MM-DD or null",
+  "source_domain": "example.com",
+  "url": "https://... or null"
+}
+No markdown. Pure JSON only.
+"""</span></pre>
+        </div>
+
+        <div class="code-block" id="p-analyst">
+            <button class="copy-btn" onclick="copyCode('p-analyst')">COPY</button>
+            <pre><span class="v">ANALYST_PROMPT</span> = <span class="s">"""
+You are a media bias and sentiment analysis agent.
+You receive text output from a single intelligence source. Your job:
+1. Score overall sentiment: -1.0 (very negative) to +1.0 (very positive)
+2. Assign up to 3 taxonomy tags:
+   politics|finance|conflict|technology|environment|health|crime|diplomacy
+3. Estimate ideological framing
+4. Detect primary language and region of coverage
+
+Return ONLY:
+{
+  "source_id": "...",
+  "sentiment": 0.0,
+  "tags": ["politics", "diplomacy"],
+  "framing": "centrist|left-leaning|right-leaning|neutral|unclear",
+  "language": "en",
+  "region": "South Asia",
+  "bias_indicators": ["..."]
+}
+No markdown. Pure JSON only.
+"""</span></pre>
+        </div>
+
+        <div class="code-block" id="p-agg">
+            <button class="copy-btn" onclick="copyCode('p-agg')">COPY</button>
+            <pre><span class="v">AGGREGATOR_PROMPT</span> = <span class="s">"""
+You are a senior intelligence analyst synthesising a multi-source media brief.
+You receive JSON outputs from ALL agents in this pipeline run. Your job:
+1. Identify entities appearing across multiple sources
+2. Build a unified timeline of events
+3. Find disparities / contradictions between sources
+4. Write a 5-7 sentence executive intelligence brief
+5. Generate dashboard_cards (one per unique story angle) for React UI
+
+Return ONLY:
+{
+  "run_id": "...",
+  "brief": "5-7 sentence summary of all intelligence gathered.",
+  "cross_links": [
+    {"entity": "Name", "found_in": ["pdf_001","yt_002"], "context": "..."}
+  ],
+  "timeline": [{"date": "YYYY-MM-DD", "event": "...", "sources": []}],
+  "contradictions": [],
+  "dashboard_cards": [
+    {
+      "id": "card_001", "headline": "...", "summary": "...",
+      "sentiment": 0.0, "tags": [], "sources": [], "timestamp": "ISO-8601"
+    }
+  ],
+  "total_sources_processed": 0
+}
+No markdown. Pure JSON only.
+"""</span></pre>
+        </div>
+    </div>
+
+    <!-- 05 TOKEN & COST ESTIMATES -->
+    <div class="section-title">05 — Per-Agent Token &amp; Cost Estimates</div>
+    <table class="cost-table">
+        <thead>
+            <tr>
+                <th>Agent</th>
+                <th>Model</th>
+                <th>Avg Input Tok</th>
+                <th>Avg Output Tok</th>
+                <th>Cost / Call</th>
+                <th>Calls / Run</th>
+                <th>Est. Cost / Run</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>🧠 Orchestrator</td>
+                <td class="mono">claude-sonnet-4-6</td>
+                <td class="mono">~800</td>
+                <td class="mono">~400</td>
+                <td class="mono">~$0.004</td>
+                <td class="mono">1</td>
+                <td class="mono"><span class="badge-pill pill-t">~$0.004</span></td>
+                <td>Routing + DAG only, small context</td>
+            </tr>
+            <tr>
+                <td>🎙 Transcriber</td>
+                <td class="mono">Whisper + claude-haiku</td>
+                <td class="mono">~3,000</td>
+                <td class="mono">~600</td>
+                <td class="mono">~$0.003</td>
+                <td class="mono">1–5 videos</td>
+                <td class="mono"><span class="badge-pill pill-p">~$0.003–$0.015</span></td>
+                <td>Whisper local/free; Claude cleans + summarises</td>
+            </tr>
+            <tr>
+                <td>📄 PDF Extractor</td>
+                <td class="mono">claude-sonnet-4-6</td>
+                <td class="mono">~2,500</td>
+                <td class="mono">~500</td>
+                <td class="mono">~$0.009</td>
+                <td class="mono">1–10 PDFs</td>
+                <td class="mono"><span class="badge-pill pill-p">~$0.009–$0.09</span></td>
+                <td>PyMuPDF parsing is free; LLM entity extraction</td>
+            </tr>
+            <tr>
+                <td>🌐 Web Parser</td>
+                <td class="mono">claude-haiku</td>
+                <td class="mono">~1,500</td>
+                <td class="mono">~400</td>
+                <td class="mono">~$0.001</td>
+                <td class="mono">1–20 articles</td>
+                <td class="mono"><span class="badge-pill pill-t">~$0.001–$0.02</span></td>
+                <td>Haiku sufficient for HTML cleanup</td>
+            </tr>
+            <tr>
+                <td>📊 Content Analyst</td>
+                <td class="mono">claude-haiku</td>
+                <td class="mono">~1,000</td>
+                <td class="mono">~200</td>
+                <td class="mono">~$0.0005</td>
+                <td class="mono">5–30 sources</td>
+                <td class="mono"><span class="badge-pill pill-t">~$0.003–$0.015</span></td>
+                <td>Runs once per source; Haiku is ideal here</td>
+            </tr>
+            <tr>
+                <td>🔗 Aggregator</td>
+                <td class="mono">claude-sonnet-4-6</td>
+                <td class="mono">~15k–40k</td>
+                <td class="mono">~2,000</td>
+                <td class="mono">~$0.18–$0.48</td>
+                <td class="mono">1 (final)</td>
+                <td class="mono"><span class="badge-pill pill-a">~$0.18–$0.48</span></td>
+                <td>Large context — all sources merged; biggest cost</td>
+            </tr>
+            <tr style="border-top:2px solid var(--accent);">
+                <td style="color:var(--accent3);font-weight:800;">TOTAL (typical)</td>
+                <td class="mono">—</td>
+                <td class="mono">—</td>
+                <td class="mono">—</td>
+                <td class="mono">—</td>
+                <td class="mono">—</td>
+                <td class="mono"><span class="badge-pill pill-g"
+                        style="font-size:13px;padding:4px 12px;">~$0.20–$0.65</span></td>
+                <td>5 YT + 5 PDFs + 10 web articles + aggregation</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Cost Summary Cards -->
+    <div class="cost-grid" style="margin-top:24px;">
+        <div class="cost-card">
+            <div class="cost-label">Typical Run</div>
+            <div class="cost-val">~$0.35</div>
+            <div class="cost-unit">per full analysis batch</div>
+            <div class="cost-note">5 videos + 5 PDFs + 10 web articles. Dominated by aggregator.</div>
+        </div>
+        <div class="cost-card">
+            <div class="cost-label">Light Run</div>
+            <div class="cost-val">~$0.05</div>
+            <div class="cost-unit">per small batch</div>
+            <div class="cost-note">2 PDFs + 3 web articles + 1 video. Fastest demo scenario.</div>
+        </div>
+        <div class="cost-card">
+            <div class="cost-label">Heavy Run</div>
+            <div class="cost-val">~$1.50</div>
+            <div class="cost-unit">per large archive</div>
+            <div class="cost-note">20+ sources. Aggregator context window approaches 100k tokens.</div>
+        </div>
+        <div class="cost-card">
+            <div class="cost-label">Haiku Savings</div>
+            <div class="cost-val">~60%</div>
+            <div class="cost-unit">using Haiku for tools 3 &amp; 4</div>
+            <div class="cost-note">Haiku $0.25/MTok vs Sonnet $3/MTok for simpler parsing agents.</div>
+        </div>
+    </div>
+
+    <!-- 06 BUILD ROADMAP -->
+    <div class="section-title">06 — 3-Phase Agent Build Roadmap</div>
+    <div class="roadmap">
+        <div class="phase">
+            <div class="phase-label">Phase 1 — Foundation</div>
+            <h3>Backend + MCP Shell</h3>
+            <ul>
+                <li>FastAPI multipart upload endpoint (ZIP, PDF, URL list)</li>
+                <li>MCP server skeleton exposing all 5 tool stubs</li>
+                <li>MIME detection + input classifier (python-magic)</li>
+                <li>asyncio DAG executor + asyncio.gather parallel dispatch</li>
+                <li>WebSocket endpoint to stream agent results to UI</li>
+            </ul>
+        </div>
+        <div class="phase">
+            <div class="phase-label">Phase 2 — Agents</div>
+            <h3>Tool Implementations</h3>
+            <ul>
+                <li>Tool 1: yt-dlp download → Whisper STT → Claude cleanup</li>
+                <li>Tool 2: PyMuPDF parse → Claude entity extraction</li>
+                <li>Tool 3: BeautifulSoup4 clean → Claude normalisation</li>
+                <li>Tool 4: Claude Haiku sentiment + categorisation</li>
+                <li>Tool 5: Aggregator prompt + barrier sync + dashboard JSON</li>
+            </ul>
+        </div>
+        <div class="phase">
+            <div class="phase-label">Phase 3 — Frontend</div>
+            <h3>React Dashboard (ZIP)</h3>
+            <ul>
+                <li>Wire React ZIP dashboard to FastAPI WebSocket</li>
+                <li>Add file upload dropzone (ZIP, PDFs, URL list)</li>
+                <li>Stream intelligence cards live as agents complete</li>
+                <li>Display sentiment scores, tags, entity network</li>
+                <li>End-to-end test + demo recording for presentation</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="footer-left">LIVINGAI TEAM · MEDIA INTELLIGENCE PLATFORM · FEB 22 AGENT PLAN</div>
+        <div class="footer-right">
+            <span class="live-dot"></span>
+            TEAM B: AMEY · SAIRAJ · CHANDRESH
+        </div>
+    </div>
+
+    </div><!-- /container -->
+
     <!-- Theme Toggle -->
-    <button id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle theme">🌙</button>
+    <button id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
 
     <script>
+        function showTab(id, btn) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+        function copyCode(id) {
+            const pre = document.getElementById(id).querySelector('pre');
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                const btn = document.getElementById(id).querySelector('.copy-btn');
+                btn.textContent = 'COPIED!'; btn.style.color = '#4fffd4';
+                setTimeout(() => { btn.textContent = 'COPY'; btn.style.color = ''; }, 2000);
+            });
+        }
         (function () {
             var btn = document.getElementById('theme-toggle');
-            var stored = localStorage.getItem('theme');
-            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            var theme = stored || (prefersDark ? 'dark' : 'light');
-
+            var theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             function apply(t) {
                 document.documentElement.setAttribute('data-theme', t);
                 btn.textContent = t === 'dark' ? '☀️' : '🌙';
                 localStorage.setItem('theme', t);
             }
-
             apply(theme);
-
-            btn.addEventListener('click', function () {
-                var current = document.documentElement.getAttribute('data-theme');
-                apply(current === 'dark' ? 'light' : 'dark');
-            });
+            btn.addEventListener('click', () => apply(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
         })();
     </script>
 
