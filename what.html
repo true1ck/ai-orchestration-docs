@@ -2895,29 +2895,28 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
     <!-- Cost Summary Cards -->
     <div class="cost-grid" style="margin-top:24px;">
         <div class="cost-card">
-            <div class="cost-label">Typical Run</div>
-            <div class="cost-val">~$1.20</div>
-            <div class="cost-unit">per full batch (all Sonnet)</div>
-            <div class="cost-note">5 videos + 5 PDFs + 10 web articles + 15 analysis passes + aggregation.</div>
-        </div>
-        <div class="cost-card">
             <div class="cost-label">Light Run</div>
-            <div class="cost-val">~$0.35</div>
-            <div class="cost-unit">per small batch</div>
-            <div class="cost-note">1 video + 2 PDFs + 3 web articles + 6 analysis passes. Demo scenario.</div>
+            <div class="cost-val">~$1.05</div>
+            <div class="cost-unit">Raw: ~$0.42 (with 2.5x buffer)</div>
+            <div class="cost-note">1 video + 2 PDFs + 3 web + 6 analyses.</div>
         </div>
         <div class="cost-card">
-            <div class="cost-label">WORST Case</div>
-            <div class="cost-val">~$3.50</div>
-            <div class="cost-unit">per max archive (all Sonnet)</div>
-            <div class="cost-note">10 videos + 10 PDFs + 20 articles + 30 analysis passes. Aggregator hits 60k tokens.
-            </div>
+            <div class="cost-label">Typical Run</div>
+            <div class="cost-val">~$3.75</div>
+            <div class="cost-unit">Raw: ~$1.50 (with 2.5x buffer)</div>
+            <div class="cost-note">5 videos + 5 PDFs + 10 web + 15 analyses.</div>
         </div>
-        <div class="cost-card">
-            <div class="cost-label">Monthly Budget</div>
-            <div class="cost-val">~$105</div>
-            <div class="cost-unit">30 typical runs / month</div>
-            <div class="cost-note">Daily broadcast analysis cycle. Plan for $150/mo buffer. Heavy days cost ~$10.50.
+        <div class="cost-card" style="border-color:rgba(255,195,79,0.3); background:rgba(255,195,79,0.05);">
+            <div class="cost-label" style="color:var(--accent4);">Worst Case Run</div>
+            <div class="cost-val">~$10.20</div>
+            <div class="cost-unit">Raw: ~$4.07 (with 2.5x buffer)</div>
+            <div class="cost-note">10 videos + 10 PDFs + 20 web + 30 analyses.</div>
+        </div>
+        <div class="cost-card" style="border-color:rgba(255,79,139,0.3); background:rgba(255,79,139,0.05);">
+            <div class="cost-label" style="color:var(--accent2);">Monthly Budget</div>
+            <div class="cost-val">~$150/mo</div>
+            <div class="cost-unit">Comfort Buffer</div>
+            <div class="cost-note">Raw 30 typical: ~$45. Heavy mix: ~$122-$300. Present as $150 to $300 for comfort.
             </div>
         </div>
     </div>
@@ -2944,7 +2943,8 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <th>Avg Output / Call</th>
                 <th>Cost / Call</th>
                 <th>Est. # Calls</th>
-                <th>Subtotal</th>
+                <th>Raw Subtotal</th>
+                <th>×2.5 Safe Budget</th>
             </tr>
         </thead>
         <tbody>
@@ -2954,26 +2954,29 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <td class="mono">~20,000</td>
                 <td class="mono">~4,000</td>
                 <td class="mono">~$0.12</td>
-                <td class="mono">80–120 sessions</td>
-                <td class="mono"><span class="badge-pill pill-a">~$9.60–$14.40</span></td>
+                <td class="mono">100–150 sessions</td>
+                <td class="mono"><span class="badge-pill pill-a">~$12–$18</span></td>
+                <td class="mono"><span class="badge-pill pill-a">~$30–$45</span></td>
             </tr>
             <tr>
                 <td>🔁 Prompt Engineering</td>
-                <td>Iterating system prompts per agent: send test output → refine → re-test (6 agents × 10 rounds)</td>
+                <td>Iterating system prompts per agent: send test output → refine → re-test (6 agents × 12 rounds)</td>
                 <td class="mono">~6,000</td>
                 <td class="mono">~2,000</td>
                 <td class="mono">~$0.048</td>
-                <td class="mono">60 iterations</td>
-                <td class="mono"><span class="badge-pill pill-a">~$2.88</span></td>
+                <td class="mono">80 iterations</td>
+                <td class="mono"><span class="badge-pill pill-a">~$3.84</span></td>
+                <td class="mono"><span class="badge-pill pill-a">~$9.60</span></td>
             </tr>
             <tr>
                 <td>🧪 Test Pipeline Runs</td>
                 <td>Running the full end-to-end pipeline during development to verify agent outputs are correct</td>
                 <td class="mono">varies</td>
                 <td class="mono">varies</td>
-                <td class="mono">~$1.20 / run</td>
-                <td class="mono">40–60 runs</td>
-                <td class="mono"><span class="badge-pill pill-a">~$48–$72</span></td>
+                <td class="mono">~$1.50 / run</td>
+                <td class="mono">80–100 runs</td>
+                <td class="mono"><span class="badge-pill pill-a">~$120–$150</span></td>
+                <td class="mono"><span class="badge-pill pill-a">~$300–$375</span></td>
             </tr>
             <tr>
                 <td>🐛 Debug Sessions</td>
@@ -2981,8 +2984,9 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <td class="mono">~12,000</td>
                 <td class="mono">~2,500</td>
                 <td class="mono">~$0.073</td>
-                <td class="mono">50–80 sessions</td>
-                <td class="mono"><span class="badge-pill pill-a">~$3.65–$5.84</span></td>
+                <td class="mono">80–100 sessions</td>
+                <td class="mono"><span class="badge-pill pill-a">~$5.84–$7.30</span></td>
+                <td class="mono"><span class="badge-pill pill-a">~$14.60–$18.25</span></td>
             </tr>
             <tr>
                 <td>📐 Schema &amp; Config Iterations</td>
@@ -2990,8 +2994,9 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <td class="mono">~5,000</td>
                 <td class="mono">~1,500</td>
                 <td class="mono">~$0.037</td>
-                <td class="mono">20–30 sessions</td>
-                <td class="mono"><span class="badge-pill pill-p">~$0.74–$1.11</span></td>
+                <td class="mono">30–40 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$1.11–$1.48</span></td>
+                <td class="mono"><span class="badge-pill pill-p">~$2.78–$3.70</span></td>
             </tr>
             <tr>
                 <td>🔗 Integration Testing</td>
@@ -2999,8 +3004,9 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <td class="mono">~15,000</td>
                 <td class="mono">~3,000</td>
                 <td class="mono">~$0.09</td>
-                <td class="mono">20–30 sessions</td>
-                <td class="mono"><span class="badge-pill pill-p">~$1.80–$2.70</span></td>
+                <td class="mono">30–40 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$2.70–$3.60</span></td>
+                <td class="mono"><span class="badge-pill pill-p">~$6.75–$9.00</span></td>
             </tr>
             <tr>
                 <td>🎨 React Frontend Wiring</td>
@@ -3008,8 +3014,9 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <td class="mono">~18,000</td>
                 <td class="mono">~4,000</td>
                 <td class="mono">~$0.114</td>
-                <td class="mono">25–40 sessions</td>
-                <td class="mono"><span class="badge-pill pill-p">~$2.85–$4.56</span></td>
+                <td class="mono">40–50 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$4.56–$5.70</span></td>
+                <td class="mono"><span class="badge-pill pill-p">~$11.40–$14.25</span></td>
             </tr>
             <tr>
                 <td>📋 Code Reviews &amp; Refactors</td>
@@ -3017,15 +3024,19 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <td class="mono">~20,000</td>
                 <td class="mono">~3,000</td>
                 <td class="mono">~$0.105</td>
-                <td class="mono">20–30 sessions</td>
-                <td class="mono"><span class="badge-pill pill-p">~$2.10–$3.15</span></td>
+                <td class="mono">30–40 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$3.15–$4.20</span></td>
+                <td class="mono"><span class="badge-pill pill-p">~$7.88–$10.50</span></td>
             </tr>
             <tr style="border-top:2px solid var(--accent2);">
                 <td style="color:var(--accent2);font-weight:800;">TOTAL DEV BUDGET</td>
                 <td colspan="5" style="color:var(--muted); font-size:12px;">Full build cycle: Phase 1 + Phase 2 + Phase
-                    3 + all prompt iterations + ~50 full test runs</td>
+                    3 + all prompt iterations + ~80 full test runs</td>
                 <td class="mono"><span class="badge-pill pill-a"
-                        style="font-size:13px;padding:4px 12px;background:rgba(255,79,139,0.2);color:var(--accent2);">~$75–$110</span>
+                        style="font-size:13px;padding:4px 12px;background:rgba(255,79,139,0.2);color:var(--accent2);">~$153–$191</span>
+                </td>
+                <td class="mono"><span class="badge-pill pill-a"
+                        style="font-size:13px;padding:4px 12px;background:rgba(255,79,139,0.2);color:var(--accent2);">~$382–$478</span>
                 </td>
             </tr>
             <tr>
@@ -3033,7 +3044,10 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
                 <td colspan="5" style="color:var(--muted); font-size:12px;">Multiple refactors, heavy debugging, 100+
                     test runs, architecture pivots, solo developer iterating fast</td>
                 <td class="mono"><span class="badge-pill pill-a"
-                        style="font-size:13px;padding:4px 12px;background:rgba(255,195,79,0.2);color:var(--accent4);">~$200–$300</span>
+                        style="font-size:13px;padding:4px 12px;background:rgba(255,195,79,0.2);color:var(--accent4);">~$250–$320</span>
+                </td>
+                <td class="mono"><span class="badge-pill pill-a"
+                        style="font-size:13px;padding:4px 12px;background:rgba(255,195,79,0.2);color:var(--accent4);">~$625–$800</span>
                 </td>
             </tr>
         </tbody>
@@ -3043,33 +3057,80 @@ Cite source_ids everywhere. Never fabricate facts not in the input data.
     <div class="cost-grid" style="margin-bottom:48px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
         <div class="cost-card" style="border-color:rgba(255,79,139,0.3); background:rgba(255,79,139,0.05);">
             <div class="cost-label" style="color:var(--accent2);">Dev-Time Cost</div>
-            <div class="cost-val">~$150</div>
-            <div class="cost-unit">total to build the platform</div>
-            <div class="cost-note">Code gen + prompts + ~50 full test runs + debugging. Dominated by repeated test
+            <div class="cost-val">~$425</div>
+            <div class="cost-unit">total to build the platform (with buffer)</div>
+            <div class="cost-note">Code gen + prompts + 80–100 full test runs + debugging. Dominated by repeated test
                 pipeline executions.</div>
         </div>
         <div class="cost-card">
-            <div class="cost-label">Runtime Cost</div>
-            <div class="cost-val">~$1.20</div>
-            <div class="cost-unit">per production run</div>
-            <div class="cost-note">Typical batch: 5 YT + 5 PDFs + 10 articles. All Sonnet. This is post-launch recurring
-                cost.</div>
+            <div class="cost-label">Biggest Dev Drain</div>
+            <div class="cost-val">Test Runs</div>
+            <div class="cost-unit">~80 runs × $1.50 = ~$120</div>
+            <div class="cost-note">Every time you run the pipeline to check if your fix worked, you spend $1.50. 80 test
+                runs = ~$120 ($300 with buffer).</div>
         </div>
         <div class="cost-card" style="border-color:rgba(255,79,139,0.3); background:rgba(255,79,139,0.05);">
-            <div class="cost-label" style="color:var(--accent2);">Biggest Dev Drain</div>
-            <div class="cost-val">Test Runs</div>
-            <div class="cost-unit">~50 runs × $1.20 = $60</div>
-            <div class="cost-note">Every time you run the pipeline to check if your fix worked, you spend $1.20. 50 test
-                runs = $60 alone.</div>
+            <div class="cost-label" style="color:var(--accent4);">Worst Case Dev</div>
+            <div class="cost-val">~$625–$800</div>
+            <div class="cost-unit">with 2.5x buffer</div>
+            <div class="cost-note">100+ test runs, major refactors, architecture pivots, heavy debugging.</div>
         </div>
         <div class="cost-card" style="border-color:rgba(255,195,79,0.3); background:rgba(255,195,79,0.05);">
-            <div class="cost-label" style="color:var(--accent4);">Smart Dev Tip</div>
+            <div class="cost-label" style="color:var(--accent5);">Smart Dev Tip</div>
             <div class="cost-val">Mock Data</div>
-            <div class="cost-unit">saves ~$40–$60 in dev</div>
+            <div class="cost-unit">saves ~$100+ in dev</div>
             <div class="cost-note">Use cached mock responses for agent outputs during UI + wiring dev. Only hit real
                 LLMs for final agent validation.</div>
         </div>
     </div>
+
+    <!-- 05c WHAT TO TELL STAKEHOLDERS -->
+    <div class="section-title" style="color:var(--accent5);">05c — What to Tell Stakeholders</div>
+
+    <div class="task-banner task-c"
+        style="border-color:var(--accent5); background:rgba(120,255,100,0.06); margin-bottom:32px;">
+        <span class="task-tag" style="background:rgba(120,255,100,0.2); color:var(--accent5);">STAKEHOLDER NOTE</span>
+        <span>The test pipeline runs are the hidden cost everyone misses — present the $400–500 build cost clearly
+            rather than the $150 figure from before, because stakeholders who later see Anthropic bills during
+            development will ask questions if you only quoted them $150.</span>
+    </div>
+
+    <table class="cost-table" style="margin-bottom:48px;">
+        <thead>
+            <tr>
+                <th>Budget Line</th>
+                <th>Present This Number</th>
+                <th>Covers</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Build Cost (one-time)</td>
+                <td><strong style="color:var(--accent3); font-size:16px;">$400–$500</strong></td>
+                <td>Full dev cycle + 2.5× buffer. Worst case $600 if major architecture rethot.</td>
+            </tr>
+            <tr>
+                <td>Monthly Running Cost</td>
+                <td><strong style="color:var(--text); font-size:14px;">$150/month</strong></td>
+                <td>30 typical daily runs. Scales linearly with usage.</td>
+            </tr>
+            <tr>
+                <td>Heavy Month</td>
+                <td><strong style="color:var(--text); font-size:14px;">$300/month</strong></td>
+                <td>If team runs 3–4 analyses per day instead of 1.</td>
+            </tr>
+            <tr>
+                <td>First 6 Months Total</td>
+                <td><strong style="color:var(--text); font-size:14px;">~$1,400</strong></td>
+                <td>Build + 5 months running. Safe number for a business case.</td>
+            </tr>
+            <tr>
+                <td>Cost per intelligence report</td>
+                <td><strong style="color:var(--text); font-size:14px;">~$3.75</strong></td>
+                <td>Typical run with safety buffer. Roughly the cost of one coffee.</td>
+            </tr>
+        </tbody>
+    </table>
 
     <!-- 06 BUILD ROADMAP -->
     <div class="section-title">06 — 3-Phase Agent Build Roadmap</div>
