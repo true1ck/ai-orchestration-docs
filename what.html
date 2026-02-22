@@ -2156,6 +2156,155 @@ No markdown. Pure JSON only.
         </div>
     </div>
 
+    <!-- 05b DEVELOPMENT COST -->
+    <div class="section-title" style="color:var(--accent2);">05b — Real Development Cost (You're Right, Way More Than
+        $3.50)</div>
+
+    <div class="task-banner task-c"
+        style="border-color:var(--accent2); background:rgba(255,79,139,0.06); margin-bottom:32px;">
+        <span class="task-tag" style="background:rgba(255,79,139,0.2); color:var(--accent2);">⚠ REALITY CHECK</span>
+        <span>The $3.50 figure is <strong style="color:var(--text);">only the per-run production inference
+                cost</strong>. During development you also burn tokens on code generation, prompt engineering,
+            debugging, and repeated test runs. This section estimates the <strong style="color:var(--accent2);">actual
+                total spend to build and ship the platform</strong>.</span>
+    </div>
+
+    <table class="cost-table" style="margin-bottom:32px;">
+        <thead>
+            <tr>
+                <th>Dev Activity</th>
+                <th>What Claude Is Doing</th>
+                <th>Avg Input / Call</th>
+                <th>Avg Output / Call</th>
+                <th>Cost / Call</th>
+                <th>Est. # Calls</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>🔧 Code Generation</td>
+                <td>Writing MCP servers, FastAPI routes, DB config, React hooks — full files at a time</td>
+                <td class="mono">~20,000</td>
+                <td class="mono">~4,000</td>
+                <td class="mono">~$0.12</td>
+                <td class="mono">80–120 sessions</td>
+                <td class="mono"><span class="badge-pill pill-a">~$9.60–$14.40</span></td>
+            </tr>
+            <tr>
+                <td>🔁 Prompt Engineering</td>
+                <td>Iterating system prompts per agent: send test output → refine → re-test (6 agents × 10 rounds)</td>
+                <td class="mono">~6,000</td>
+                <td class="mono">~2,000</td>
+                <td class="mono">~$0.048</td>
+                <td class="mono">60 iterations</td>
+                <td class="mono"><span class="badge-pill pill-a">~$2.88</span></td>
+            </tr>
+            <tr>
+                <td>🧪 Test Pipeline Runs</td>
+                <td>Running the full end-to-end pipeline during development to verify agent outputs are correct</td>
+                <td class="mono">varies</td>
+                <td class="mono">varies</td>
+                <td class="mono">~$1.20 / run</td>
+                <td class="mono">40–60 runs</td>
+                <td class="mono"><span class="badge-pill pill-a">~$48–$72</span></td>
+            </tr>
+            <tr>
+                <td>🐛 Debug Sessions</td>
+                <td>Sending stack traces + full code context to Claude for error diagnosis + fix suggestions</td>
+                <td class="mono">~12,000</td>
+                <td class="mono">~2,500</td>
+                <td class="mono">~$0.073</td>
+                <td class="mono">50–80 sessions</td>
+                <td class="mono"><span class="badge-pill pill-a">~$3.65–$5.84</span></td>
+            </tr>
+            <tr>
+                <td>📐 Schema &amp; Config Iterations</td>
+                <td>Refining DB schema, .env values, MCP tool signatures, Vite proxy settings</td>
+                <td class="mono">~5,000</td>
+                <td class="mono">~1,500</td>
+                <td class="mono">~$0.037</td>
+                <td class="mono">20–30 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$0.74–$1.11</span></td>
+            </tr>
+            <tr>
+                <td>🔗 Integration Testing</td>
+                <td>Connecting all 5 MCP servers to orchestrator, verifying WebSocket stream, checking DB writes</td>
+                <td class="mono">~15,000</td>
+                <td class="mono">~3,000</td>
+                <td class="mono">~$0.09</td>
+                <td class="mono">20–30 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$1.80–$2.70</span></td>
+            </tr>
+            <tr>
+                <td>🎨 React Frontend Wiring</td>
+                <td>Adapting existing React ZIP to consume the new API: hooks, props, live card rendering</td>
+                <td class="mono">~18,000</td>
+                <td class="mono">~4,000</td>
+                <td class="mono">~$0.114</td>
+                <td class="mono">25–40 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$2.85–$4.56</span></td>
+            </tr>
+            <tr>
+                <td>📋 Code Reviews &amp; Refactors</td>
+                <td>Asking Claude to audit each file, spot bugs, improve error handling, add type hints</td>
+                <td class="mono">~20,000</td>
+                <td class="mono">~3,000</td>
+                <td class="mono">~$0.105</td>
+                <td class="mono">20–30 sessions</td>
+                <td class="mono"><span class="badge-pill pill-p">~$2.10–$3.15</span></td>
+            </tr>
+            <tr style="border-top:2px solid var(--accent2);">
+                <td style="color:var(--accent2);font-weight:800;">TOTAL DEV BUDGET</td>
+                <td colspan="5" style="color:var(--muted); font-size:12px;">Full build cycle: Phase 1 + Phase 2 + Phase
+                    3 + all prompt iterations + ~50 full test runs</td>
+                <td class="mono"><span class="badge-pill pill-a"
+                        style="font-size:13px;padding:4px 12px;background:rgba(255,79,139,0.2);color:var(--accent2);">~$75–$110</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="color:var(--accent4);font-weight:800;">WORST CASE DEV</td>
+                <td colspan="5" style="color:var(--muted); font-size:12px;">Multiple refactors, heavy debugging, 100+
+                    test runs, architecture pivots, solo developer iterating fast</td>
+                <td class="mono"><span class="badge-pill pill-a"
+                        style="font-size:13px;padding:4px 12px;background:rgba(255,195,79,0.2);color:var(--accent4);">~$200–$300</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Dev vs Prod Cost Breakdown Cards -->
+    <div class="cost-grid" style="margin-bottom:48px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+        <div class="cost-card" style="border-color:rgba(255,79,139,0.3); background:rgba(255,79,139,0.05);">
+            <div class="cost-label" style="color:var(--accent2);">Dev-Time Cost</div>
+            <div class="cost-val">~$150</div>
+            <div class="cost-unit">total to build the platform</div>
+            <div class="cost-note">Code gen + prompts + ~50 full test runs + debugging. Dominated by repeated test
+                pipeline executions.</div>
+        </div>
+        <div class="cost-card">
+            <div class="cost-label">Runtime Cost</div>
+            <div class="cost-val">~$1.20</div>
+            <div class="cost-unit">per production run</div>
+            <div class="cost-note">Typical batch: 5 YT + 5 PDFs + 10 articles. All Sonnet. This is post-launch recurring
+                cost.</div>
+        </div>
+        <div class="cost-card" style="border-color:rgba(255,79,139,0.3); background:rgba(255,79,139,0.05);">
+            <div class="cost-label" style="color:var(--accent2);">Biggest Dev Drain</div>
+            <div class="cost-val">Test Runs</div>
+            <div class="cost-unit">~50 runs × $1.20 = $60</div>
+            <div class="cost-note">Every time you run the pipeline to check if your fix worked, you spend $1.20. 50 test
+                runs = $60 alone.</div>
+        </div>
+        <div class="cost-card" style="border-color:rgba(255,195,79,0.3); background:rgba(255,195,79,0.05);">
+            <div class="cost-label" style="color:var(--accent4);">Smart Dev Tip</div>
+            <div class="cost-val">Mock Data</div>
+            <div class="cost-unit">saves ~$40–$60 in dev</div>
+            <div class="cost-note">Use cached mock responses for agent outputs during UI + wiring dev. Only hit real
+                LLMs for final agent validation.</div>
+        </div>
+    </div>
+
     <!-- 06 BUILD ROADMAP -->
     <div class="section-title">06 — 3-Phase Agent Build Roadmap</div>
     <div class="roadmap">
