@@ -2054,73 +2054,74 @@ No markdown. Pure JSON only.
             <tr>
                 <td>🧠 Orchestrator</td>
                 <td class="mono">claude-sonnet-4-6</td>
-                <td class="mono">~800</td>
-                <td class="mono">~400</td>
-                <td class="mono">~$0.004</td>
+                <td class="mono">~10,000</td>
+                <td class="mono">~2,000</td>
+                <td class="mono">~$0.060</td>
                 <td class="mono">1</td>
-                <td class="mono"><span class="badge-pill pill-t">~$0.004</span></td>
-                <td>Routing + DAG only, small context</td>
+                <td class="mono"><span class="badge-pill pill-t">~$0.06</span></td>
+                <td>Payload manifest + all file metadata + routing plan. Worst case: large ZIP with many sources.</td>
             </tr>
             <tr>
                 <td>🎙 Transcriber</td>
-                <td class="mono">Whisper + claude-haiku</td>
-                <td class="mono">~3,000</td>
-                <td class="mono">~600</td>
-                <td class="mono">~$0.003</td>
-                <td class="mono">1–5 videos</td>
-                <td class="mono"><span class="badge-pill pill-p">~$0.003–$0.015</span></td>
-                <td>Whisper local/free; Claude cleans + summarises</td>
+                <td class="mono">Whisper + claude-sonnet-4-6</td>
+                <td class="mono">~15,000</td>
+                <td class="mono">~2,000</td>
+                <td class="mono">~$0.075</td>
+                <td class="mono">up to 10 videos</td>
+                <td class="mono"><span class="badge-pill pill-p">~$0.75</span></td>
+                <td>15-min video = ~15k tokens transcript. Whisper free; Sonnet cleans + extracts key quotes.</td>
             </tr>
             <tr>
                 <td>📄 PDF Extractor</td>
                 <td class="mono">claude-sonnet-4-6</td>
-                <td class="mono">~2,500</td>
-                <td class="mono">~500</td>
-                <td class="mono">~$0.009</td>
-                <td class="mono">1–10 PDFs</td>
-                <td class="mono"><span class="badge-pill pill-p">~$0.009–$0.09</span></td>
-                <td>PyMuPDF parsing is free; LLM entity extraction</td>
+                <td class="mono">~10,000</td>
+                <td class="mono">~2,000</td>
+                <td class="mono">~$0.060</td>
+                <td class="mono">up to 10 PDFs</td>
+                <td class="mono"><span class="badge-pill pill-p">~$0.60</span></td>
+                <td>Dense newspaper PDFs can fill 10k tokens. PyMuPDF parsing free; Sonnet entity extraction.</td>
             </tr>
             <tr>
                 <td>🌐 Web Parser</td>
-                <td class="mono">claude-haiku</td>
-                <td class="mono">~1,500</td>
-                <td class="mono">~400</td>
-                <td class="mono">~$0.001</td>
-                <td class="mono">1–20 articles</td>
-                <td class="mono"><span class="badge-pill pill-t">~$0.001–$0.02</span></td>
-                <td>Haiku sufficient for HTML cleanup</td>
+                <td class="mono">claude-sonnet-4-6</td>
+                <td class="mono">~6,000</td>
+                <td class="mono">~1,000</td>
+                <td class="mono">~$0.033</td>
+                <td class="mono">up to 20 articles</td>
+                <td class="mono"><span class="badge-pill pill-p">~$0.66</span></td>
+                <td>Long-form news articles can be 5–6k tokens after BS4 strip. Sonnet ensures accurate normalisation.
+                </td>
             </tr>
             <tr>
                 <td>📊 Content Analyst</td>
-                <td class="mono">claude-haiku</td>
-                <td class="mono">~1,000</td>
-                <td class="mono">~200</td>
-                <td class="mono">~$0.0005</td>
-                <td class="mono">5–30 sources</td>
-                <td class="mono"><span class="badge-pill pill-t">~$0.003–$0.015</span></td>
-                <td>Runs once per source; Haiku is ideal here</td>
+                <td class="mono">claude-sonnet-4-6</td>
+                <td class="mono">~6,000</td>
+                <td class="mono">~1,500</td>
+                <td class="mono">~$0.041</td>
+                <td class="mono">up to 30 sources</td>
+                <td class="mono"><span class="badge-pill pill-a">~$1.21</span></td>
+                <td>Runs once per source. High call count drives cost. Sonnet gives reliable sentiment + taxonomy.</td>
             </tr>
             <tr>
                 <td>🔗 Aggregator</td>
                 <td class="mono">claude-sonnet-4-6</td>
-                <td class="mono">~15k–40k</td>
-                <td class="mono">~2,000</td>
-                <td class="mono">~$0.18–$0.48</td>
+                <td class="mono">~40k–60k</td>
+                <td class="mono">~5,000</td>
+                <td class="mono">~$0.195–$0.255</td>
                 <td class="mono">1 (final)</td>
-                <td class="mono"><span class="badge-pill pill-a">~$0.18–$0.48</span></td>
-                <td>Large context — all sources merged; biggest cost</td>
+                <td class="mono"><span class="badge-pill pill-a">~$0.195–$0.255</span></td>
+                <td>All agent outputs merged into one massive context. 200k token window = future headroom.</td>
             </tr>
             <tr style="border-top:2px solid var(--accent);">
-                <td style="color:var(--accent3);font-weight:800;">TOTAL (typical)</td>
+                <td style="color:var(--accent2);font-weight:800;">TOTAL WORST CASE</td>
+                <td class="mono">all Sonnet</td>
                 <td class="mono">—</td>
                 <td class="mono">—</td>
                 <td class="mono">—</td>
                 <td class="mono">—</td>
-                <td class="mono">—</td>
-                <td class="mono"><span class="badge-pill pill-g"
-                        style="font-size:13px;padding:4px 12px;">~$0.20–$0.65</span></td>
-                <td>5 YT + 5 PDFs + 10 web articles + aggregation</td>
+                <td class="mono"><span class="badge-pill pill-a"
+                        style="font-size:13px;padding:4px 12px;">~$3.00–$3.50</span></td>
+                <td>10 YT + 10 PDFs + 20 web articles + 30 analysis passes + aggregation. All on Sonnet.</td>
             </tr>
         </tbody>
     </table>
@@ -2129,27 +2130,29 @@ No markdown. Pure JSON only.
     <div class="cost-grid" style="margin-top:24px;">
         <div class="cost-card">
             <div class="cost-label">Typical Run</div>
-            <div class="cost-val">~$0.35</div>
-            <div class="cost-unit">per full analysis batch</div>
-            <div class="cost-note">5 videos + 5 PDFs + 10 web articles. Dominated by aggregator.</div>
+            <div class="cost-val">~$1.20</div>
+            <div class="cost-unit">per full batch (all Sonnet)</div>
+            <div class="cost-note">5 videos + 5 PDFs + 10 web articles + 15 analysis passes + aggregation.</div>
         </div>
         <div class="cost-card">
             <div class="cost-label">Light Run</div>
-            <div class="cost-val">~$0.05</div>
+            <div class="cost-val">~$0.35</div>
             <div class="cost-unit">per small batch</div>
-            <div class="cost-note">2 PDFs + 3 web articles + 1 video. Fastest demo scenario.</div>
+            <div class="cost-note">1 video + 2 PDFs + 3 web articles + 6 analysis passes. Demo scenario.</div>
         </div>
         <div class="cost-card">
-            <div class="cost-label">Heavy Run</div>
-            <div class="cost-val">~$1.50</div>
-            <div class="cost-unit">per large archive</div>
-            <div class="cost-note">20+ sources. Aggregator context window approaches 100k tokens.</div>
+            <div class="cost-label">WORST Case</div>
+            <div class="cost-val">~$3.50</div>
+            <div class="cost-unit">per max archive (all Sonnet)</div>
+            <div class="cost-note">10 videos + 10 PDFs + 20 articles + 30 analysis passes. Aggregator hits 60k tokens.
+            </div>
         </div>
         <div class="cost-card">
-            <div class="cost-label">Haiku Savings</div>
-            <div class="cost-val">~60%</div>
-            <div class="cost-unit">using Haiku for tools 3 &amp; 4</div>
-            <div class="cost-note">Haiku $0.25/MTok vs Sonnet $3/MTok for simpler parsing agents.</div>
+            <div class="cost-label">Monthly Budget</div>
+            <div class="cost-val">~$105</div>
+            <div class="cost-unit">30 typical runs / month</div>
+            <div class="cost-note">Daily broadcast analysis cycle. Plan for $150/mo buffer. Heavy days cost ~$10.50.
+            </div>
         </div>
     </div>
 
